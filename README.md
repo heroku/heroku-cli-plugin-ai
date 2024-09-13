@@ -25,5 +25,22 @@ USAGE
 ```
 # Commands
 <!-- commands -->
+* [`heroku ai:docs`](#heroku-aidocs)
 
+## `heroku ai:docs`
+
+Opens documentation for Heroku AI in your web browser.
+
+```
+USAGE
+  $ heroku ai:docs [--browser <value>]
+
+FLAGS
+  --browser=<value>  browser to open docs with (example: "firefox", "safari")
+
+DESCRIPTION
+  Opens documentation for Heroku AI in your web browser.
+```
+
+_See code: [dist/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/docs.ts)_
 <!-- commandsstop -->
