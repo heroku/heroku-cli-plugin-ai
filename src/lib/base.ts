@@ -9,8 +9,8 @@ import {HerokuAPIError} from '@heroku-cli/command/lib/api-client'
 export class NotFound extends Error {
   constructor(addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
-      We can’t find a model instance called ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}.
-      Run ${color.cmd(`heroku ai:models:info --app ${appIdentifier ? appIdentifier : '<value>'}`)} to see a list of model instances.
+      We can’t find a model resource called ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}.
+      Run ${color.cmd(`heroku ai:models:info --app ${appIdentifier ? appIdentifier : '<value>'}`)} to see a list of model resources.
     `
     super(message)
   }
@@ -22,8 +22,8 @@ export class NotFound extends Error {
 export class AmbiguousError extends Error {
   constructor(public readonly matches: string[], addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
-      Multiple model instances match ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}: ${matches.map(match => color.addon(match)).join(', ')}.
-      Specify the model instance by its name instead.
+      Multiple model resources match ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}: ${matches.map(match => color.addon(match)).join(', ')}.
+      Specify the model resource by its name instead.
     `
     super(message)
   }
@@ -244,7 +244,7 @@ export default abstract class extends Command {
     if (this._apiKey)
       return this._apiKey
 
-    ux.error(`Model instance ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
   }
 
   get apiKeyConfigVarName(): string {
@@ -263,7 +263,7 @@ export default abstract class extends Command {
     if (this._apiUrl)
       return this._apiUrl
 
-    ux.error(`Model instance ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
   }
 
   get apiUrlConfigVarName(): string {
