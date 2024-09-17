@@ -1,0 +1,74 @@
+{
+  "name": "@heroku-cli/plugin-ai",
+  "description": "Heroku CLI plugin for Heroku AI add-on",
+  "version": "0.0.0",
+  "author": "Heroku",
+  "bugs": "https://github.com/heroku/heroku-cli-plugin-ai/issues",
+  "dependencies": {
+    "@heroku-cli/color": "^2",
+    "@heroku-cli/command": "^11",
+    "@heroku-cli/schema": "^1.0.25",
+    "@oclif/core": "^2.16.0",
+    "@oclif/plugin-help": "^5",
+    "tsheredoc": "^1"
+  },
+  "devDependencies": {
+    "@oclif/test": "^2.3.28",
+    "@types/mocha": "^10",
+    "@types/nock": "^11",
+    "@types/node": "^16",
+    "@types/sinon": "^17",
+    "@typescript-eslint/eslint-plugin": "^6",
+    "@typescript-eslint/parser": "^6",
+    "chai": "^4",
+    "eslint": "^7",
+    "eslint-config-oclif": "^4",
+    "eslint-config-oclif-typescript": "^1",
+    "eslint-import-resolver-typescript": "^3",
+    "eslint-plugin-import": "^2",
+    "eslint-plugin-mocha": "^10",
+    "http-call": "^5",
+    "mocha": "^10",
+    "nock": "^13",
+    "np": "7.7.0",
+    "nyc": "^15",
+    "oclif": "2.2.0",
+    "sinon": "^14",
+    "stdout-stderr": "^0",
+    "strip-ansi": "^6",
+    "ts-node": "^10",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=16.20.2"
+  },
+  "files": [
+    "/dist"
+  ],
+  "homepage": "https://github.com/heroku/heroku-cli-plugin-ai",
+  "keywords": [
+    "heroku-plugin",
+    "oclif"
+  ],
+  "license": "ISC",
+  "oclif": {
+    "bin": "heroku",
+    "commands": "./dist/commands",
+    "devPlugins": [
+      "@oclif/plugin-help"
+    ],
+    "topics": {
+      "ai": {
+        "description": "manage Heroku AI models"
+      }
+    }
+  },
+  "repository": "heroku/heroku-cli-plugin-integration",
+  "scripts": {
+    "build": "rm -rf dist && tsc -b && oclif manifest && oclif readme && mv oclif.manifest.json ./dist/oclif.manifest.json && cp README.md ./dist/README.md",
+    "lint": "eslint . --ext .ts --config .eslintrc.json",
+    "posttest": "yarn lint",
+    "test": "nyc mocha --forbid-only",
+    "version": "oclif readme && git add README.md"
+  }
+}
