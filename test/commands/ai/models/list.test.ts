@@ -1,6 +1,7 @@
 import {expect} from 'chai'
 import {stderr, stdout} from 'stdout-stderr'
 import Cmd from '../../../../src/commands/ai/models/list'
+import stripAnsi from '../../../helpers/strip-ansi'
 import {runCommand} from '../../../run-command'
 import {availableModels} from '../../../helpers/fixtures'
 import nock from 'nock'
@@ -31,6 +32,18 @@ describe('ai:models:list', function () {
       .then(() => expect(stdout.output).to.contain('cohere-embed-english      Text to text, Embedding'))
       .then(() => expect(stdout.output).to.contain('cohere-embed-multilingual Text to text, Embedding'))
       .then(() => expect(stdout.output).to.contain('See https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models for more info'))
-      .then(() => expect('').to.eq(stderr.output))
+      .then(() => expect(stderr.output).to.eq(''))
+  })
+
+  it('warns if no models are available', async function () {
+    herokuAI
+      .get('/available-models')
+      .reply(200, [])
+
+    await runCommand(Cmd)
+      .then(() => expect(stdout.output).to.eq(''))
+      .then(() => expect(stripAnsi(stderr.output)).to.contain('Failed to retrieve the list of available models. Check the Heroku Status page https://status.heroku.com/'))
+      .then(() => expect(stripAnsi(stderr.output)).to.contain('for system outages. After all incidents have resolved, try again. You can also see a list of models at'))
+      .then(() => expect(stripAnsi(stderr.output)).to.contain('https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models.'))
   })
 })

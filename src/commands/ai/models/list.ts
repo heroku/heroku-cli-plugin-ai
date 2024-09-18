@@ -1,5 +1,5 @@
 import {ux} from '@oclif/core'
-import {ModelListItem} from '../../../lib/ai/types'
+import {ModelList} from '../../../lib/ai/types'
 import Command from '../../../lib/base'
 
 const displayModels = (models: any) => {
@@ -28,9 +28,9 @@ export default class List extends Command {
 
     const herokuAIClient = this.herokuAI
     const urlPath = '/available-models'
-    const {body: availableModels} = await herokuAIClient.get<ModelListItem>(urlPath)
+    const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
 
-    if (availableModels) {
+    if (availableModels.length > 0) {
       displayModels(availableModels)
       ux.log('\nSee https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models for more info.')
     } else {
