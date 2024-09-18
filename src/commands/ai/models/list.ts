@@ -1,13 +1,22 @@
 // import color from '@heroku-cli/color'
-// import {ux} from '@oclif/core'
+import {ux} from '@oclif/core'
 import {ModelListItem} from '../../../lib/ai/types'
 // import {CLIError} from '@oclif/core/lib/errors'
 import Command from '../../../lib/base'
 
-// const displayModels = (models: any) => {
-//   // parse and display models from design doc
+const displayModels = (models: any) => {
+  // parse and display models from design doc
+  ux.log()
 
-// }
+  ux.table(models, {
+    model: {
+      get: ({model_id}: any) => model_id,
+    },
+    type: {
+      get: ({type}: any) => type,
+    },
+  }, {'no-header': true})
+}
 
 export default class List extends Command {
   static description = 'List available AI models to provision access to.'
@@ -25,8 +34,8 @@ export default class List extends Command {
     const urlPath = '/available-models'
     const {body: availableModels} = await herokuAIClient.get<ModelListItem>(urlPath)
 
-    console.log('available models', availableModels)
+    // console.log('available models', availableModels)
 
-    // displayModels(availableModels)
+    displayModels(availableModels)
   }
 }
