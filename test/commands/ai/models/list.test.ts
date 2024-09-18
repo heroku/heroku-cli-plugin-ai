@@ -36,6 +36,9 @@ describe('ai:models:list', function () {
   })
 
   it('warns if no models are available', async function () {
+    const statusURL = 'https://status.heroku.com/'
+    const modelsDevCenterURL = 'https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models'
+
     herokuAI
       .get('/available-models')
       .reply(200, [])
@@ -43,5 +46,7 @@ describe('ai:models:list', function () {
     await runCommand(Cmd)
       .then(() => expect(stdout.output).to.eq(''))
       .then(() => expect(stripAnsi(stderr.output)).to.contain('Failed to retrieve the list of available models.'))
+      .then(() => expect(stripAnsi(stderr.output)).to.contain(statusURL))
+      .then(() => expect(stripAnsi(stderr.output)).to.contain(modelsDevCenterURL))
   })
 })
