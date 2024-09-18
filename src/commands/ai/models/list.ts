@@ -1,8 +1,9 @@
 import {ux} from '@oclif/core'
 import {ModelList} from '../../../lib/ai/types'
+import {CLIError} from '@oclif/core/lib/errors'
 import Command from '../../../lib/base'
 
-const displayModels = (models: any) => {
+const displayModels = (models: ModelList) => {
   ux.log()
   ux.table(models, {
     model: {
@@ -28,13 +29,14 @@ export default class List extends Command {
 
     const herokuAIClient = this.herokuAI
     const urlPath = '/available-models'
-    const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
 
-    if (availableModels.length > 0) {
+    try {
+      const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
       displayModels(availableModels)
       ux.log('\nSee https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models for more info.')
-    } else {
-      ux.warn('Failed to retrieve the list of available models. Check the Heroku Status page https://status.heroku.com/ for system outages. After all incidents have resolved, try again. You can also see a list of models at https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models.')
+    } catch (error) {
+      const {message} = error as CLIError
+      ux.error(message, {exit: 1})
     }
   }
 }

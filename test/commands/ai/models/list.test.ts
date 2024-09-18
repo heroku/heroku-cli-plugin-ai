@@ -3,7 +3,8 @@ import {stderr, stdout} from 'stdout-stderr'
 import Cmd from '../../../../src/commands/ai/models/list'
 import stripAnsi from '../../../helpers/strip-ansi'
 import {runCommand} from '../../../run-command'
-import {availableModels} from '../../../helpers/fixtures'
+import {availableModels, mockAPIErrors} from '../../../helpers/fixtures'
+import {CLIError} from '@oclif/core/lib/errors'
 import nock from 'nock'
 
 describe('ai:models:list', function () {
@@ -41,12 +42,16 @@ describe('ai:models:list', function () {
 
     herokuAI
       .get('/available-models')
-      .reply(200, [])
+      .reply(500, mockAPIErrors.modelsListErrorResponse)
 
-    await runCommand(Cmd)
-      .then(() => expect(stdout.output).to.eq(''))
-      .then(() => expect(stripAnsi(stderr.output)).to.contain('Failed to retrieve the list of available models.'))
-      .then(() => expect(stripAnsi(stderr.output)).to.contain(statusURL))
-      .then(() => expect(stripAnsi(stderr.output)).to.contain(modelsDevCenterURL))
+    try {
+      await runCommand(Cmd)
+    } catch (error) {
+      const {message, oclif} = error as CLIError
+      expect(stripAnsi(message)).to.contains('Failed to retrieve the list of available models.')
+      expect(stripAnsi(message)).to.contains(statusURL)
+      expect(stripAnsi(message)).to.contains(modelsDevCenterURL)
+      expect(oclif.exit).to.equal(1)
+    }
   })
 })
