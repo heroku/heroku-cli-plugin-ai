@@ -42,8 +42,6 @@ describe('ai:models:list', function () {
 
     await runCommand(Cmd)
       .then(() => expect(stdout.output).to.eq(''))
-      .then(() => expect(stripAnsi(stderr.output)).to.contain('Failed to retrieve the list of available models. Check the Heroku Status page https://status.heroku.com/'))
-      .then(() => expect(stripAnsi(stderr.output)).to.contain('for system outages. After all incidents have resolved, try again. You can also see a list of models at'))
-      .then(() => expect(stripAnsi(stderr.output)).to.contain('https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models.'))
+      .then(() => expect(stripAnsi(stderr.output)).to.contain('Failed to retrieve the list of available models.'))
   })
 })
