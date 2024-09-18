@@ -4,7 +4,6 @@ import Command from '../../../lib/base'
 
 const displayModels = (models: any) => {
   ux.log()
-
   ux.table(models, {
     model: {
       get: ({model_id}: any) => model_id,

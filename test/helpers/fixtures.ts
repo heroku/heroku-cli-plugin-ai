@@ -1,5 +1,36 @@
 import * as Heroku from '@heroku-cli/schema'
 
+export const availableModels = [
+  {
+    model_id: 'stable-diffusion-xl',
+    type: ['Text-to-image'],
+  },
+  {
+    model_id: 'claude-3-5-sonnet',
+    type: ['Text-to-text'],
+  },
+  {
+    model_id: 'claude-3-opus',
+    type: ['Text-to-text'],
+  },
+  {
+    model_id: 'claude-3-sonnet',
+    type: ['Text-to-text'],
+  },
+  {
+    model_id: 'claude-3-haiku',
+    type: ['Text-to-text'],
+  },
+  {
+    model_id: 'cohere-embed-english',
+    type: ['Text-to-text', 'Embedding'],
+  },
+  {
+    model_id: 'cohere-embed-multilingual',
+    type: ['Text-to-text', 'Embedding'],
+  },
+]
+
 export const addon1: Heroku.AddOn = {
   addon_service: {
     id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
