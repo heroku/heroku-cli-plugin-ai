@@ -15,7 +15,7 @@ const displayModels = (models: ModelList) => {
 }
 
 export default class List extends Command {
-  static description = 'List available AI models to provision access to.'
+  static description = 'list available AI models to provision access to'
 
   static examples = [
     '$ heroku ai:models:list',

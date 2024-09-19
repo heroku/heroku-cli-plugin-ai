@@ -48,14 +48,14 @@ _See code: [dist/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugi
 
 ## `heroku ai:models`
 
-List available AI models to provision access to.
+list available AI models to provision access to
 
 ```
 USAGE
   $ heroku ai:models
 
 DESCRIPTION
-  List available AI models to provision access to.
+  list available AI models to provision access to
 
 ALIASES
   $ heroku ai:models
@@ -66,14 +66,14 @@ EXAMPLES
 
 ## `heroku ai:models:list`
 
-List available AI models to provision access to.
+list available AI models to provision access to
 
 ```
 USAGE
   $ heroku ai:models:list
 
 DESCRIPTION
-  List available AI models to provision access to.
+  list available AI models to provision access to
 
 ALIASES
   $ heroku ai:models
