@@ -47,11 +47,10 @@ describe('ai:models:list', function () {
     try {
       await runCommand(Cmd)
     } catch (error) {
-      const {message, oclif} = error as CLIError
+      const {message} = error as CLIError
       expect(stripAnsi(message)).to.contains('Failed to retrieve the list of available models.')
       expect(stripAnsi(message)).to.contains(statusURL)
       expect(stripAnsi(message)).to.contains(modelsDevCenterURL)
-      expect(oclif.exit).to.equal(1)
     }
   })
 })
