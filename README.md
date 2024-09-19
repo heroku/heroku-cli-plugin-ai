@@ -26,6 +26,8 @@ USAGE
 # Commands
 <!-- commands -->
 * [`heroku ai:docs`](#heroku-aidocs)
+* [`heroku ai:models`](#heroku-aimodels)
+* [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
 
@@ -43,4 +45,42 @@ DESCRIPTION
 ```
 
 _See code: [dist/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/docs.ts)_
+
+## `heroku ai:models`
+
+list available AI models to provision access to
+
+```
+USAGE
+  $ heroku ai:models
+
+DESCRIPTION
+  list available AI models to provision access to
+
+ALIASES
+  $ heroku ai:models
+
+EXAMPLES
+  $ heroku ai:models:list
+```
+
+## `heroku ai:models:list`
+
+list available AI models to provision access to
+
+```
+USAGE
+  $ heroku ai:models:list
+
+DESCRIPTION
+  list available AI models to provision access to
+
+ALIASES
+  $ heroku ai:models
+
+EXAMPLES
+  $ heroku ai:models:list
+```
+
+_See code: [dist/commands/ai/models/list.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/list.ts)_
 <!-- commandsstop -->
