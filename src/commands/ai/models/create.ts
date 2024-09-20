@@ -14,7 +14,7 @@ export default class Create extends Command {
     }),
   }
 
-  static description = 'provisions access to an AI model'
+  static description = 'provision access to an AI model'
   static example = heredoc`
     # Provision access to an AI model and attach it to your app with a default name:
     $ heroku ai:models:create claude-3-5-sonnet --app example-app

@@ -67,7 +67,7 @@ EXAMPLES
 
 ## `heroku ai:models:create MODEL_NAME`
 
-provisions access to an AI model
+provision access to an AI model
 
 ```
 USAGE
@@ -83,7 +83,7 @@ FLAGS
   --confirm=<value>     overwrite existing config vars or existing add-on attachments
 
 DESCRIPTION
-  provisions access to an AI model
+  provision access to an AI model
 
 EXAMPLES
   # Provision access to an AI model and attach it to your app with a default name:
