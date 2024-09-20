@@ -43,6 +43,7 @@ export type ModelInfo = {
  */
 export type ModelInstance = {
   plan: ModelName
+  ready: string
   created: string
   tokens_in: string
   tokens_out?: string

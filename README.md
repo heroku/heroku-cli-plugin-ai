@@ -27,6 +27,7 @@ USAGE
 <!-- commands -->
 * [`heroku ai:docs`](#heroku-aidocs)
 * [`heroku ai:models`](#heroku-aimodels)
+* [`heroku ai:models:info [INSTANCE]`](#heroku-aimodelsinfo-instance)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
@@ -63,6 +64,32 @@ ALIASES
 EXAMPLES
   $ heroku ai:models:list
 ```
+
+## `heroku ai:models:info [INSTANCE]`
+
+get the current status of all the AI model instances attached to your app or a specific instance
+
+```
+USAGE
+  $ heroku ai:models:info [INSTANCE] -a <value> [-r <value>]
+
+ARGUMENTS
+  INSTANCE  the resource ID or alias of the model instance to check
+
+FLAGS
+  -a, --app=<value>     (required) app to run command against
+  -r, --remote=<value>  git remote of app to use
+
+DESCRIPTION
+  get the current status of all the AI model instances attached to your app or a specific instance
+
+EXAMPLES
+  $ heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app
+
+  $ heroku ai:models:info --app example-app
+```
+
+_See code: [dist/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/info.ts)_
 
 ## `heroku ai:models:list`
 

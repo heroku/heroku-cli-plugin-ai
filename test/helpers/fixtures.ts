@@ -1,4 +1,5 @@
 import * as Heroku from '@heroku-cli/schema'
+import {ModelInstance} from '../../src/lib/ai/types'
 
 export const availableModels = [
   {
@@ -36,6 +37,15 @@ export const mockAPIErrors = {
     id: 'error',
     message: 'Failed to retrieve the list of available models. Check the Heroku Status page https://status.heroku.com/ for system outages. After all incidents have resolved, try again. You can also see a list of models at https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models.',
   },
+}
+
+export const modelInstance: ModelInstance = {
+  plan: 'claude-3-haiku',
+  ready: 'Yes',
+  created: '2023-01-21T13:02:37.320+00.00',
+  tokens_in: '0 tokens this period',
+  tokens_out: '0 tokens this period',
+  avg_performance: 'latency 0.4sec, 28 tokens/sec',
 }
 
 export const addon1: Heroku.AddOn = {
