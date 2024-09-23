@@ -34,7 +34,7 @@
     "np": "7.7.0",
     "nyc": "^15",
     "oclif": "2.2.0",
-    "sinon": "^14",
+    "sinon": "^19",
     "stdout-stderr": "^0",
     "strip-ansi": "^6",
     "ts-node": "^10",
