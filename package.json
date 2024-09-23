@@ -33,7 +33,7 @@
     "nock": "^13",
     "np": "7.7.0",
     "nyc": "^15",
-    "oclif": "2.2.0",
+    "oclif": "4.14.35",
     "sinon": "^14",
     "stdout-stderr": "^0",
     "strip-ansi": "^6",
