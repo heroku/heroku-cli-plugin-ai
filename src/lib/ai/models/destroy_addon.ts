@@ -3,12 +3,13 @@ import {ux} from '@oclif/core'
 import {APIClient} from '@heroku-cli/command'
 import * as Heroku from '@heroku-cli/schema'
 
-export default async function (heroku: APIClient, addon: Heroku.AddOn, force = false) {
+export default async function (config: any, addon: Heroku.AddOn, force = false) {
   const addonName = addon.name || ''
+  const herokuClient = new APIClient(config)
 
   ux.action.start(`Destroying ${color.addon(addonName)} in the background.\n The app will restart when complete...`)
 
-  const {body: addonDelete} = await heroku.delete<Heroku.AddOn>(`/apps/${addon.app?.id}/addons/${addon.id}`, {
+  const {body: addonDelete} = await herokuClient.delete<Heroku.AddOn>(`/apps/${addon.app?.id}/addons/${addon.id}`, {
     headers: {'Accept-Expansion': 'plan'},
     body: {force},
   }).catch(error => {

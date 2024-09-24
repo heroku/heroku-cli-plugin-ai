@@ -1,5 +1,6 @@
 import {Args, ux} from '@oclif/core'
 import {flags} from '@heroku-cli/command'
+import destroyAddon from '../../../lib/ai/models/destroy_addon'
 import {ModelList} from '../../../lib/ai/types'
 import Command from '../../../lib/base'
 
@@ -29,10 +30,10 @@ export default class Destroy extends Command {
 
     await this.configureHerokuAIClient(modelResource, app)
 
-    const aiAddonId = this.addon.id
-    console.log('aiAddonId', aiAddonId)
+    const aiAddon = this.addon
 
-    // const herokuClient = this.herokuAI
+    const destroyAddonResponse = await destroyAddon(this.config, aiAddon, force)
+    console.log('destroyAddonResponse', destroyAddonResponse)
 
     // const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
   }
