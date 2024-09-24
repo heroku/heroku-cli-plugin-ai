@@ -22,14 +22,18 @@ export default class Destroy extends Command {
   ]
 
   public async run(): Promise<void> {
-    const {flags, argv} = await this.parse(Destroy)
+    const {flags, args} = await this.parse(Destroy)
     const {app, confirm} = flags
+    const {modelResource} = args
     const force = flags.force || process.env.HEROKU_FORCE === '1'
-    await this.configureHerokuAIClient()
 
-    const herokuAIClient = this.herokuAI
-    const urlPath = '/available-models'
+    await this.configureHerokuAIClient(modelResource, app)
 
-    const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
+    const aiAddonId = this.addon.id
+    console.log('aiAddonId', aiAddonId)
+
+    // const herokuClient = this.herokuAI
+
+    // const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
   }
 }
