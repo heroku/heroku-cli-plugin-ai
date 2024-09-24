@@ -49,8 +49,8 @@ describe('ai:models:create', function () {
         Creating inference:claude-3-haiku on app1... free
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
-        Inference addon provisioned successfully
-        Created inference-regular-74659 as INFERENCE_KEY, INFERENCE_MODEL_ID, INFERENCE_URL
+        Heroku AI model resource provisioned successfully
+        Added INFERENCE_KEY, INFERENCE_MODEL_ID, INFERENCE_URL to app1
         Use heroku ai:docs to view documentation.
       `)
     })
@@ -78,8 +78,8 @@ describe('ai:models:create', function () {
         Creating inference:claude-3-haiku on app1... free
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
-        Inference addon provisioned successfully
-        Created inference-regular-74659 as CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL
+        Heroku AI model resource provisioned successfully
+        Added CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL to app1
         Use heroku ai:docs to view documentation.
       `)
     })
@@ -114,8 +114,8 @@ describe('ai:models:create', function () {
       expect(prompt.calledOnce).to.be.true
       expect(stripAnsi(stderr.output)).to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
-        Inference addon provisioned successfully
-        Created inference-regular-74659 as CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL
+        Heroku AI model resource provisioned successfully
+        Added CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL to app1
         Use heroku ai:docs to view documentation.
       `)
     })
@@ -140,8 +140,8 @@ describe('ai:models:create', function () {
       expect(prompt.calledOnce).to.be.false
       expect(stripAnsi(stderr.output)).not.to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
-        Inference addon provisioned successfully
-        Created inference-regular-74659 as CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL
+        Heroku AI model resource provisioned successfully
+        Added CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL to app1
         Use heroku ai:docs to view documentation.
       `)
     })

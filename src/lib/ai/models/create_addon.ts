@@ -4,16 +4,6 @@ import * as Heroku from '@heroku-cli/schema'
 import {APIClient} from '@heroku-cli/command'
 import * as util from './util'
 
-function formatConfigVarsMessage(addon: Required<Heroku.AddOn>) {
-  const configVars = addon.config_vars
-  let message = `Created ${color.addon(addon.name)}`
-
-  if (configVars.length > 0)
-    message += ` as ${configVars.map((c: string) => color.configVar(c)).join(', ')}`
-
-  return message
-}
-
 // eslint-disable-next-line max-params
 export default async function (
   heroku: APIClient,
@@ -35,7 +25,10 @@ export default async function (
 
     const {body: addon} = await heroku.post<Required<Heroku.AddOn>>(`/apps/${app}/addons`, {
       body,
-      headers: {'accept-expansion': 'plan'},
+      headers: {
+        'accept-expansion': 'plan',
+        'x-heroku-legacy-provider-messages': 'true',
+      },
     }).catch(error => {
       ux.action.stop('')
       throw error
@@ -52,7 +45,9 @@ export default async function (
     ux.log(addon.provision_message)
   }
 
-  ux.log(formatConfigVarsMessage(addon))
+  ux.log(
+    `Added ${addon.config_vars.map((c: string) => color.configVar(c)).join(', ')} to ${color.app(addon.app.name)}`
+  )
 
   return addon
 }

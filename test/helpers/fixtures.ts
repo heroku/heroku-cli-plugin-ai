@@ -224,7 +224,7 @@ export const addon1Provisioned: Heroku.AddOn = {
     },
     name: 'inference:claude-3-haiku',
   },
-  provision_message: 'Inference addon provisioned successfully',
+  provision_message: 'Heroku AI model resource provisioned successfully',
   state: 'provisioned',
 }
 
