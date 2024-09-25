@@ -48,12 +48,13 @@ describe('ai:models:destroy', function () {
       .reply(200, [addon1])
       .get(`/apps/${addonAppId}/config-vars`)
       .reply(200, configuredMockConfigVars)
-      // .delete(`/apps/${addonAppId}/addons/${addonId}`, {force: false})
-      // .reply(200, {...addon1, state: 'deprovisioned'})
+      .delete(`/apps/${addonAppId}/addons/${addonId}`, {force: false})
+      .reply(200, {...addon1, state: 'deprovisioned'})
 
-    await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`, '--confirm', `${appName}`], true)
-    expect(stdout.output).to.contain('test1')
-    expect(stderr.output).to.eq('test2')
+    await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`, '--confirm', `${appName}`])
+    expect(stderr.output).contains(`Destroying ${addonName} in the background.`)
+    expect(stderr.output).contains('The app will restart when complete...')
+    expect(stdout.output).to.eq('')
   })
 
   // it('displays API error message if destroy request fails', async function () {
