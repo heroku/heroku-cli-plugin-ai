@@ -207,3 +207,32 @@ export const addon4Attachment1: Heroku.AddOnAttachment = {
   id: '7ee1ae69-9810-4e4e-8c1d-df96af9625a5',
   name: 'INFERENCE',
 }
+
+export const addon1Provisioned: Heroku.AddOn = {
+  ...addon1,
+  config_vars: [
+    'INFERENCE_KEY',
+    'INFERENCE_MODEL_ID',
+    'INFERENCE_URL',
+  ],
+  plan: {
+    id: '927beee9-dc83-4bcc-b1f7-70c091ece601',
+    price: {
+      cents: 0,
+      unit: 'month',
+      contract: false,
+    },
+    name: 'inference:claude-3-haiku',
+  },
+  provision_message: 'Heroku AI model resource provisioned successfully',
+  state: 'provisioned',
+}
+
+export const addon1ProvisionedWithAttachmentName: Heroku.AddOn = {
+  ...addon1Provisioned,
+  config_vars: [
+    'CLAUDE_HAIKU_KEY',
+    'CLAUDE_HAIKU_ID',
+    'CLAUDE_HAIKU_URL',
+  ],
+}

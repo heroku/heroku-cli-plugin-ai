@@ -41,7 +41,7 @@ export type ModelInfo = {
 /**
  * Object schema for Model Status endpoint responses.
  */
-export type ModelInstance = {
+export type ModelResource = {
   plan: ModelName
   created: string
   tokens_in: string
