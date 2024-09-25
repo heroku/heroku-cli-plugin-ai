@@ -3,6 +3,7 @@ import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import * as Heroku from '@heroku-cli/schema'
 import Command from '../../../lib/base'
+import {HTTPError} from 'http-call'
 
 export default class Detach extends Command {
   static description = 'Detach a model resource from an app.'
@@ -20,12 +21,32 @@ export default class Detach extends Command {
 
   static example = '$ heroku ai:models:detach claude-3-5-sonnet-acute-41518 --app example-app'
 
+  private handleAttachmentError = (error: HTTPError, modelResource: string, app: string) => {
+    const statusCode = error.http.statusCode
+    const resource = error.http.body.resource
+
+    if (statusCode === 404 && resource === 'attachment') {
+      ux.error(`We can’t find a model resource called ${modelResource}. Run 'heroku addons' to see a list of model resources attached to your app.`)
+    } else if (statusCode === 404 && resource === 'app') {
+      ux.error(`We can’t find the ${app} app. Check your spelling.`)
+    } else {
+      ux.error(error)
+    }
+  }
+
   public async run(): Promise<void> {
     const {flags, args} = await this.parse(Detach)
     const {app} = flags
     const {model_resource: modelResource} = args
+    let model: Heroku.AddOnAttachment | null = {}
 
-    const {body: model} = await this.heroku.get<Heroku.AddOnAttachment>(`/apps/${app}/addon-attachments/${modelResource}`)
+    try {
+      const attachmentResponse = await this.heroku.get<Heroku.AddOnAttachment>(`/apps/${app}/addon-attachments/${modelResource}`)
+      model = attachmentResponse.body
+    } catch (error) {
+      const httpError = error as HTTPError
+      this.handleAttachmentError(httpError, modelResource, app)
+    }
 
     ux.action.start(`Detaching ${color.cyan(model.name || '')} to ${color.yellow(model.addon?.name || '')} from ${color.magenta(app)}`)
 
