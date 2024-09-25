@@ -1,7 +1,6 @@
 import {Args, ux} from '@oclif/core'
 import {flags} from '@heroku-cli/command'
 import destroyAddon from '../../../lib/ai/models/destroy_addon'
-import {ModelList} from '../../../lib/ai/types'
 import Command from '../../../lib/base'
 
 export default class Destroy extends Command {
@@ -16,7 +15,7 @@ export default class Destroy extends Command {
 
   static args = {
     modelResource: Args.string({required: true, description: 'The resource ID or alias of the model resource to destroy.'}),
-  };
+  }
 
   static examples = [
     '$ heroku ai:models:destroy claude-3-5-sonnet-acute-43973',
@@ -32,9 +31,6 @@ export default class Destroy extends Command {
 
     const aiAddon = this.addon
 
-    const destroyAddonResponse = await destroyAddon(this.config, aiAddon, force)
-    console.log('destroyAddonResponse', destroyAddonResponse)
-
-    // const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
+    await destroyAddon(this.config, aiAddon, force)
   }
 }
