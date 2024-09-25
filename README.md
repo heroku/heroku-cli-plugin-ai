@@ -28,6 +28,7 @@ USAGE
 * [`heroku ai:docs`](#heroku-aidocs)
 * [`heroku ai:models`](#heroku-aimodels)
 * [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
+* [`heroku ai:models:destroy MODELRESOURCE`](#heroku-aimodelsdestroy-modelresource)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
@@ -77,7 +78,7 @@ ARGUMENTS
   MODEL_NAME  The name of the model to provision access for
 
 FLAGS
-  -a, --app=<value>     (required) The name of the Heroku app to attach the model to
+  -a, --app=<value>     (required) [default: test-cli-plugin-ai2] The name of the Heroku app to attach the model to
   -r, --remote=<value>  git remote of app to use
   --as=<value>          alias name for model resource
   --confirm=<value>     overwrite existing config vars or existing add-on attachments
@@ -93,6 +94,32 @@ EXAMPLES
 ```
 
 _See code: [dist/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/create.ts)_
+
+## `heroku ai:models:destroy MODELRESOURCE`
+
+destroy an existing AI model resource
+
+```
+USAGE
+  $ heroku ai:models:destroy [MODELRESOURCE] -a <value> [-c <value>] [-f] [-r <value>]
+
+ARGUMENTS
+  MODELRESOURCE  The resource ID or alias of the model resource to destroy.
+
+FLAGS
+  -a, --app=<value>      (required) [default: test-cli-plugin-ai2] app to run command against
+  -c, --confirm=<value>
+  -f, --force            allow destruction even if connected to other apps
+  -r, --remote=<value>   git remote of app to use
+
+DESCRIPTION
+  destroy an existing AI model resource
+
+EXAMPLES
+  $ heroku ai:models:destroy claude-3-5-sonnet-acute-43973
+```
+
+_See code: [dist/commands/ai/models/destroy.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/destroy.ts)_
 
 ## `heroku ai:models:list`
 

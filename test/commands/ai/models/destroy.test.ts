@@ -3,29 +3,23 @@ import {stderr, stdout} from 'stdout-stderr'
 import Cmd from '../../../../src/commands/ai/models/destroy'
 import stripAnsi from '../../../helpers/strip-ansi'
 import {runCommand} from '../../../run-command'
-import {mockAPIErrors, addon1, addon1Attachment1} from '../../../helpers/fixtures'
+import {mockAPIErrors, addon1} from '../../../helpers/fixtures'
 import {CLIError} from '@oclif/core/lib/errors'
 import nock from 'nock'
 
 describe('ai:models:destroy', function () {
-  // let herokuAI: nock.Scope
   let herokuAPI: nock.Scope
 
   beforeEach(function () {
-    // herokuAI = nock('https://inference.heroku.com')
     herokuAPI = nock('https://api.heroku.com:443')
   })
 
   afterEach(function () {
-    // herokuAI.done()
     herokuAPI.done()
     nock.cleanAll()
   })
 
   it('displays confirmation of AI addon destruction', async function () {
-    // herokuAI
-    //   .get('/available-models')
-    //   .reply(200, availableModels)
     const addonAppId = addon1.app?.id
     const addonId = addon1.id
     const addonName = addon1.name
