@@ -3,19 +3,22 @@ import {stderr, stdout} from 'stdout-stderr'
 import Cmd from '../../../../src/commands/ai/models/destroy'
 import stripAnsi from '../../../helpers/strip-ansi'
 import {runCommand} from '../../../run-command'
-import {mockAPIErrors, addon1} from '../../../helpers/fixtures'
+import {mockConfigVars, addon1} from '../../../helpers/fixtures'
 import {CLIError} from '@oclif/core/lib/errors'
 import nock from 'nock'
 
 describe('ai:models:destroy', function () {
-  let herokuAPI: nock.Scope
+  const {env} = process
+  let api: nock.Scope
 
   beforeEach(function () {
-    herokuAPI = nock('https://api.heroku.com:443')
+    process.env = {}
+    api = nock('https://api.heroku.com:443')
   })
 
   afterEach(function () {
-    herokuAPI.done()
+    process.env = env
+    api.done()
     nock.cleanAll()
   })
 
@@ -25,17 +28,13 @@ describe('ai:models:destroy', function () {
     const addonName = addon1.name
     const appName = addon1.app?.name
 
-    herokuAPI
+    api
       .post('/actions/addons/resolve', {app: `${appName}`, addon: `${addonName}`})
       .reply(200, [addon1])
       .get(`/addons/${addonId}/addon-attachments`)
       .reply(200, [addon1])
       .get(`/apps/${addonAppId}/config-vars`)
-      .reply(200, {
-        INFERENCE_KEY: 's3cr3t_k3y',
-        INFERENCE_MODEL_ID: 'claude-3-5-sonnet',
-        INFERENCE_URL: 'inference-eu.heroku.com',
-      })
+      .reply(200, mockConfigVars)
       .delete(`/apps/${addonAppId}/addons/${addonId}`, {force: false})
       .reply(200, {...addon1, state: 'deprovisioned'})
 

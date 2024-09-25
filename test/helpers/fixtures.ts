@@ -31,6 +31,12 @@ export const availableModels = [
   },
 ]
 
+export const mockConfigVars = {
+  INFERENCE_KEY: 's3cr3t_k3y',
+  INFERENCE_MODEL_ID: 'claude-3-5-sonnet',
+  INFERENCE_URL: 'inference-eu.heroku.com',
+}
+
 export const mockAPIErrors = {
   modelsListErrorResponse: {
     id: 'error',
