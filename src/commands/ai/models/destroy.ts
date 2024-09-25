@@ -1,6 +1,7 @@
-import {Args, ux} from '@oclif/core'
+import {Args} from '@oclif/core'
 import {flags} from '@heroku-cli/command'
 import destroyAddon from '../../../lib/ai/models/destroy_addon'
+import confirmCommand from '../../../lib/confirmCommand'
 import Command from '../../../lib/base'
 
 export default class Destroy extends Command {
@@ -31,6 +32,7 @@ export default class Destroy extends Command {
 
     const aiAddon = this.addon
 
+    await confirmCommand(app, confirm)
     await destroyAddon(this.config, aiAddon, force)
   }
 }
