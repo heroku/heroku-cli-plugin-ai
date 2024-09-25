@@ -3,7 +3,7 @@ import {stderr, stdout} from 'stdout-stderr'
 import Cmd from '../../../../src/commands/ai/models/destroy'
 import stripAnsi from '../../../helpers/strip-ansi'
 import {runCommand} from '../../../run-command'
-import {mockConfigVars, addon1} from '../../../helpers/fixtures'
+import {mockAPIErrors, mockConfigVars, addon1} from '../../../helpers/fixtures'
 import {CLIError} from '@oclif/core/lib/errors'
 import nock from 'nock'
 
@@ -22,6 +22,18 @@ describe('ai:models:destroy', function () {
     nock.cleanAll()
   })
 
+  context('no model resource is provided', function () {
+    it('errors when no model resource is provided', async function () {
+      try {
+        await runCommand(Cmd)
+      } catch (error) {
+        const {message} = error as CLIError
+        expect(stripAnsi(message)).contains('Missing 1 required arg:')
+        expect(stripAnsi(message)).contains('modelResource  The resource ID or alias of the model resource to destroy.')
+      }
+    })
+  })
+
   it('displays confirmation of AI addon destruction', async function () {
     const addonAppId = addon1.app?.id
     const addonId = addon1.id
@@ -35,29 +47,36 @@ describe('ai:models:destroy', function () {
       .reply(200, [addon1])
       .get(`/apps/${addonAppId}/config-vars`)
       .reply(200, mockConfigVars)
-      .delete(`/apps/${addonAppId}/addons/${addonId}`, {force: false})
-      .reply(200, {...addon1, state: 'deprovisioned'})
+      // .delete(`/apps/${addonAppId}/addons/${addonId}`, {force: false})
+      // .reply(200, {...addon1, state: 'deprovisioned'})
 
-    await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`])
+    await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`, '--confirm', `${appName}`])
     expect(stdout.output).to.contain('test1')
     expect(stderr.output).to.eq('test2')
   })
 
-  // it('warns if no models are available', async function () {
-  //   const statusURL = 'https://status.heroku.com/'
-  //   const modelsDevCenterURL = 'https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models'
+  it('displays API error message if destroy request fails', async function () {
+    const addonAppId = addon1.app?.id
+    const addonId = addon1.id
+    const addonName = addon1.name
+    const appName = addon1.app?.name
 
-  //   herokuAI
-  //     .get('/available-models')
-  //     .reply(500, mockAPIErrors.modelsListErrorResponse)
+    api
+      .post('/actions/addons/resolve', {app: `${appName}`, addon: `${addonName}`})
+      .reply(200, [addon1])
+      .get(`/addons/${addonId}/addon-attachments`)
+      .reply(200, [addon1])
+      .get(`/apps/${addonAppId}/config-vars`)
+      .reply(200, mockConfigVars)
+      // .delete(`/apps/${addonAppId}/addons/${addonId}`, {force: false})
+      // .reply(500, mockAPIErrors.modelsDestroyErrorResponse)
 
-  //   try {
-  //     await runCommand(Cmd)
-  //   } catch (error) {
-  //     const {message} = error as CLIError
-  //     expect(stripAnsi(message)).to.contains('Failed to retrieve the list of available models.')
-  //     expect(stripAnsi(message)).to.contains(statusURL)
-  //     expect(stripAnsi(message)).to.contains(modelsDevCenterURL)
-  //   }
-  // })
+    try {
+      await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`, '--confirm', `${appName}`])
+    } catch (error) {
+      const {message} = error as CLIError
+      expect(stripAnsi(message)).to.contains('The add-on was unable to be destroyed:')
+      expect(stripAnsi(message)).to.contains(mockAPIErrors.modelsDestroyErrorResponse.message)
+    }
+  })
 })

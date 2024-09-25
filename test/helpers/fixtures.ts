@@ -42,6 +42,10 @@ export const mockAPIErrors = {
     id: 'error',
     message: 'Failed to retrieve the list of available models. Check the Heroku Status page https://status.heroku.com/ for system outages. After all incidents have resolved, try again. You can also see a list of models at https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models.',
   },
+  modelsDestroyErrorResponse: {
+    id: 'error',
+    message: 'Example API Error',
+  },
 }
 
 export const addon1: Heroku.AddOn = {
