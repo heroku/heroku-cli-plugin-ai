@@ -9,8 +9,8 @@ import {HerokuAPIError} from '@heroku-cli/command/lib/api-client'
 export class NotFound extends Error {
   constructor(addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
-      We can’t find a model instance called ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}.
-      Run ${color.cmd(`heroku ai:models:info --app ${appIdentifier ? appIdentifier : '<value>'}`)} to see a list of model instances.
+      We can’t find a model resource called ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}.
+      Run ${color.cmd(`heroku ai:models:info --app ${appIdentifier ? appIdentifier : '<value>'}`)} to see a list of model resources.
     `
     super(message)
   }
@@ -22,8 +22,8 @@ export class NotFound extends Error {
 export class AmbiguousError extends Error {
   constructor(public readonly matches: string[], addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
-      Multiple model instances match ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}: ${matches.map(match => color.addon(match)).join(', ')}.
-      Specify the model instance by its name instead.
+      Multiple model resources match ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}: ${matches.map(match => color.addon(match)).join(', ')}.
+      Specify the model resource by its name instead.
     `
     super(message)
   }
@@ -36,7 +36,6 @@ export default abstract class extends Command {
   private _addon?: Required<Heroku.AddOn>
   private _addonAttachment?: Required<Heroku.AddOnAttachment>
   private _addonServiceSlug?: string
-  private _inferenceAddonSlugs = ['inference', 'inference-staging']
   private _apiKey?: string
   private _apiModelId?: string
   private _apiUrl?: string
@@ -62,6 +61,7 @@ export default abstract class extends Command {
       this._apiModelId = configVars[this.apiModelIdConfigVarName] ||
         this.addon.plan.name?.split(':')[1] // Fallback to plan name (e.g. "inference:claude-3-haiku" => "claude-3-haiku"
       this._apiUrl = configVars[this.apiUrlConfigVarName]
+      this._addonServiceSlug = this.addon.addon_service.name
       this._herokuAI.defaults.host = this.apiUrl
       this._herokuAI.defaults.headers = {
         ...defaultHeaders,
@@ -174,7 +174,7 @@ export default abstract class extends Command {
     }
 
     // 5. If we resolved for an add-on, check that it's a Managed Inference add-on or throw a NotFound error.
-    if (resolvedAddon && !this._inferenceAddonSlugs.includes(resolvedAddon.addon_service.name as string))
+    if (resolvedAddon && resolvedAddon.addon_service.name !== this.addonServiceSlug)
       throw new NotFound(addonIdentifier, appIdentifier)
 
     // 6. If we resolved for an add-on but not for an attachment yet, try to resolve the attachment
@@ -234,17 +234,16 @@ export default abstract class extends Command {
   }
 
   get addonServiceSlug(): string {
-    if (this._addonServiceSlug)
-      return this._addonServiceSlug
-
-    ux.error('Heroku AI API Client not configured.', {exit: 1})
+    return this._addonServiceSlug ||
+      process.env.HEROKU_INFERENCE_ADDON ||
+      'inference'
   }
 
   get apiKey(): string {
-    if (this._apiKey)
+    if (this.addon && this._apiKey)
       return this._apiKey
 
-    ux.error(`Model instance ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
   }
 
   get apiKeyConfigVarName(): string {
@@ -260,10 +259,10 @@ export default abstract class extends Command {
   }
 
   get apiUrl(): string {
-    if (this._apiUrl)
+    if (this.addon && this._apiUrl)
       return this._apiUrl
 
-    ux.error(`Model instance ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
   }
 
   get apiUrlConfigVarName(): string {

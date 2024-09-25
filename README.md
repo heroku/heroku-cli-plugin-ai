@@ -27,6 +27,7 @@ USAGE
 <!-- commands -->
 * [`heroku ai:docs`](#heroku-aidocs)
 * [`heroku ai:models`](#heroku-aimodels)
+* [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
@@ -63,6 +64,35 @@ ALIASES
 EXAMPLES
   $ heroku ai:models:list
 ```
+
+## `heroku ai:models:create MODEL_NAME`
+
+provision access to an AI model
+
+```
+USAGE
+  $ heroku ai:models:create [MODEL_NAME] -a <value> [--as <value>] [--confirm <value>] [-r <value>]
+
+ARGUMENTS
+  MODEL_NAME  The name of the model to provision access for
+
+FLAGS
+  -a, --app=<value>     (required) The name of the Heroku app to attach the model to
+  -r, --remote=<value>  git remote of app to use
+  --as=<value>          alias name for model resource
+  --confirm=<value>     overwrite existing config vars or existing add-on attachments
+
+DESCRIPTION
+  provision access to an AI model
+
+EXAMPLES
+  # Provision access to an AI model and attach it to your app with a default name:
+  $ heroku ai:models:create claude-3-5-sonnet --app example-app
+  # Provision access to an AI model and attach it to your app with a custom name:
+  $ heroku ai:models:create stable-diffusion-xl --app example-app --as my_sdxl
+```
+
+_See code: [dist/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/create.ts)_
 
 ## `heroku ai:models:list`
 
