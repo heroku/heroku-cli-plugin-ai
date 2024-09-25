@@ -8,7 +8,7 @@ import {HTTPError} from 'http-call'
 export default class Detach extends Command {
   static description = 'Detach a model resource from an app.'
   static flags = {
-    app: flags.app({description: 'The name of the Heroku app to detach the model resrouce from.', required: true}),
+    app: flags.app({description: 'The name of the Heroku app to detach the model resource from.', required: true}),
     remote: flags.remote(),
   }
 

@@ -107,7 +107,7 @@ ARGUMENTS
   MODEL_RESOURCE  The resource ID or alias of the model resource to detach
 
 FLAGS
-  -a, --app=<value>     (required) [default: k80-ai-test] The name of the Heroku app to detach the model resrouce from.
+  -a, --app=<value>     (required) The name of the Heroku app to detach the model resource from.
   -r, --remote=<value>  git remote of app to use
 
 DESCRIPTION
