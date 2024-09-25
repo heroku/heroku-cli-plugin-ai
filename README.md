@@ -78,7 +78,7 @@ ARGUMENTS
   MODEL_NAME  The name of the model to provision access for
 
 FLAGS
-  -a, --app=<value>     (required) [default: test-cli-plugin-ai2] The name of the Heroku app to attach the model to
+  -a, --app=<value>     (required) The name of the Heroku app to attach the model to
   -r, --remote=<value>  git remote of app to use
   --as=<value>          alias name for model resource
   --confirm=<value>     overwrite existing config vars or existing add-on attachments
@@ -107,7 +107,7 @@ ARGUMENTS
   MODELRESOURCE  The resource ID or alias of the model resource to destroy.
 
 FLAGS
-  -a, --app=<value>      (required) [default: test-cli-plugin-ai2] app to run command against
+  -a, --app=<value>      (required) app to run command against
   -c, --confirm=<value>
   -f, --force            allow destruction even if connected to other apps
   -r, --remote=<value>   git remote of app to use
