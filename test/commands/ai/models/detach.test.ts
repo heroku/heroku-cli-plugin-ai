@@ -3,6 +3,7 @@ import Cmd  from '../../../../src/commands/ai/models/detach'
 import {runCommand} from '../../../run-command'
 import nock from 'nock'
 import {expect} from 'chai'
+import stripAnsi from 'strip-ansi'
 
 describe('addons:detach', function () {
   let api: nock.Scope
@@ -41,7 +42,7 @@ describe('addons:detach', function () {
       await runCommand(Cmd, ['--app', 'myapp', 'false_model'])
     } catch (error) {
       const {message} = error as Error
-      expect(message).to.equal('We can’t find a model resource called false_model. Run \'heroku addons\' to see a list of model resources attached to your app.')
+      expect(stripAnsi(message)).to.equal('We can’t find a model resource called false_model. Run \'heroku ai:models:info -a <appname>\' to see a list of model resources attached to your app.')
     }
   })
 

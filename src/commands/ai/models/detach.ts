@@ -26,7 +26,7 @@ export default class Detach extends Command {
     const resource = error.http.body.resource
 
     if (statusCode === 404 && resource === 'attachment') {
-      ux.error(`We can’t find a model resource called ${modelResource}. Run 'heroku addons' to see a list of model resources attached to your app.`)
+      ux.error(`We can’t find a model resource called ${modelResource}. Run 'heroku ai:models:info -a <appname>' to see a list of model resources attached to your app.`)
     } else if (statusCode === 404 && resource === 'app') {
       ux.error(`We can’t find the ${app} app. Check your spelling.`)
     } else {
