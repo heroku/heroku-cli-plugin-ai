@@ -14,6 +14,7 @@ export default async function (config: Config, addon: Heroku.AddOn, force = fals
     headers: {'Accept-Expansion': 'plan'},
     body: {force},
   }).catch(error => {
+    ux.action.stop('')
     const error_ = error.body && error.body.message ? new Error(`The add-on was unable to be destroyed: ${error.body.message}.`) : new Error(`The add-on was unable to be destroyed: ${error}.`)
     throw error_
   })
