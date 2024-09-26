@@ -52,11 +52,11 @@ describe('ai:models:attach', function () {
       ])
 
       expect(stdout.output).to.eq('')
-      expect(stderr.output).to.eq(heredoc`
-        Attaching inference-animate-91825 to ⬢ app2...
-        Attaching inference-animate-91825 to ⬢ app2... done
-        Setting INFERENCE_JADE config vars and restarting ⬢ app2...
-        Setting INFERENCE_JADE config vars and restarting ⬢ app2... done, v10
+      expect(stripAnsi(stderr.output)).to.eq(heredoc`
+        Attaching inference-animate-91825 to app2...
+        Attaching inference-animate-91825 to app2... done
+        Setting INFERENCE_JADE config vars and restarting app2...
+        Setting INFERENCE_JADE config vars and restarting app2... done, v10
       `)
     })
   })
@@ -83,11 +83,11 @@ describe('ai:models:attach', function () {
       ])
 
       expect(stdout.output).to.eq('')
-      expect(stderr.output).to.eq(heredoc`
-        Attaching inference-animate-91825 as CLAUDE_SONNET to ⬢ app2...
-        Attaching inference-animate-91825 as CLAUDE_SONNET to ⬢ app2... done
-        Setting CLAUDE_SONNET config vars and restarting ⬢ app2...
-        Setting CLAUDE_SONNET config vars and restarting ⬢ app2... done, v10
+      expect(stripAnsi(stderr.output)).to.eq(heredoc`
+        Attaching inference-animate-91825 as CLAUDE_SONNET to app2...
+        Attaching inference-animate-91825 as CLAUDE_SONNET to app2... done
+        Setting CLAUDE_SONNET config vars and restarting app2...
+        Setting CLAUDE_SONNET config vars and restarting app2... done, v10
       `)
     })
   })
