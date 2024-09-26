@@ -31,18 +31,10 @@ export const availableModels = [
   },
 ]
 
-export const configureMockConfigVars = (addonAttachment: Heroku.AddOnAttachment) => {
-  const updatedMockConfigVars: any = {}
-
-  const newInferenceKey = `${addonAttachment.addon?.name.toUpperCase()}_KEY`
-  const newInferenceURL = `${addonAttachment.addon?.name.toUpperCase()}_URL`
-  const newInferenceMODELID = `${addonAttachment.addon?.name.toUpperCase()}_MODEL_ID`
-
-  updatedMockConfigVars[newInferenceKey] = 's3cr3t_k3y'
-  updatedMockConfigVars[newInferenceMODELID] = 'claude-3-5-sonnet'
-  updatedMockConfigVars[newInferenceURL] = 'inference-eu.heroku.com'
-
-  return updatedMockConfigVars
+export const mockConfigVars = {
+  INFERENCE_KEY: 's3cr3t_k3y',
+  INFERENCE_MODEL_ID: 'claude-3-opus',
+  INFERENCE_URL: 'inference-eu.heroku.com',
 }
 
 export const mockAPIErrors = {

@@ -3,14 +3,13 @@ import {stderr, stdout} from 'stdout-stderr'
 import Cmd from '../../../../src/commands/ai/models/destroy'
 import stripAnsi from '../../../helpers/strip-ansi'
 import {runCommand} from '../../../run-command'
-import {configureMockConfigVars, mockAPIErrors, addon1, addon1Attachment1} from '../../../helpers/fixtures'
+import {mockConfigVars, mockAPIErrors, addon1, addon1Attachment1} from '../../../helpers/fixtures'
 import {CLIError} from '@oclif/core/lib/errors'
 import nock from 'nock'
 
 describe('ai:models:destroy', function () {
   const {env} = process
   let api: nock.Scope
-  const configuredMockConfigVars = configureMockConfigVars(addon1Attachment1)
 
   beforeEach(function () {
     process.env = {}
@@ -45,9 +44,9 @@ describe('ai:models:destroy', function () {
       .post('/actions/addons/resolve', {app: `${appName}`, addon: `${addonName}`})
       .reply(200, [addon1])
       .get(`/addons/${addonId}/addon-attachments`)
-      .reply(200, [addon1])
+      .reply(200, [addon1Attachment1])
       .get(`/apps/${addonAppId}/config-vars`)
-      .reply(200, configuredMockConfigVars)
+      .reply(200, mockConfigVars)
       .delete(`/apps/${addonAppId}/addons/${addonId}`, {force: false})
       .reply(200, {...addon1, state: 'deprovisioned'})
 
@@ -67,9 +66,9 @@ describe('ai:models:destroy', function () {
       .post('/actions/addons/resolve', {app: `${appName}`, addon: `${addonName}`})
       .reply(200, [addon1])
       .get(`/addons/${addonId}/addon-attachments`)
-      .reply(200, [addon1])
+      .reply(200, [addon1Attachment1])
       .get(`/apps/${addonAppId}/config-vars`)
-      .reply(200, configuredMockConfigVars)
+      .reply(200, mockConfigVars)
       .delete(`/apps/${addonAppId}/addons/${addonId}`, {force: false})
       .reply(500, mockAPIErrors.modelsDestroyErrorResponse)
 
