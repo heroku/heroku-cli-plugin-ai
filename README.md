@@ -27,8 +27,10 @@ USAGE
 <!-- commands -->
 * [`heroku ai:docs`](#heroku-aidocs)
 * [`heroku ai:models`](#heroku-aimodels)
+* [`heroku ai:models:attach MODEL_RESOURCE`](#heroku-aimodelsattach-model_resource)
 * [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
 * [`heroku ai:models:destroy MODELRESOURCE`](#heroku-aimodelsdestroy-modelresource)
+* [`heroku ai:models:detach MODEL_RESOURCE`](#heroku-aimodelsdetach-model_resource)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
@@ -65,6 +67,34 @@ ALIASES
 EXAMPLES
   $ heroku ai:models:list
 ```
+
+## `heroku ai:models:attach MODEL_RESOURCE`
+
+attach an existing model resource to an app
+
+```
+USAGE
+  $ heroku ai:models:attach [MODEL_RESOURCE] -a <value> [--as <value>] [--confirm <value>] [-r <value>]
+
+ARGUMENTS
+  MODEL_RESOURCE  The resource ID or alias of the model resource to attach.
+
+FLAGS
+  -a, --app=<value>     (required) app to run command against
+  -r, --remote=<value>  git remote of app to use
+  --as=<value>          alias name for model resource
+  --confirm=<value>     overwrite existing resource with same name
+
+DESCRIPTION
+  attach an existing model resource to an app
+
+EXAMPLES
+  $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app
+
+  $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app --as MY_CS35
+```
+
+_See code: [dist/commands/ai/models/attach.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/attach.ts)_
 
 ## `heroku ai:models:create MODEL_NAME`
 
@@ -120,6 +150,30 @@ EXAMPLES
 ```
 
 _See code: [dist/commands/ai/models/destroy.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/destroy.ts)_
+
+## `heroku ai:models:detach MODEL_RESOURCE`
+
+Detach a model resource from an app.
+
+```
+USAGE
+  $ heroku ai:models:detach [MODEL_RESOURCE] -a <value> [-r <value>]
+
+ARGUMENTS
+  MODEL_RESOURCE  The resource ID or alias of the model resource to detach
+
+FLAGS
+  -a, --app=<value>     (required) The name of the Heroku app to detach the model resource from.
+  -r, --remote=<value>  git remote of app to use
+
+DESCRIPTION
+  Detach a model resource from an app.
+
+EXAMPLES
+  $ heroku ai:models:detach claude-3-5-sonnet-acute-41518 --app example-app
+```
+
+_See code: [dist/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/detach.ts)_
 
 ## `heroku ai:models:list`
 
