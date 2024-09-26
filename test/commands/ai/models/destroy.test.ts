@@ -57,28 +57,28 @@ describe('ai:models:destroy', function () {
     expect(stdout.output).to.eq('')
   })
 
-  // it('displays API error message if destroy request fails', async function () {
-  //   const addonAppId = addon1.app?.id
-  //   const addonId = addon1.id
-  //   const addonName = addon1.name
-  //   const appName = addon1.app?.name
+  it('displays API error message if destroy request fails', async function () {
+    const addonAppId = addon1.app?.id
+    const addonId = addon1.id
+    const addonName = addon1.name
+    const appName = addon1.app?.name
 
-  //   api
-  //     .post('/actions/addons/resolve', {app: `${appName}`, addon: `${addonName}`})
-  //     .reply(200, [addon1])
-  //     .get(`/addons/${addonId}/addon-attachments`)
-  //     .reply(200, [addon1])
-  //     .get(`/apps/${addonAppId}/config-vars`)
-  //     .reply(200, configuredMockConfigVars)
-  //     // .delete(`/apps/${addonAppId}/addons/${addonId}`, {force: false})
-  //     // .reply(500, mockAPIErrors.modelsDestroyErrorResponse)
+    api
+      .post('/actions/addons/resolve', {app: `${appName}`, addon: `${addonName}`})
+      .reply(200, [addon1])
+      .get(`/addons/${addonId}/addon-attachments`)
+      .reply(200, [addon1])
+      .get(`/apps/${addonAppId}/config-vars`)
+      .reply(200, configuredMockConfigVars)
+      .delete(`/apps/${addonAppId}/addons/${addonId}`, {force: false})
+      .reply(500, mockAPIErrors.modelsDestroyErrorResponse)
 
-  //   try {
-  //     await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`, '--confirm', `${appName}`])
-  //   } catch (error) {
-  //     const {message} = error as CLIError
-  //     expect(stripAnsi(message)).to.contains('The add-on was unable to be destroyed:')
-  //     expect(stripAnsi(message)).to.contains(mockAPIErrors.modelsDestroyErrorResponse.message)
-  //   }
-  // })
+    try {
+      await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`, '--confirm', `${appName}`])
+    } catch (error) {
+      const {message} = error as CLIError
+      expect(stripAnsi(message)).to.contains('The add-on was unable to be destroyed:')
+      expect(stripAnsi(message)).to.contains(mockAPIErrors.modelsDestroyErrorResponse.message)
+    }
+  })
 })
