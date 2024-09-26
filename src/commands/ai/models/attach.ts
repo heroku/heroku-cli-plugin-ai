@@ -2,7 +2,7 @@ import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
 import * as Heroku from '@heroku-cli/schema'
 import {Args, ux} from '@oclif/core'
-import {handleError, trapConfirmationRequired} from '../../../lib/ai/models/util'
+import {handlePlatformApiErrors, trapConfirmationRequired} from '../../../lib/ai/models/util'
 import Command from '../../../lib/base'
 
 export default class Attach extends Command {
@@ -55,7 +55,7 @@ export default class Attach extends Command {
     ux.action.start(`Attaching ${color.addon(this.addon.name || '')}${as ? ' as ' + color.cyan(as) : ''} to ${color.app(app)}`)
     const {body: attachment} = await this.heroku.post<Required<Heroku.AddOnAttachment>>('/addon-attachments', {body}).catch(error => {
       ux.action.stop('')
-      handleError(error, {as})
+      handlePlatformApiErrors(error, {as})
     })
     ux.action.stop()
 

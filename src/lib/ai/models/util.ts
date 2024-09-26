@@ -26,7 +26,7 @@ export const trapConfirmationRequired = async function<T> (app: string, confirm:
  * returned from API in order to format the error correctly. This is prone to fail if changes are introduced
  * upstream on error messages. We should rely on the error `id` but API returns a generic `invalid_params`.
  */
-export function handleError(error: unknown, cmdContext: {as?: string, modelName?: string} = {}): never {
+export function handlePlatformApiErrors(error: unknown, cmdContext: {as?: string, modelName?: string} = {}): never {
   if (error instanceof HerokuAPIError && error.body.id === 'invalid_params') {
     if (cmdContext.as && error.body.message?.includes('start with a letter')) {
       ux.error(

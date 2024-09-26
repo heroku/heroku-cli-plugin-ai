@@ -3,7 +3,7 @@ import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import heredoc from 'tsheredoc'
 import createAddon from '../../../lib/ai/models/create_addon'
-import {handleError} from '../../../lib/ai/models/util'
+import {handlePlatformApiErrors} from '../../../lib/ai/models/util'
 import Command from '../../../lib/base'
 
 export default class Create extends Command {
@@ -48,7 +48,7 @@ export default class Create extends Command {
       await this.config.runHook('recache', {type: 'addon', app, addon})
       ux.log(`Use ${color.cmd('heroku ai:docs to view documentation')}.`)
     } catch (error: unknown) {
-      handleError(error, {as, modelName})
+      handlePlatformApiErrors(error, {as, modelName})
     }
   }
 }
