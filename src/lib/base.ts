@@ -19,6 +19,18 @@ export class NotFound extends Error {
   public readonly id = 'not_found'
 }
 
+export class AppNotFound extends Error {
+  constructor(appIdentifier?: string) {
+    const message = heredoc`
+      We can’t find the ${color.app(appIdentifier)} app. Check your spelling.
+    `
+    super(message)
+  }
+
+  public readonly statusCode = 404
+  public readonly id = 'not_found'
+}
+
 export class AmbiguousError extends Error {
   constructor(public readonly matches: string[], addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
@@ -211,10 +223,16 @@ export default abstract class extends Command {
     const attachmentNotFound = attachmentResolverError instanceof HerokuAPIError &&
       attachmentResolverError.http.statusCode === 404 &&
       attachmentResolverError.body.resource === 'add_on attachment'
+    const appNotFound = attachmentResolverError instanceof HerokuAPIError &&
+      attachmentResolverError.http.statusCode === 404 &&
+      attachmentResolverError.body.resource === 'app'
     let error = addonResolverError
 
     if (addonNotFound)
       error = attachmentNotFound ? new NotFound(addonIdentifier, appIdentifier) : attachmentResolverError
+
+    if (appNotFound)
+      error = new AppNotFound(appIdentifier)
 
     throw error
   }
