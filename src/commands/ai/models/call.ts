@@ -2,7 +2,7 @@ import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import fs from 'node:fs'
-import {ChatCompletionResponse, ImageResponse, ModelList} from '../../../lib/ai/types'
+import {ChatCompletionResponse, EmbeddingResponse, ImageResponse, ModelList} from '../../../lib/ai/types'
 import Command from '../../../lib/base'
 import {openUrl} from '../../../lib/open-url'
 
@@ -27,7 +27,7 @@ export default class Call extends Command {
     //   description: 'Use interactive mode for conversation beyond the initial prompt (not available on all models)',
     //   default: false,
     // }),
-    browser: flags.string({description: 'browser to open images with (example: "firefox", "safari")'}),
+    browser: flags.string({description: 'browser to open URLs with (example: "firefox", "safari")'}),
     json: flags.boolean({char: 'j', description: 'Output response as JSON'}),
     optfile: flags.string({
       description: 'Additional options for model inference, provided as a JSON config file.',
@@ -67,8 +67,11 @@ export default class Call extends Command {
     const modelType = availableModels.find(m => m.model_id === this.apiModelId)?.type[0]
 
     switch (modelType) {
-    case 'Embedding':
+    case 'Embedding': {
+      const embedding = await this.createEmbedding(prompt, options)
+      await this.displayEmbedding(embedding, output, json)
       break
+    }
 
     case 'Text-to-Image': {
       const image = await this.generateImage(prompt, options)
@@ -193,6 +196,30 @@ export default class Call extends Command {
       return
     }
 
-    ux.error('Unexpected response format')
+    // This should never happen, but we'll handle it anyway
+    ux.error('Unexpected response format', {exit: 1})
+  }
+
+  private async createEmbedding(input: string, options = {}) {
+    const {body: EmbeddingResponse} = await this.herokuAI.post<EmbeddingResponse>('/v1/embeddings', {
+      body: {
+        ...options,
+        model: this.apiModelId,
+        input,
+      },
+      headers: {authorization: `Bearer ${this.apiKey}`},
+    })
+
+    return EmbeddingResponse
+  }
+
+  private async displayEmbedding(embedding: EmbeddingResponse, output?: string, json = false) {
+    const content = (embedding.data[0].embeddings || []).toString()
+
+    if (output) {
+      fs.writeFileSync(output, json ? JSON.stringify(embedding, null, 2) : content)
+    } else {
+      json ? ux.styledJSON(embedding) : ux.log(content)
+    }
   }
 }

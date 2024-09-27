@@ -113,7 +113,7 @@ FLAGS
   -o, --output=<value>  The file path where the command writes the model response.
   -p, --prompt=<value>  (required) The input prompt for the model.
   -r, --remote=<value>  git remote of app to use
-  --browser=<value>     browser to open images with (example: "firefox", "safari")
+  --browser=<value>     browser to open URLs with (example: "firefox", "safari")
   --optfile=<value>     Additional options for model inference, provided as a JSON config file.
   --opts=<value>        Additional options for model inference, provided as a JSON string.
 

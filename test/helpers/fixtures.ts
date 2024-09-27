@@ -1,5 +1,5 @@
 import * as Heroku from '@heroku-cli/schema'
-import {ChatCompletionResponse, ImageResponse} from '../../src/lib/ai/types'
+import {ChatCompletionResponse, EmbeddingResponse, ImageResponse} from '../../src/lib/ai/types'
 
 export const availableModels = [
   {
@@ -296,22 +296,84 @@ export const addon5Attachment1: Heroku.AddOnAttachment = {
   name: 'DIFFUSION',
 }
 
-export const mockedImageContent = 'Let’s pretend this is an image'
-export const mockedImageBase64 = 'TGV04oCZcyBwcmV0ZW5kIHRoaXMgaXMgYW4gaW1hZ2U='
-export const mockedImageUrl = 'https://example.com/image.png'
+export const imageContent = 'Let’s pretend this is an image'
+export const imageContentBase64 = 'TGV04oCZcyBwcmV0ZW5kIHRoaXMgaXMgYW4gaW1hZ2U='
+export const imageUrl = 'https://example.com/image.png'
 
-export const mockedImageResponseBase64: ImageResponse = {
+export const imageResponseBase64: ImageResponse = {
   created: 1234567890,
   data: [{
-    b64_json: mockedImageBase64,
+    b64_json: imageContentBase64,
     revised_prompt: '',
   }],
 }
 
-export const mockedImageResponseUrl: ImageResponse = {
+export const imageResponseUrl: ImageResponse = {
   created: 1234567890,
   data: [{
-    url: mockedImageUrl,
+    url: imageUrl,
     revised_prompt: '',
   }],
+}
+
+export const addon6: Heroku.AddOn = {
+  addon_service: {
+    id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
+    name: 'inference',
+  },
+  app: {
+    id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+    name: 'app2',
+  },
+  id: 'f4be4855-2639-443b-bc96-4080f62da7f2',
+  name: 'inference-crystalline-08560',
+  plan: {
+    id: '808ebff3-813e-425c-812f-3c6c4241b4af',
+    name: 'inference:cohere-embed-multilingual',
+  },
+}
+
+export const addon6Attachment1: Heroku.AddOnAttachment = {
+  addon: {
+    id: 'f4be4855-2639-443b-bc96-4080f62da7f2',
+    name: 'inference-crystalline-08560',
+    app: {
+      id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+      name: 'app2',
+    },
+  },
+  app: {
+    id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+    name: 'app2',
+  },
+  id: '6156e9ef-3cad-4049-965a-b616a21883f1',
+  name: 'EMBEDDINGS',
+}
+
+export const embeddingsVector = [
+  0.017089844,
+  0.029556274,
+  -0.047729492,
+  0.025772095,
+  -0.03060913,
+  -0.0309906,
+  -0.010574341,
+  -0.030792236,
+]
+
+export const stringifiedEmbeddingsVector = embeddingsVector.toString()
+
+export const embeddingsResponse: EmbeddingResponse = {
+  object: 'list',
+  data: [{
+    object: 'embeddings',
+    index: 0,
+    embeddings: embeddingsVector,
+  }],
+  model: 'cohere-embed-multilingual',
+  usage: {
+    prompt_tokens: 13,
+    completion_tokens: 0,
+    total_tokens: 13,
+  },
 }

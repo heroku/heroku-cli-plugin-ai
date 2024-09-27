@@ -10,11 +10,12 @@ import {runCommand} from '../../../run-command'
 import {
   addon3, addon3Attachment1,
   addon5, addon5Attachment1,
+  addon6, addon6Attachment1,
   availableModels,
   chatCompletionResponse,
-  mockedImageBase64, mockedImageContent, mockedImageResponseBase64,
-  mockedImageResponseUrl,
-  mockedImageUrl,
+  embeddingsResponse,
+  imageContentBase64, imageContent, imageResponseBase64, imageResponseUrl, imageUrl,
+  stringifiedEmbeddingsVector,
 } from '../../../helpers/fixtures'
 import heredoc from 'tsheredoc'
 
@@ -269,9 +270,9 @@ describe('ai:models:call', function () {
 
   context('when targeting a diffusion (Text-to-Image) model resource', function () {
     beforeEach(async function () {
-      api.post('/actions/addons/resolve', {addon: addon5Attachment1.name, app: addon5Attachment1.app?.name})
+      api.post('/actions/addons/resolve', {addon: addon5.name, app: addon5Attachment1.app?.name})
         .reply(200, [addon5])
-        .post('/actions/addon-attachments/resolve', {addon_attachment: addon5Attachment1.name, app: addon5Attachment1.app?.name})
+        .post('/actions/addon-attachments/resolve', {addon_attachment: addon5.name, app: addon5Attachment1.app?.name})
         .reply(200, [addon5Attachment1])
         .get(`/apps/${addon5Attachment1.app?.id}/config-vars`)
         .reply(200, {
@@ -289,17 +290,17 @@ describe('ai:models:call', function () {
         }).post('/v1/images/generations', {
           model: 'stable-diffusion-xl',
           prompt,
-          response_format: 'b64_json',
-        }).reply(200, mockedImageResponseBase64)
+          response_format: 'base64',
+        }).reply(200, imageResponseBase64)
 
         await runCommand(Cmd, [
-          'DIFFUSION',
+          'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
-          '--opts={"response_format":"b64_json"}',
+          '--opts={"response_format":"base64"}',
         ])
 
-        expect(stdout.output).to.eq(mockedImageBase64)
+        expect(stdout.output).to.eq(imageContentBase64)
         expect(stripAnsi(stderr.output)).to.eq('')
       })
     })
@@ -312,18 +313,18 @@ describe('ai:models:call', function () {
         }).post('/v1/images/generations', {
           model: 'stable-diffusion-xl',
           prompt,
-          response_format: 'b64_json',
-        }).reply(200, mockedImageResponseBase64)
+          response_format: 'base64',
+        }).reply(200, imageResponseBase64)
 
         await runCommand(Cmd, [
-          'DIFFUSION',
+          'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
-          '--opts={"response_format":"b64_json"}',
+          '--opts={"response_format":"base64"}',
           '--json',
         ])
 
-        expect(JSON.parse(stdout.output)).to.deep.equal(mockedImageResponseBase64)
+        expect(JSON.parse(stdout.output)).to.deep.equal(imageResponseBase64)
         expect(stripAnsi(stderr.output)).to.eq('')
       })
     })
@@ -337,20 +338,20 @@ describe('ai:models:call', function () {
         }).post('/v1/images/generations', {
           model: 'stable-diffusion-xl',
           prompt,
-          response_format: 'b64_json',
-        }).reply(200, mockedImageResponseBase64)
+          response_format: 'base64',
+        }).reply(200, imageResponseBase64)
 
         await runCommand(Cmd, [
-          'DIFFUSION',
+          'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
-          '--opts={"response_format":"b64_json"}',
+          '--opts={"response_format":"base64"}',
           '--output=output-image.png',
         ])
 
         expect(writeFileSyncMock.calledWith(
           'output-image.png',
-          Buffer.from(mockedImageContent),
+          Buffer.from(imageContent),
         )).to.be.true
         expect(stdout.output).to.eq('')
         expect(stripAnsi(stderr.output)).to.eq('')
@@ -366,21 +367,21 @@ describe('ai:models:call', function () {
         }).post('/v1/images/generations', {
           model: 'stable-diffusion-xl',
           prompt,
-          response_format: 'b64_json',
-        }).reply(200, mockedImageResponseBase64)
+          response_format: 'base64',
+        }).reply(200, imageResponseBase64)
 
         await runCommand(Cmd, [
-          'DIFFUSION',
+          'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
-          '--opts={"response_format":"b64_json"}',
+          '--opts={"response_format":"base64"}',
           '--output=image-response.json',
           '--json',
         ])
 
         expect(writeFileSyncMock.calledWith(
           'image-response.json',
-          JSON.stringify(mockedImageResponseBase64, null, 2),
+          JSON.stringify(imageResponseBase64, null, 2),
         )).to.be.true
         expect(stdout.output).to.eq('')
         expect(stripAnsi(stderr.output)).to.eq('')
@@ -396,15 +397,15 @@ describe('ai:models:call', function () {
         }).post('/v1/images/generations', {
           model: 'stable-diffusion-xl',
           prompt,
-        }).reply(200, mockedImageResponseUrl)
+        }).reply(200, imageResponseUrl)
 
         await runCommand(Cmd, [
-          'DIFFUSION',
+          'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
         ])
 
-        expect(openUrlStub.calledWith(mockedImageUrl, undefined, 'view the image')).to.be.true
+        expect(openUrlStub.calledWith(imageUrl, undefined, 'view the image')).to.be.true
       })
     })
 
@@ -416,16 +417,16 @@ describe('ai:models:call', function () {
         }).post('/v1/images/generations', {
           model: 'stable-diffusion-xl',
           prompt,
-        }).reply(200, mockedImageResponseUrl)
+        }).reply(200, imageResponseUrl)
 
         await runCommand(Cmd, [
-          'DIFFUSION',
+          'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
           '--json',
         ])
 
-        expect(JSON.parse(stdout.output)).to.deep.equal(mockedImageResponseUrl)
+        expect(JSON.parse(stdout.output)).to.deep.equal(imageResponseUrl)
         expect(stripAnsi(stderr.output)).to.eq('')
       })
     })
@@ -439,10 +440,10 @@ describe('ai:models:call', function () {
         }).post('/v1/images/generations', {
           model: 'stable-diffusion-xl',
           prompt,
-        }).reply(200, mockedImageResponseUrl)
+        }).reply(200, imageResponseUrl)
 
         await runCommand(Cmd, [
-          'DIFFUSION',
+          'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
           '--output=image-url.txt',
@@ -450,7 +451,7 @@ describe('ai:models:call', function () {
 
         expect(writeFileSyncMock.calledWith(
           'image-url.txt',
-          mockedImageUrl,
+          imageUrl,
         )).to.be.true
         expect(stdout.output).to.eq('')
         expect(stripAnsi(stderr.output)).to.eq('')
@@ -466,10 +467,10 @@ describe('ai:models:call', function () {
         }).post('/v1/images/generations', {
           model: 'stable-diffusion-xl',
           prompt,
-        }).reply(200, mockedImageResponseUrl)
+        }).reply(200, imageResponseUrl)
 
         await runCommand(Cmd, [
-          'DIFFUSION',
+          'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
           '--output=image-response.json',
@@ -478,7 +479,92 @@ describe('ai:models:call', function () {
 
         expect(writeFileSyncMock.calledWith(
           'image-response.json',
-          JSON.stringify(mockedImageResponseUrl, null, 2),
+          JSON.stringify(imageResponseUrl, null, 2),
+        )).to.be.true
+        expect(stdout.output).to.eq('')
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+    })
+  })
+
+  context('when targeting an embeddings model resource', function () {
+    beforeEach(async function () {
+      api.post('/actions/addons/resolve', {addon: addon6.name, app: addon6Attachment1.app?.name})
+        .reply(200, [addon6])
+        .post('/actions/addon-attachments/resolve', {addon_attachment: addon6.name, app: addon6Attachment1.app?.name})
+        .reply(200, [addon6Attachment1])
+        .get(`/apps/${addon6Attachment1.app?.id}/config-vars`)
+        .reply(200, {
+          EMBEDDINGS_KEY: 's3cr3t_k3y',
+          EMBEDDINGS_MODEL_ID: 'cohere-embed-multilingual',
+          EMBEDDINGS_URL: 'inference-eu.heroku.com',
+        })
+    })
+
+    context('without --json or --output options', function () {
+      it('sends the prompt to the service and displays the embeddings vector', async function () {
+        const prompt = 'Heroku Managed Inference Add-on'
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/embeddings', {
+          input: prompt,
+          model: 'cohere-embed-multilingual',
+        }).reply(200, embeddingsResponse)
+
+        await runCommand(Cmd, [
+          'inference-crystalline-08560',
+          '--app=app2',
+          `--prompt=${prompt}`,
+        ])
+
+        expect(stdout.output).to.contain(stringifiedEmbeddingsVector.slice(0, 64))
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+    })
+
+    context('with --json flag', function () {
+      it('sends the prompt to the service and shows the JSON response', async function () {
+        const prompt = 'Heroku Managed Inference Add-on'
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/embeddings', {
+          input: prompt,
+          model: 'cohere-embed-multilingual',
+        }).reply(200, embeddingsResponse)
+
+        await runCommand(Cmd, [
+          'inference-crystalline-08560',
+          '--app=app2',
+          `--prompt=${prompt}`,
+          '--json',
+        ])
+
+        expect(JSON.parse(stdout.output)).to.deep.equal(embeddingsResponse)
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+    })
+
+    context('with --output option', function () {
+      it('writes to the indicated file', async function () {
+        const prompt = 'Heroku Managed Inference Add-on'
+        const writeFileSyncMock = sandbox.stub(fs, 'writeFileSync')
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/embeddings', {
+          input: prompt,
+          model: 'cohere-embed-multilingual',
+        }).reply(200, embeddingsResponse)
+
+        await runCommand(Cmd, [
+          'inference-crystalline-08560',
+          '--app=app2',
+          `--prompt=${prompt}`,
+          '--output=model-output.txt',
+        ])
+
+        expect(writeFileSyncMock.calledWith(
+          'model-output.txt',
+          stringifiedEmbeddingsVector,
         )).to.be.true
         expect(stdout.output).to.eq('')
         expect(stripAnsi(stderr.output)).to.eq('')
