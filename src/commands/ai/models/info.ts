@@ -2,7 +2,7 @@ import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import Command from '../../../lib/base'
-import {ModelInstance} from '../../../lib/ai/types'
+import {ModelResource} from '../../../lib/ai/types'
 
 export default class Info extends Command {
   static description = 'get the current status of all the AI model resources attached to your app or a specific resource'
@@ -26,7 +26,7 @@ export default class Info extends Command {
     const {modelResource} = args
     if (modelResource) {
       await this.configureHerokuAIClient(modelResource, app)
-      const modelResourceResponse = await this.herokuAI.get<ModelInstance>(`/models/${this.modelId}`)
+      const modelResourceResponse = await this.herokuAI.get<ModelResource>(`/models/${this.apiModelId}`)
         .catch(error => {
           if (error.statusCode === 404) {
             ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
@@ -42,7 +42,7 @@ export default class Info extends Command {
     }
   }
 
-  displayModelResource(modelResource: ModelInstance) {
+  displayModelResource(modelResource: ModelResource) {
     ux.styledObject({
       'Base Model ID': modelResource.plan,
       Ready: modelResource.ready,
