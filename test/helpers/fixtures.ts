@@ -31,10 +31,20 @@ export const availableModels = [
   },
 ]
 
+export const mockConfigVars = {
+  INFERENCE_KEY: 's3cr3t_k3y',
+  INFERENCE_MODEL_ID: 'claude-3-opus',
+  INFERENCE_URL: 'inference-eu.heroku.com',
+}
+
 export const mockAPIErrors = {
   modelsListErrorResponse: {
     id: 'error',
     message: 'Failed to retrieve the list of available models. Check the Heroku Status page https://status.heroku.com/ for system outages. After all incidents have resolved, try again. You can also see a list of models at https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models.',
+  },
+  modelsDestroyErrorResponse: {
+    id: 'error',
+    message: 'Example API Error',
   },
 }
 

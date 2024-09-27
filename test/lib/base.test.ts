@@ -188,6 +188,32 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
+    context('when using an existent model resource name with non-existent app', function () {
+      beforeEach(async function () {
+        api
+          .post('/actions/addons/resolve', {addon: addon1.name, app: 'app2'})
+          .reply(404, [addon1])
+          .post('/actions/addon-attachments/resolve', {addon_attachment: addon1.name, app: 'app2'})
+          .reply(404, {id: 'not_found', message: 'Couldn\'t find that app.', resource: 'app'})
+      })
+
+      it('returns a custom not found error message', async function () {
+        try {
+          await runCommand(CommandConfiguredWithResourceName, [
+            addon1.name as string,
+            '--app=app2',
+          ])
+        } catch (error) {
+          const {message} = error as Error
+          expect(stripAnsi(message)).to.equal(heredoc`
+            We can’t find the app2 app. Check your spelling.
+          `)
+        }
+
+        expect(stdout.output).to.equal('')
+      })
+    })
+
     context('when using the add-on service slug and no app, matching multiple model resources', function () {
       beforeEach(async function () {
         api

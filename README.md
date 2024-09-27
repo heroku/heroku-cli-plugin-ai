@@ -29,6 +29,7 @@ USAGE
 * [`heroku ai:models`](#heroku-aimodels)
 * [`heroku ai:models:attach MODEL_RESOURCE`](#heroku-aimodelsattach-model_resource)
 * [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
+* [`heroku ai:models:destroy MODELRESOURCE`](#heroku-aimodelsdestroy-modelresource)
 * [`heroku ai:models:detach MODEL_RESOURCE`](#heroku-aimodelsdetach-model_resource)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
@@ -123,6 +124,32 @@ EXAMPLES
 ```
 
 _See code: [dist/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/create.ts)_
+
+## `heroku ai:models:destroy MODELRESOURCE`
+
+destroy an existing AI model resource
+
+```
+USAGE
+  $ heroku ai:models:destroy [MODELRESOURCE] -a <value> [-c <value>] [-f] [-r <value>]
+
+ARGUMENTS
+  MODELRESOURCE  The resource ID or alias of the model resource to destroy.
+
+FLAGS
+  -a, --app=<value>      (required) app to run command against
+  -c, --confirm=<value>
+  -f, --force            allow destruction even if connected to other apps
+  -r, --remote=<value>   git remote of app to use
+
+DESCRIPTION
+  destroy an existing AI model resource
+
+EXAMPLES
+  $ heroku ai:models:destroy claude-3-5-sonnet-acute-43973
+```
+
+_See code: [dist/commands/ai/models/destroy.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/destroy.ts)_
 
 ## `heroku ai:models:detach MODEL_RESOURCE`
 
