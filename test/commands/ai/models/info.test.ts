@@ -7,10 +7,23 @@ import nock from 'nock'
 import heredoc from 'tsheredoc'
 import stripAnsi from '../../../helpers/strip-ansi'
 
-describe('ai:models:info', function () {
+describe.only('ai:models:info', function () {
+  const {env} = process
+  let api: nock.Scope
+
   context('when provisioned model name is provided and is found', function () {
     beforeEach(function () {
-      nock('https://api.heroku.com')
+      process.env = {}
+      api = nock('https://api.heroku.com:443')
+    })
+
+    afterEach(function () {
+      process.env = env
+      nock.cleanAll()
+    })
+
+    it('shows info for a model instance ', async function () {
+      api
         .post('/actions/addons/resolve',
           {addon: addon1.name, app: addon1Attachment1.app?.name})
         .reply(200, [addon1])
@@ -25,18 +38,13 @@ describe('ai:models:info', function () {
       nock('https://inference.heroku.com')
         .get(`/models/${addon1Attachment1.id}`)
         .reply(200, modelResource)
-    })
 
-    afterEach(function () {
-      nock.cleanAll()
-    })
-
-    it('shows info for a model instance ', async function () {
       await runCommand(Cmd, [
         '--app',
         'app1',
         'inference-regular-74659',
-      ])
+      ], true)
+
       expect(stdout.output).to.eq(heredoc`
         Avg Performance: latency 0.4sec, 28 tokens/sec
         Base Model ID:   claude-3-haiku
@@ -49,7 +57,17 @@ describe('ai:models:info', function () {
 
   context('when provisioned model name is provided and is yet provisioned', function () {
     beforeEach(function () {
-      nock('https://api.heroku.com')
+      process.env = {}
+      api = nock('https://api.heroku.com:443')
+    })
+
+    afterEach(function () {
+      process.env = env
+      nock.cleanAll()
+    })
+
+    it('shows an error message', async function () {
+      api
         .post('/actions/addons/resolve',
           {addon: addon1.name, app: addon1Attachment1.app?.name})
         .reply(200, [addon1])
@@ -64,13 +82,7 @@ describe('ai:models:info', function () {
       nock('https://inference.heroku.com')
         .get(`/models/${addon1Attachment1.id}`)
         .reply(404, {error: 'Model not found'})
-    })
 
-    afterEach(function () {
-      nock.cleanAll()
-    })
-
-    it('shows an error message', async function () {
       await runCommand(Cmd, [
         '--app',
         'app1',

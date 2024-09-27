@@ -26,8 +26,11 @@ export default class Info extends Command {
     const {modelResource} = args
     if (modelResource) {
       await this.configureHerokuAIClient(modelResource, app)
-      const modelResourceResponse = await this.herokuAI.get<ModelResource>(`/models/${this.apiModelId}`)
+      const modelResourceResponse = await this.herokuAI.get<ModelResource>(`/models/${this.apiModelId}`, {
+        headers: {authorization: `Bearer ${this.apiKey}`},
+      })
         .catch(error => {
+          console.log('WE ARE HERE4')
           if (error.statusCode === 404) {
             ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
           } else {
@@ -38,10 +41,17 @@ export default class Info extends Command {
       if (currentModelResource)
         this.displayModelResource(currentModelResource)
     } else {
-      throw new Error('Not implemented')
+      // const addonsResponse = awiat this.
     }
   }
 
+  // add model names to array
+  // const addonNameArray = []
+
+  // iterate over array with configureHerokuAIClient to get this.apiModelId
+  // iterate through array of this.apiModelIds and display
+
+  // pass this function when iterating through model resources
   displayModelResource(modelResource: ModelResource) {
     ux.styledObject({
       'Base Model ID': modelResource.plan,
