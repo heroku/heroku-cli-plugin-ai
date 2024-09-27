@@ -28,6 +28,7 @@ USAGE
 * [`heroku ai:docs`](#heroku-aidocs)
 * [`heroku ai:models`](#heroku-aimodels)
 * [`heroku ai:models:attach MODEL_RESOURCE`](#heroku-aimodelsattach-model_resource)
+* [`heroku ai:models:call MODEL_RESOURCE`](#heroku-aimodelscall-model_resource)
 * [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
@@ -93,6 +94,38 @@ EXAMPLES
 ```
 
 _See code: [dist/commands/ai/models/attach.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/attach.ts)_
+
+## `heroku ai:models:call MODEL_RESOURCE`
+
+make an inference request to a specific AI model resource
+
+```
+USAGE
+  $ heroku ai:models:call [MODEL_RESOURCE] -a <value> -p <value> [-j] [--optfile <value>] [--opts <value>] [-o
+    <value>] [-r <value>]
+
+ARGUMENTS
+  MODEL_RESOURCE  The resource ID or alias of the model to call.
+
+FLAGS
+  -a, --app=<value>     (required) app to run command against
+  -j, --json            Output response as JSON
+  -o, --output=<value>  The file path where the command writes the model response.
+  -p, --prompt=<value>  (required) The input prompt for the model.
+  -r, --remote=<value>  git remote of app to use
+  --optfile=<value>     Additional options for model inference, provided as a JSON config file.
+  --opts=<value>        Additional options for model inference, provided as a JSON string.
+
+DESCRIPTION
+  make an inference request to a specific AI model resource
+
+EXAMPLES
+  $ heroku ai:models:call my_llm --prompt "What is the meaning of life?"
+
+  $ heroku ai:models:call sdxl --prompt "Generate an image of a sunset" --opts '{"quality": "hd"}'
+```
+
+_See code: [dist/commands/ai/models/call.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/call.ts)_
 
 ## `heroku ai:models:create MODEL_NAME`
 

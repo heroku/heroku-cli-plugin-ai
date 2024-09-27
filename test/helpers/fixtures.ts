@@ -1,33 +1,34 @@
 import * as Heroku from '@heroku-cli/schema'
+import {ChatCompletionResponse} from '../../src/lib/ai/types'
 
 export const availableModels = [
   {
-    model_id: 'stable-diffusion-xl',
-    type: ['Text-to-image'],
-  },
-  {
-    model_id: 'claude-3-5-sonnet',
-    type: ['Text-to-text'],
-  },
-  {
-    model_id: 'claude-3-opus',
-    type: ['Text-to-text'],
-  },
-  {
     model_id: 'claude-3-sonnet',
-    type: ['Text-to-text'],
+    type: ['Text-to-Text'],
   },
   {
     model_id: 'claude-3-haiku',
-    type: ['Text-to-text'],
+    type: ['Text-to-Text'],
   },
   {
     model_id: 'cohere-embed-english',
-    type: ['Text-to-text', 'Embedding'],
+    type: ['Embedding'],
   },
   {
     model_id: 'cohere-embed-multilingual',
-    type: ['Text-to-text', 'Embedding'],
+    type: ['Embedding'],
+  },
+  {
+    model_id: 'stable-diffusion-xl',
+    type: ['Text-to-Image'],
+  },
+  {
+    model_id: 'claude-3-5-sonnet',
+    type: ['Text-to-Text'],
+  },
+  {
+    model_id: 'claude-3-opus',
+    type: ['Text-to-Text'],
   },
 ]
 
@@ -236,3 +237,28 @@ export const addon1ProvisionedWithAttachmentName: Heroku.AddOn = {
     'CLAUDE_HAIKU_URL',
   ],
 }
+
+export const chatCompletionResponse: ChatCompletionResponse = {
+  id: 'chatcmpl-17f8f365f941de720ad38',
+  object: 'chat.completion',
+  created: 1727398076,
+  model: 'claude-3-sonnet',
+  system_fingerprint: 'heroku-inf-zzuqrd',
+  choices: [
+    {
+      index: 0,
+      message: {
+        role: 'assistant',
+        content: "Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.",
+        refusal: null,
+      },
+      finish_reason: 'stop',
+    },
+  ],
+  usage: {
+    prompt_tokens: 13,
+    completion_tokens: 26,
+    total_tokens: 39,
+  },
+}
+
