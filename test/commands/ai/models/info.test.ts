@@ -55,7 +55,51 @@ describe.only('ai:models:info', function () {
     })
   })
 
-  context('when provisioned model name is provided and is yet provisioned', function () {
+  context('when provisioned model name is not provided', function () {
+    beforeEach(function () {
+      process.env = {}
+      api = nock('https://api.heroku.com:443')
+    })
+
+    afterEach(function () {
+      process.env = env
+      nock.cleanAll()
+    })
+
+    it('shows info for all model resources on specified app', async function () {
+      api
+        .post('/actions/addons/resolve',
+          {addon: addon1.name, app: addon1Attachment1.app?.name})
+        .reply(200, [addon1])
+        .get(`/addons/${addon1.id}/addon-attachments`)
+        .reply(200, [addon1Attachment1])
+        .get(`/apps/${addon1Attachment1.app?.id}/config-vars`)
+        .reply(200, {
+          INFERENCE_KEY: 's3cr3t_k3y',
+          INFERENCE_MODEL_ID: 'claude-3-haiku',
+          INFERENCE_URL: 'inference.heroku.com',
+        })
+      nock('https://inference.heroku.com')
+        .get(`/models/${addon1Attachment1.id}`)
+        .reply(200, modelResource)
+
+      await runCommand(Cmd, [
+        '--app',
+        'app1',
+        'inference-regular-74659',
+      ], true)
+
+      expect(stdout.output).to.eq(heredoc`
+        Avg Performance: latency 0.4sec, 28 tokens/sec
+        Base Model ID:   claude-3-haiku
+        Ready:           Yes
+        Tokens In:       0 tokens this period
+        Tokens Out:      0 tokens this period
+        `)
+    })
+  })
+
+  context('when provisioned model name is incorrectly inputted', function () {
     beforeEach(function () {
       process.env = {}
       api = nock('https://api.heroku.com:443')
