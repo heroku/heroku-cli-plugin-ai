@@ -27,13 +27,13 @@ export default class Info extends Command {
     const {app} = flags
     const {modelResource} = args
     const synthesizedModels: any = []
+    let listOfProvisionedModels: any = []
 
     const modelInfo = async () => {
       const modelInfoResponse = await this.herokuAI.get<ModelResource>(`/models/${this.apiModelId}`, {
         headers: {authorization: `Bearer ${this.apiKey}`},
       })
         .catch(error => {
-          console.log('WE ARE HERE4')
           if (error.statusCode === 404) {
             ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
           } else {
@@ -49,14 +49,13 @@ export default class Info extends Command {
         const modelResource = collectedModels
         await this.configureHerokuAIClient(modelResource, app)
 
-        const modelResourceResponse = await modelInfo()
-        synthesizedModels.push(modelResourceResponse)
+        const {body: currentModelResource} = await modelInfo() || {body: null}
+        synthesizedModels.push(currentModelResource)
       } else {
         for (const addonModel of collectedModels) {
           await this.configureHerokuAIClient(addonModel.modelResource, app)
 
-          const modelResourceResponse = await modelInfo()
-          const {body: currentModelResource} = modelResourceResponse || {body: null}
+          const {body: currentModelResource} = await modelInfo() || {body: null}
           synthesizedModels.push(currentModelResource)
         }
       }
@@ -65,8 +64,8 @@ export default class Info extends Command {
     }
 
     if (modelResource) {
-      const listOfProvisionedModels = await getModelDetails(modelResource)
-      console.log('listOfProvisionedModels', listOfProvisionedModels)
+      listOfProvisionedModels = await getModelDetails(modelResource)
+      // console.log('listOfProvisionedModels', listOfProvisionedModels)
     } else {
       const provisionedModelsInfo: Record<string, string | undefined>[] = []
       const inferenceRegex = /inference/
@@ -85,23 +84,22 @@ export default class Info extends Command {
         }
       }
 
-      const listOfProvisionedModels = await getModelDetails(provisionedModelsInfo)
-
-      console.log('listOfProvisionedModels', listOfProvisionedModels)
-      // console.log('provisionedModelsInfo', provisionedModelsInfo)
+      listOfProvisionedModels = await getModelDetails(provisionedModelsInfo)
     }
 
-    // this.displayModelResource()
+    this.displayModelResource(listOfProvisionedModels)
   }
 
-  // pass this function when iterating through model resources
-  displayModelResource(modelResource: ModelResource) {
-    ux.styledObject({
-      'Base Model ID': modelResource.plan,
-      Ready: modelResource.ready,
-      'Tokens In': modelResource.tokens_in,
-      'Tokens Out': modelResource.tokens_out,
-      'Avg Performance': modelResource.avg_performance,
-    })
+  displayModelResource(modelResources: ModelResource[]) {
+    for (const modelResource of modelResources) {
+      ux.log()
+      ux.styledObject({
+        'Base Model ID': modelResource.plan,
+        Ready: modelResource.ready,
+        'Tokens In': modelResource.tokens_in,
+        'Tokens Out': modelResource.tokens_out,
+        'Avg Performance': modelResource.avg_performance,
+      })
+    }
   }
 }
