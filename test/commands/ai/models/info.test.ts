@@ -2,7 +2,7 @@ import {expect} from 'chai'
 import {stdout, stderr} from 'stdout-stderr'
 import Cmd from '../../../../src/commands/ai/models/info'
 import {runCommand} from '../../../run-command'
-import {modelInstance, addon1Attachment1, addon1} from '../../../helpers/fixtures'
+import {modelResource, addon1Attachment1, addon1} from '../../../helpers/fixtures'
 import nock from 'nock'
 import heredoc from 'tsheredoc'
 import stripAnsi from '../../../helpers/strip-ansi'
@@ -24,7 +24,7 @@ describe('ai:models:info', function () {
         })
       nock('https://inference.heroku.com')
         .get(`/models/${addon1Attachment1.id}`)
-        .reply(200, modelInstance)
+        .reply(200, modelResource)
     })
 
     afterEach(function () {

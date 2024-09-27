@@ -1,5 +1,5 @@
 import * as Heroku from '@heroku-cli/schema'
-import {ModelInstance} from '../../src/lib/ai/types'
+import {ModelResource} from '../../src/lib/ai/types'
 
 export const availableModels = [
   {
@@ -49,7 +49,7 @@ export const mockAPIErrors = {
   },
 }
 
-export const modelInstance: ModelInstance = {
+export const modelResource: ModelResource = {
   plan: 'claude-3-haiku',
   ready: 'Yes',
   created: '2023-01-21T13:02:37.320+00.00',
