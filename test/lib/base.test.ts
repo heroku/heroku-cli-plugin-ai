@@ -18,20 +18,20 @@ import {flags} from '@heroku-cli/command'
 
 class CommandWithoutConfiguration extends BaseCommand {
   async run() {
-    this.herokuAI.get<AI.ModelInstance>('/models/01234567-89ab-cdef-0123-456789abcdef')
+    this.herokuAI.get<AI.ModelResource>('/models/01234567-89ab-cdef-0123-456789abcdef')
   }
 }
 
-class CommandConfiguredWithoutInstanceName extends BaseCommand {
+class CommandConfiguredWithoutResourceName extends BaseCommand {
   async run() {
     await this.configureHerokuAIClient()
     await this.herokuAI.get<AI.ModelList>('/models')
   }
 }
 
-class CommandConfiguredWithInstanceName extends BaseCommand {
+class CommandConfiguredWithResourceName extends BaseCommand {
   static args = {
-    instance_name: Args.string({required: true}),
+    resource_name: Args.string({required: true}),
   }
 
   static flags = {
@@ -39,12 +39,12 @@ class CommandConfiguredWithInstanceName extends BaseCommand {
   }
 
   async run() {
-    const {args, flags} = await this.parse(CommandConfiguredWithInstanceName)
-    const {instance_name: instanceName} = args
+    const {args, flags} = await this.parse(CommandConfiguredWithResourceName)
+    const {resource_name: resourceName} = args
     const {app} = flags
 
-    await this.configureHerokuAIClient(instanceName, app)
-    await this.herokuAI.get<AI.ModelInstance>(`/models/${this.addon.id}`)
+    await this.configureHerokuAIClient(resourceName, app)
+    await this.herokuAI.get<AI.ModelResource>(`/models/${this.addon.id}`)
   }
 }
 
@@ -82,13 +82,13 @@ describe('attempt a request using the Heroku AI client', function () {
     })
   })
 
-  context('when the command doesn’t require an instance name', function () {
+  context('when the command doesn’t require a resource name', function () {
     it('makes a request to the default host', async function () {
       const defaultApiHost = nock('https://inference.heroku.com')
         .get('/models')
         .reply(200, [])
 
-      await runCommand(CommandConfiguredWithoutInstanceName)
+      await runCommand(CommandConfiguredWithoutResourceName)
 
       defaultApiHost.done()
     })
@@ -102,13 +102,13 @@ describe('attempt a request using the Heroku AI client', function () {
         .get('/models')
         .reply(200, [])
 
-      await runCommand(CommandConfiguredWithoutInstanceName)
+      await runCommand(CommandConfiguredWithoutResourceName)
 
       customApiHost.done()
     })
   })
 
-  context('when the model instance isn’t fully provisioned', function () {
+  context('when the model resource isn’t fully provisioned', function () {
     beforeEach(async function () {
       api
         .post('/actions/addons/resolve', {addon: addon1.name, app: null})
@@ -121,12 +121,12 @@ describe('attempt a request using the Heroku AI client', function () {
 
     it('returns an error message and exits with a status of 1', async function () {
       try {
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           addon1.name as string,
         ])
       } catch (error) {
         const {message, oclif} = error as CLIError
-        expect(stripAnsi(message)).to.equal('Model instance inference-regular-74659 isn’t fully provisioned on app1.')
+        expect(stripAnsi(message)).to.equal('Model resource inference-regular-74659 isn’t fully provisioned on app1.')
         expect(oclif.exit).to.equal(1)
       }
 
@@ -135,7 +135,7 @@ describe('attempt a request using the Heroku AI client', function () {
   })
 
   describe('user with unrestricted access to all apps and add-ons', function () {
-    context('when using an inexistent model instance name and no app', function () {
+    context('when using an inexistent model resource name and no app', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'inference-inexistent-00001', app: null})
@@ -146,14 +146,14 @@ describe('attempt a request using the Heroku AI client', function () {
 
       it('returns a not found error message', async function () {
         try {
-          await runCommand(CommandConfiguredWithInstanceName, [
+          await runCommand(CommandConfiguredWithResourceName, [
             'inference-inexistent-00001',
           ])
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            We can’t find a model instance called inference-inexistent-00001.
-            Run heroku ai:models:info --app <value> to see a list of model instances.
+            We can’t find a model resource called inference-inexistent-00001.
+            Run heroku ai:models:info --app <value> to see a list of model resources.
           `)
         }
 
@@ -161,7 +161,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model instance name with the wrong app', function () {
+    context('when using an existent model resource name with the wrong app', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: addon1.name, app: 'app2'})
@@ -172,15 +172,15 @@ describe('attempt a request using the Heroku AI client', function () {
 
       it('returns a not found error message', async function () {
         try {
-          await runCommand(CommandConfiguredWithInstanceName, [
+          await runCommand(CommandConfiguredWithResourceName, [
             addon1.name as string,
             '--app=app2',
           ])
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            We can’t find a model instance called ${addon1.name} on app2.
-            Run heroku ai:models:info --app app2 to see a list of model instances.
+            We can’t find a model resource called ${addon1.name} on app2.
+            Run heroku ai:models:info --app app2 to see a list of model resources.
           `)
         }
 
@@ -188,7 +188,33 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using the add-on service slug and no app, matching multiple model instances', function () {
+    context('when using an existent model resource name with non-existent app', function () {
+      beforeEach(async function () {
+        api
+          .post('/actions/addons/resolve', {addon: addon1.name, app: 'app2'})
+          .reply(404, [addon1])
+          .post('/actions/addon-attachments/resolve', {addon_attachment: addon1.name, app: 'app2'})
+          .reply(404, {id: 'not_found', message: 'Couldn\'t find that app.', resource: 'app'})
+      })
+
+      it('returns a custom not found error message', async function () {
+        try {
+          await runCommand(CommandConfiguredWithResourceName, [
+            addon1.name as string,
+            '--app=app2',
+          ])
+        } catch (error) {
+          const {message} = error as Error
+          expect(stripAnsi(message)).to.equal(heredoc`
+            We can’t find the app2 app. Check your spelling.
+          `)
+        }
+
+        expect(stdout.output).to.equal('')
+      })
+    })
+
+    context('when using the add-on service slug and no app, matching multiple model resources', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'inference', app: null})
@@ -199,14 +225,14 @@ describe('attempt a request using the Heroku AI client', function () {
 
       it('returns an ambiguous identifier error message', async function () {
         try {
-          await runCommand(CommandConfiguredWithInstanceName, [
+          await runCommand(CommandConfiguredWithResourceName, [
             'inference',
           ])
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model instances match inference: ${addon1.name}, ${addon2.name}, ${addon3.name}, ${addon4.name}.
-            Specify the model instance by its name instead.
+            Multiple model resources match inference: ${addon1.name}, ${addon2.name}, ${addon3.name}, ${addon4.name}.
+            Specify the model resource by its name instead.
           `)
         }
 
@@ -214,7 +240,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using the add-on service slug and app, matching a single instance', function () {
+    context('when using the add-on service slug and app, matching a single resource', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'inference', app: 'app2'})
@@ -236,7 +262,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon4.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           'inference',
           '--app=app2',
         ])
@@ -246,7 +272,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using the add-on plan slug and no app, matching multiple model instances', function () {
+    context('when using the add-on plan slug and no app, matching multiple model resources', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'inference:claude-3-opus', app: null})
@@ -257,14 +283,14 @@ describe('attempt a request using the Heroku AI client', function () {
 
       it('returns an ambiguous identifier error message', async function () {
         try {
-          await runCommand(CommandConfiguredWithInstanceName, [
+          await runCommand(CommandConfiguredWithResourceName, [
             'inference:claude-3-opus',
           ])
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model instances match inference:claude-3-opus: ${addon2.name}, ${addon4.name}.
-            Specify the model instance by its name instead.
+            Multiple model resources match inference:claude-3-opus: ${addon2.name}, ${addon4.name}.
+            Specify the model resource by its name instead.
           `)
         }
 
@@ -272,7 +298,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using the add-on plan slug and app, matching a single instance', function () {
+    context('when using the add-on plan slug and app, matching a single resource', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'inference:claude-3-opus', app: 'app2'})
@@ -294,7 +320,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon4.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           'inference:claude-3-opus',
           '--app=app2',
         ])
@@ -304,7 +330,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using a partial attachment name and app, matching multiple model instance attachments', function () {
+    context('when using a partial attachment name and app, matching multiple model resource attachments', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'INFERENCE', app: 'app1'})
@@ -319,15 +345,15 @@ describe('attempt a request using the Heroku AI client', function () {
 
       it('returns an ambiguous identifier error message', async function () {
         try {
-          await runCommand(CommandConfiguredWithInstanceName, [
+          await runCommand(CommandConfiguredWithResourceName, [
             'INFERENCE',
             '--app=app1',
           ])
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model instances match INFERENCE on app1: ${addon2.name}, ${addon3.name}.
-            Specify the model instance by its name instead.
+            Multiple model resources match INFERENCE on app1: ${addon2.name}, ${addon3.name}.
+            Specify the model resource by its name instead.
           `)
         }
 
@@ -335,7 +361,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an exact attachment name and app, matching a single instance', function () {
+    context('when using an exact attachment name and app, matching a single resource', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'INFERENCE_PINK', app: 'app1'})
@@ -357,7 +383,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon2.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           'INFERENCE_PINK',
           '--app=app1',
         ])
@@ -367,7 +393,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model instance name with multiple attachments to different apps and no app', function () {
+    context('when using an existent model resource name with multiple attachments to different apps and no app', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: addon3.name, app: null})
@@ -387,7 +413,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon3.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           addon3.name as string,
         ])
 
@@ -396,7 +422,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model instance name with multiple attachments to different apps and the billing app', function () {
+    context('when using an existent model resource name with multiple attachments to different apps and the billing app', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: addon3.name, app: addon3.app?.name})
@@ -416,7 +442,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon3.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           addon3.name as string,
           '--app=app1',
         ])
@@ -426,7 +452,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model instance name with multiple attachments to different apps and the attached app', function () {
+    context('when using an existent model resource name with multiple attachments to different apps and the attached app', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: addon3.name, app: addon3Attachment2.app?.name})
@@ -446,7 +472,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon3.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           addon3.name as string,
           '--app=app2',
         ])
@@ -456,7 +482,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model instance name with multiple attachments to the same app', function () {
+    context('when using an existent model resource name with multiple attachments to the same app', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: addon2.name, app: null})
@@ -476,7 +502,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon2.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           addon2.name as string,
         ])
 
@@ -487,7 +513,7 @@ describe('attempt a request using the Heroku AI client', function () {
   })
 
   describe('user with restricted access to apps and add-ons', function () {
-    context('when using the add-on service slug, matching a single instance on the accessible app', function () {
+    context('when using the add-on service slug, matching a single resource on the accessible app', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'inference', app: null})
@@ -509,7 +535,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon4.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           'inference',
         ])
 
@@ -518,7 +544,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using the add-on plan slug, matching a single instance on the accessible app', function () {
+    context('when using the add-on plan slug, matching a single resource on the accessible app', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'inference:claude-3-opus', app: null})
@@ -540,7 +566,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon4.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           'inference:claude-3-opus',
         ])
 
@@ -549,7 +575,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using a partial attachment name and app, matching multiple model instance attachments', function () {
+    context('when using a partial attachment name and app, matching multiple model resource attachments', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'INFERENCE', app: 'app2'})
@@ -564,15 +590,15 @@ describe('attempt a request using the Heroku AI client', function () {
 
       it('returns an ambiguous identifier error message', async function () {
         try {
-          await runCommand(CommandConfiguredWithInstanceName, [
+          await runCommand(CommandConfiguredWithResourceName, [
             'INFERENCE',
             '--app=app2',
           ])
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model instances match INFERENCE on app2: ${addon3.name}, ${addon4.name}.
-            Specify the model instance by its name instead.
+            Multiple model resources match INFERENCE on app2: ${addon3.name}, ${addon4.name}.
+            Specify the model resource by its name instead.
           `)
         }
 
@@ -580,7 +606,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an exact attachment name and app, matching a single instance', function () {
+    context('when using an exact attachment name and app, matching a single resource', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: 'INFERENCE_JADE', app: 'app2'})
@@ -602,7 +628,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon3.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           'INFERENCE_JADE',
           '--app=app2',
         ])
@@ -612,7 +638,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model instance name and no app, matching a single instance accessible through the attachment', function () {
+    context('when using an existent model resource name and no app, matching a single resource accessible through the attachment', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: addon3.name, app: null})
@@ -636,7 +662,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon3.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           addon3.name as string,
         ])
 
@@ -645,7 +671,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model instance name and the non-accessible app', function () {
+    context('when using an existent model resource name and the non-accessible app', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: addon3.name, app: 'app1'})
@@ -656,7 +682,7 @@ describe('attempt a request using the Heroku AI client', function () {
 
       it('returns a forbidden error message', async function () {
         try {
-          await runCommand(CommandConfiguredWithInstanceName, [
+          await runCommand(CommandConfiguredWithResourceName, [
             addon3.name as string,
             '--app=app1',
           ])
@@ -669,7 +695,7 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model instance name and the accesible app with the attachment', function () {
+    context('when using an existent model resource name and the accesible app with the attachment', function () {
       beforeEach(async function () {
         api
           .post('/actions/addons/resolve', {addon: addon3.name, app: 'app2'})
@@ -691,7 +717,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/models/${addon3.id}`)
           .reply(200, {})
 
-        await runCommand(CommandConfiguredWithInstanceName, [
+        await runCommand(CommandConfiguredWithResourceName, [
           addon3.name as string,
           '--app=app2',
         ])

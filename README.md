@@ -27,7 +27,10 @@ USAGE
 <!-- commands -->
 * [`heroku ai:docs`](#heroku-aidocs)
 * [`heroku ai:models`](#heroku-aimodels)
-* [`heroku ai:models:info [INSTANCE]`](#heroku-aimodelsinfo-instance)
+* [`heroku ai:models:attach MODEL_RESOURCE`](#heroku-aimodelsattach-model_resource)
+* [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
+* [`heroku ai:models:destroy MODELRESOURCE`](#heroku-aimodelsdestroy-modelresource)
+* [`heroku ai:models:detach MODEL_RESOURCE`](#heroku-aimodelsdetach-model_resource)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
@@ -65,31 +68,112 @@ EXAMPLES
   $ heroku ai:models:list
 ```
 
-## `heroku ai:models:info [INSTANCE]`
+## `heroku ai:models:attach MODEL_RESOURCE`
 
-get the current status of all the AI model instances attached to your app or a specific instance
+attach an existing model resource to an app
 
 ```
 USAGE
-  $ heroku ai:models:info [INSTANCE] -a <value> [-r <value>]
+  $ heroku ai:models:attach [MODEL_RESOURCE] -a <value> [--as <value>] [--confirm <value>] [-r <value>]
 
 ARGUMENTS
-  INSTANCE  the resource ID or alias of the model instance to check
+  MODEL_RESOURCE  The resource ID or alias of the model resource to attach.
 
 FLAGS
   -a, --app=<value>     (required) app to run command against
   -r, --remote=<value>  git remote of app to use
+  --as=<value>          alias name for model resource
+  --confirm=<value>     overwrite existing resource with same name
 
 DESCRIPTION
-  get the current status of all the AI model instances attached to your app or a specific instance
+  attach an existing model resource to an app
 
 EXAMPLES
-  $ heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app
+  $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app
 
-  $ heroku ai:models:info --app example-app
+  $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app --as MY_CS35
 ```
 
-_See code: [dist/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/info.ts)_
+_See code: [dist/commands/ai/models/attach.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/attach.ts)_
+
+## `heroku ai:models:create MODEL_NAME`
+
+provision access to an AI model
+
+```
+USAGE
+  $ heroku ai:models:create [MODEL_NAME] -a <value> [--as <value>] [--confirm <value>] [-r <value>]
+
+ARGUMENTS
+  MODEL_NAME  The name of the model to provision access for
+
+FLAGS
+  -a, --app=<value>     (required) The name of the Heroku app to attach the model to
+  -r, --remote=<value>  git remote of app to use
+  --as=<value>          alias name for model resource
+  --confirm=<value>     overwrite existing config vars or existing add-on attachments
+
+DESCRIPTION
+  provision access to an AI model
+
+EXAMPLES
+  # Provision access to an AI model and attach it to your app with a default name:
+  $ heroku ai:models:create claude-3-5-sonnet --app example-app
+  # Provision access to an AI model and attach it to your app with a custom name:
+  $ heroku ai:models:create stable-diffusion-xl --app example-app --as my_sdxl
+```
+
+_See code: [dist/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/create.ts)_
+
+## `heroku ai:models:destroy MODELRESOURCE`
+
+destroy an existing AI model resource
+
+```
+USAGE
+  $ heroku ai:models:destroy [MODELRESOURCE] -a <value> [-c <value>] [-f] [-r <value>]
+
+ARGUMENTS
+  MODELRESOURCE  The resource ID or alias of the model resource to destroy.
+
+FLAGS
+  -a, --app=<value>      (required) app to run command against
+  -c, --confirm=<value>
+  -f, --force            allow destruction even if connected to other apps
+  -r, --remote=<value>   git remote of app to use
+
+DESCRIPTION
+  destroy an existing AI model resource
+
+EXAMPLES
+  $ heroku ai:models:destroy claude-3-5-sonnet-acute-43973
+```
+
+_See code: [dist/commands/ai/models/destroy.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/destroy.ts)_
+
+## `heroku ai:models:detach MODEL_RESOURCE`
+
+Detach a model resource from an app.
+
+```
+USAGE
+  $ heroku ai:models:detach [MODEL_RESOURCE] -a <value> [-r <value>]
+
+ARGUMENTS
+  MODEL_RESOURCE  The resource ID or alias of the model resource to detach
+
+FLAGS
+  -a, --app=<value>     (required) The name of the Heroku app to detach the model resource from.
+  -r, --remote=<value>  git remote of app to use
+
+DESCRIPTION
+  Detach a model resource from an app.
+
+EXAMPLES
+  $ heroku ai:models:detach claude-3-5-sonnet-acute-41518 --app example-app
+```
+
+_See code: [dist/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/detach.ts)_
 
 ## `heroku ai:models:list`
 
