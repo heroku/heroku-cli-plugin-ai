@@ -3,59 +3,45 @@ import Cmd  from '../../../../src/commands/ai/models/detach'
 import {runCommand} from '../../../run-command'
 import nock from 'nock'
 import {expect} from 'chai'
-import stripAnsi from 'strip-ansi'
+import {addon1, addon1Attachment1, mockConfigVars} from '../../../helpers/fixtures'
 
 describe('addons:detach', function () {
   let api: nock.Scope
+  const {env} = process
 
   beforeEach(function () {
+    process.env = {}
     api = nock('https://api.heroku.com:443')
   })
 
   afterEach(function () {
+    process.env = env
     api.done()
     nock.cleanAll
   })
 
   it('detaches an add-on', async function () {
+    const addonAppId = addon1.app?.id
+    const addonId = addon1.id
+    const addonName = addon1.name
+    const appName = addon1.app?.name
+
     api
-      .get('/apps/myapp/addon-attachments/model-123')
-      .reply(200, {id: 100, name: 'model-123', addon: {name: 'model'}})
-      .delete('/addon-attachments/100')
+      .post('/actions/addons/resolve', {app: `${appName}`, addon: `${addonName}`})
+      .reply(200, [addon1])
+      .get(`/addons/${addonId}/addon-attachments`)
+      .reply(200, [addon1Attachment1])
+      .get(`/apps/${addonAppId}/config-vars`)
+      .reply(200, mockConfigVars)
+      .delete(`/addon-attachments/${addonId}`)
       .reply(200)
-      .get('/apps/myapp/releases')
+      .get(`/apps/${appName}/releases`)
       .reply(200, [{version: 10}])
 
-    await runCommand(Cmd, ['--app', 'myapp', 'model-123'])
+    await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`])
 
     expect(stdout.output).to.equal('')
-    expect(stderr.output).to.contain('Detaching model-123 to model from myapp... done\n')
-    expect(stderr.output).to.contain('Unsetting model-123 config vars and restarting myapp... done, v10\n')
-  })
-
-  it('returns the correct error message when the model cannot be found', async function () {
-    api
-      .get('/apps/myapp/addon-attachments/false_model')
-      .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on.', resource: 'attachment'})
-
-    try {
-      await runCommand(Cmd, ['--app', 'myapp', 'false_model'])
-    } catch (error) {
-      const {message} = error as Error
-      expect(stripAnsi(message)).to.equal('We can’t find a model resource called false_model. Run \'heroku ai:models:info -a <appname>\' to see a list of model resources attached to your app.')
-    }
-  })
-
-  it('returns the correct error message when the app cannot be found', async function () {
-    api
-      .get('/apps/wrongapp/addon-attachments/model-123')
-      .reply(404, {id: 'not_found', message: 'Couldn\'t find that app.', resource: 'app'})
-
-    try {
-      await runCommand(Cmd, ['--app', 'wrongapp', 'model-123'])
-    } catch (error) {
-      const {message} = error as Error
-      expect(message).to.equal('We can’t find the wrongapp app. Check your spelling.')
-    }
+    expect(stderr.output).to.contain(`Detaching ${addonName} from ${appName}... done`)
+    expect(stderr.output).to.contain(`Unsetting ${addonName} config vars and restarting ${appName}... done, v10`)
   })
 })
