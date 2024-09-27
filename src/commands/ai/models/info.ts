@@ -5,7 +5,7 @@ import Command from '../../../lib/base'
 import {ModelInstance} from '../../../lib/ai/types'
 
 export default class Info extends Command {
-  static description = 'get the current status of all the AI model instances attached to your app or a specific instance'
+  static description = 'get the current status of all the AI model resources attached to your app or a specific resource'
   static examples = [
     '$ heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app',
     '$ heroku ai:models:info --app example-app',
@@ -17,38 +17,38 @@ export default class Info extends Command {
   }
 
   static args = {
-    instance: Args.string({description: 'the resource ID or alias of the model instance to check'}),
+    modelResource: Args.string({description: 'The resource ID or alias of the model resource to check.'}),
   }
 
   public async run(): Promise<any> {
     const {args, flags} = await this.parse(Info)
     const {app} = flags
-    const {instance} = args
-    if (instance) {
-      await this.configureHerokuAIClient(instance, app)
-      const modelInstanceResponse = await this.herokuAI.get<ModelInstance>(`/models/${this.addonAttachment.id}`)
+    const {modelResource} = args
+    if (modelResource) {
+      await this.configureHerokuAIClient(modelResource, app)
+      const modelResourceResponse = await this.herokuAI.get<ModelInstance>(`/models/${this.addonAttachment.id}`)
         .catch(error => {
           if (error.statusCode === 404) {
-            ux.warn(`${color.yellow(this.addon.name)} is not yet provisioned.\nRun ${color.cmd('heroku ai:wait')} to wait until the instance is provisioned.`)
+            ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
           } else {
             throw error
           }
         })
-      const {body: modelInstance} = modelInstanceResponse || {body: null}
-      if (modelInstance)
-        this.displayModelInstance(modelInstance)
+      const {body: currentModelResource} = modelResourceResponse || {body: null}
+      if (currentModelResource)
+        this.displayModelResource(currentModelResource)
     } else {
       throw new Error('Not implemented')
     }
   }
 
-  displayModelInstance(modelInstance: ModelInstance) {
+  displayModelResource(modelResource: ModelInstance) {
     ux.styledObject({
-      'Base Model ID': modelInstance.plan,
-      Ready: modelInstance.ready,
-      'Tokens In': modelInstance.tokens_in,
-      'Tokens Out': modelInstance.tokens_out,
-      'Avg Performance': modelInstance.avg_performance,
+      'Base Model ID': modelResource.plan,
+      Ready: modelResource.ready,
+      'Tokens In': modelResource.tokens_in,
+      'Tokens Out': modelResource.tokens_out,
+      'Avg Performance': modelResource.avg_performance,
     })
   }
 }
