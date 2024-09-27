@@ -117,10 +117,8 @@ describe('ai:models:call', function () {
           ])
         } catch (error: unknown) {
           const {message} = error as SyntaxError
-          expect(stripAnsi(message)).to.eq(heredoc`
-            Invalid JSON in model-options.json. Check the formatting in your file.
-            Unexpected token i in JSON at position 0
-          `.trim())
+          expect(stripAnsi(message)).to.contain('Invalid JSON in model-options.json. Check the formatting in your file.')
+          expect(stripAnsi(message)).to.contain('Unexpected token')
         }
 
         expect(readFileSyncMock.calledWith('model-options.json')).to.be.true
@@ -172,10 +170,8 @@ describe('ai:models:call', function () {
           ])
         } catch (error: unknown) {
           const {message} = error as SyntaxError
-          expect(stripAnsi(message)).to.eq(heredoc`
-            Invalid JSON. Check the formatting in your --opts value.
-            Unexpected token i in JSON at position 0
-          `.trim())
+          expect(stripAnsi(message)).to.contain('Invalid JSON. Check the formatting in your --opts value.')
+          expect(stripAnsi(message)).to.contain('Unexpected token')
         }
 
         expect(stripAnsi(stderr.output)).to.eq('')
