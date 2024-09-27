@@ -65,7 +65,6 @@ export default class Info extends Command {
 
     if (modelResource) {
       listOfProvisionedModels = await getModelDetails(modelResource)
-      // console.log('listOfProvisionedModels', listOfProvisionedModels)
     } else {
       const provisionedModelsInfo: Record<string, string | undefined>[] = []
       const inferenceRegex = /inference/
