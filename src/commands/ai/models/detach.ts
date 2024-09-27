@@ -3,7 +3,6 @@ import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import * as Heroku from '@heroku-cli/schema'
 import Command from '../../../lib/base'
-// import {HTTPError} from 'http-call'
 
 export default class Detach extends Command {
   static description = 'Detach a model resource from an app.'
