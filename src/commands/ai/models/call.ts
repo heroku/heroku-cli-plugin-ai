@@ -2,9 +2,9 @@ import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import fs from 'node:fs'
-// import path from 'node:path'
-import {ChatCompletionResponse, ModelList} from '../../../lib/ai/types'
+import {ChatCompletionResponse, ImageResponse, ModelList} from '../../../lib/ai/types'
 import Command from '../../../lib/base'
+import {openUrl} from '../../../lib/open-url'
 
 export default class Call extends Command {
   static args = {
@@ -16,17 +16,18 @@ export default class Call extends Command {
 
   static description = 'make an inference request to a specific AI model resource'
   static examples = [
-    'heroku ai:models:call my_llm --prompt "What is the meaning of life?"',
-    'heroku ai:models:call sdxl --prompt "Generate an image of a sunset" --opts \'{"quality": "hd"}\'',
+    'heroku ai:models:call my_llm --app my-app --prompt "What is the meaning of life?"',
+    'heroku ai:models:call sdxl --app my-app --prompt "Generate an image of a sunset" --opts \'{"quality":"hd"}\' -o sunset.png',
   ]
 
   static flags = {
-    app: flags.app({required: true}),
+    app: flags.app({required: false}),
     // interactive: flags.boolean({
     //   char: 'i',
     //   description: 'Use interactive mode for conversation beyond the initial prompt (not available on all models)',
     //   default: false,
     // }),
+    browser: flags.string({description: 'browser to open images with (example: "firefox", "safari")'}),
     json: flags.boolean({char: 'j', description: 'Output response as JSON'}),
     optfile: flags.string({
       description: 'Additional options for model inference, provided as a JSON config file.',
@@ -53,7 +54,7 @@ export default class Call extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(Call)
     const {model_resource: modelResource} = args
-    const {app, json, optfile, opts, output, prompt} = flags
+    const {app, browser, json, optfile, opts, output, prompt} = flags
 
     // Initially, configure the default client to fetch the available model classes
     await this.configureHerokuAIClient()
@@ -69,12 +70,15 @@ export default class Call extends Command {
     case 'Embedding':
       break
 
-    case 'Text-to-Image':
+    case 'Text-to-Image': {
+      const image = await this.generateImage(prompt, options)
+      await this.displayImageResult(image, output, browser, json)
       break
+    }
 
     case 'Text-to-Text': {
       const completion = await this.createChatCompletion(prompt, options)
-      this.displayChatCompletion(completion, output, json)
+      await this.displayChatCompletion(completion, output, json)
       break
     }
 
@@ -146,13 +150,49 @@ export default class Call extends Command {
     return chatCompletionResponse
   }
 
-  private displayChatCompletion(completion: ChatCompletionResponse, output?: string, json = false) {
-    const content = json ? JSON.stringify(completion, null, 2) : completion.choices[0].message.content || ''
+  private async displayChatCompletion(completion: ChatCompletionResponse, output?: string, json = false) {
+    const content = completion.choices[0].message.content || ''
 
     if (output) {
-      fs.writeFileSync(output, content)
+      fs.writeFileSync(output, json ? JSON.stringify(completion, null, 2) : content)
     } else {
       json ? ux.styledJSON(completion) : ux.log(content)
     }
+  }
+
+  private async generateImage(prompt: string, options = {}) {
+    const {body: imageResponse} = await this.herokuAI.post<ImageResponse>('/v1/images/generations', {
+      body: {
+        ...options,
+        model: this.apiModelId,
+        prompt,
+      },
+      headers: {authorization: `Bearer ${this.apiKey}`},
+    })
+
+    return imageResponse
+  }
+
+  private async displayImageResult(image: ImageResponse, output?: string, browser?: string, json = false) {
+    if (image.data[0].b64_json) {
+      if (output) {
+        const content = json ? JSON.stringify(image, null, 2) : Buffer.from(image.data[0].b64_json, 'base64')
+        fs.writeFileSync(output, content)
+      } else
+        json ? ux.styledJSON(image) : process.stdout.write(image.data[0].b64_json)
+      return
+    }
+
+    if (image.data[0].url) {
+      if (output)
+        fs.writeFileSync(output, json ? JSON.stringify(image, null, 2) : image.data[0].url)
+      else if (json)
+        ux.styledJSON(image)
+      else
+        await openUrl(image.data[0].url, browser, 'view the image')
+      return
+    }
+
+    ux.error('Unexpected response format')
   }
 }

@@ -1,5 +1,5 @@
 import * as Heroku from '@heroku-cli/schema'
-import {ChatCompletionResponse} from '../../src/lib/ai/types'
+import {ChatCompletionResponse, ImageResponse} from '../../src/lib/ai/types'
 
 export const availableModels = [
   {
@@ -241,7 +241,7 @@ export const addon1ProvisionedWithAttachmentName: Heroku.AddOn = {
 export const chatCompletionResponse: ChatCompletionResponse = {
   id: 'chatcmpl-17f8f365f941de720ad38',
   object: 'chat.completion',
-  created: 1727398076,
+  created: 1234567890,
   model: 'claude-3-sonnet',
   system_fingerprint: 'heroku-inf-zzuqrd',
   choices: [
@@ -262,3 +262,56 @@ export const chatCompletionResponse: ChatCompletionResponse = {
   },
 }
 
+export const addon5: Heroku.AddOn = {
+  addon_service: {
+    id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
+    name: 'inference',
+  },
+  app: {
+    id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+    name: 'app2',
+  },
+  id: 'c0addaa4-d2e2-4da4-bf93-c522af6790f9',
+  name: 'inference-colorful-79696',
+  plan: {
+    id: 'de948fb0-48c4-4f47-912d-745817a80f05',
+    name: 'inference:stable-diffusion-xl',
+  },
+}
+
+export const addon5Attachment1: Heroku.AddOnAttachment = {
+  addon: {
+    id: 'c0addaa4-d2e2-4da4-bf93-c522af6790f9',
+    name: 'inference-colorful-79696',
+    app: {
+      id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+      name: 'app2',
+    },
+  },
+  app: {
+    id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+    name: 'app2',
+  },
+  id: '87f6f66f-8ad3-4787-b895-bc79c2641342',
+  name: 'DIFFUSION',
+}
+
+export const mockedImageContent = 'Let’s pretend this is an image'
+export const mockedImageBase64 = 'TGV04oCZcyBwcmV0ZW5kIHRoaXMgaXMgYW4gaW1hZ2U='
+export const mockedImageUrl = 'https://example.com/image.png'
+
+export const mockedImageResponseBase64: ImageResponse = {
+  created: 1234567890,
+  data: [{
+    b64_json: mockedImageBase64,
+    revised_prompt: '',
+  }],
+}
+
+export const mockedImageResponseUrl: ImageResponse = {
+  created: 1234567890,
+  data: [{
+    url: mockedImageUrl,
+    revised_prompt: '',
+  }],
+}

@@ -150,3 +150,25 @@ export type ChatCompletionResponse = {
     } | null
   }
 }
+
+/**
+ * Image schema
+ */
+export type Image = {
+  /** The base64-encoded JSON of the generated image, if 'response_format' is 'b64_json' */
+  readonly b64_json?: string | null
+  /** The prompt that was used to generate the image, if there was any revision to the prompt */
+  readonly revised_prompt: string
+  /** The URL of the generated image, if 'response_format' is 'url' (default) */
+  readonly url?: string | null
+}
+
+/**
+ * Image response schema.
+ */
+export type ImageResponse = {
+  /** The Unix timestamp (in seconds) of when the image was generated */
+  readonly created: number
+  /** A list of images */
+  readonly data: Array<Image>
+}

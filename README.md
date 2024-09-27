@@ -101,18 +101,19 @@ make an inference request to a specific AI model resource
 
 ```
 USAGE
-  $ heroku ai:models:call [MODEL_RESOURCE] -a <value> -p <value> [-j] [--optfile <value>] [--opts <value>] [-o
-    <value>] [-r <value>]
+  $ heroku ai:models:call [MODEL_RESOURCE] -p <value> [-a <value>] [--browser <value>] [-j] [--optfile <value>]
+    [--opts <value>] [-o <value>] [-r <value>]
 
 ARGUMENTS
   MODEL_RESOURCE  The resource ID or alias of the model to call.
 
 FLAGS
-  -a, --app=<value>     (required) app to run command against
+  -a, --app=<value>     app to run command against
   -j, --json            Output response as JSON
   -o, --output=<value>  The file path where the command writes the model response.
   -p, --prompt=<value>  (required) The input prompt for the model.
   -r, --remote=<value>  git remote of app to use
+  --browser=<value>     browser to open images with (example: "firefox", "safari")
   --optfile=<value>     Additional options for model inference, provided as a JSON config file.
   --opts=<value>        Additional options for model inference, provided as a JSON string.
 
@@ -120,9 +121,9 @@ DESCRIPTION
   make an inference request to a specific AI model resource
 
 EXAMPLES
-  $ heroku ai:models:call my_llm --prompt "What is the meaning of life?"
+  $ heroku ai:models:call my_llm --app my-app --prompt "What is the meaning of life?"
 
-  $ heroku ai:models:call sdxl --prompt "Generate an image of a sunset" --opts '{"quality": "hd"}'
+  $ heroku ai:models:call sdxl --app my-app --prompt "Generate an image of a sunset" --opts '{"quality":"hd"}' -o sunset.png
 ```
 
 _See code: [dist/commands/ai/models/call.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/call.ts)_

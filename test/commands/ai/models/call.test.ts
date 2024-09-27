@@ -4,9 +4,18 @@ import {expect} from 'chai'
 import nock from 'nock'
 import sinon from 'sinon'
 import Cmd from '../../../../src/commands/ai/models/call'
+import * as openUrl from '../../../../src/lib/open-url'
 import stripAnsi from '../../../helpers/strip-ansi'
 import {runCommand} from '../../../run-command'
-import {addon3, addon3Attachment1, availableModels, chatCompletionResponse} from '../../../helpers/fixtures'
+import {
+  addon3, addon3Attachment1,
+  addon5, addon5Attachment1,
+  availableModels,
+  chatCompletionResponse,
+  mockedImageBase64, mockedImageContent, mockedImageResponseBase64,
+  mockedImageResponseUrl,
+  mockedImageUrl,
+} from '../../../helpers/fixtures'
 import heredoc from 'tsheredoc'
 
 describe('ai:models:call', function () {
@@ -48,7 +57,7 @@ describe('ai:models:call', function () {
         })
     })
 
-    context('without any optional flags', function () {
+    context('without --json or --output options', function () {
       it('sends the prompt to the service and displays the response content', async function () {
         const prompt = 'Hello, who are you?'
         inferenceApi = nock('https://inference-eu.heroku.com', {
@@ -251,6 +260,225 @@ describe('ai:models:call', function () {
         expect(writeFileSyncMock.calledWith(
           'model-output.txt',
           "Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.",
+        )).to.be.true
+        expect(stdout.output).to.eq('')
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+    })
+  })
+
+  context('when targeting a diffusion (Text-to-Image) model resource', function () {
+    beforeEach(async function () {
+      api.post('/actions/addons/resolve', {addon: addon5Attachment1.name, app: addon5Attachment1.app?.name})
+        .reply(200, [addon5])
+        .post('/actions/addon-attachments/resolve', {addon_attachment: addon5Attachment1.name, app: addon5Attachment1.app?.name})
+        .reply(200, [addon5Attachment1])
+        .get(`/apps/${addon5Attachment1.app?.id}/config-vars`)
+        .reply(200, {
+          DIFFUSION_KEY: 's3cr3t_k3y',
+          DIFFUSION_MODEL_ID: 'stable-diffusion-xl',
+          DIFFUSION_URL: 'inference-eu.heroku.com',
+        })
+    })
+
+    context('without --json or --output options, for Base64 response format', function () {
+      it('sends the prompt to the service and shows the Base64-encoded content of the file', async function () {
+        const prompt = 'Generate a mocked image'
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/images/generations', {
+          model: 'stable-diffusion-xl',
+          prompt,
+          response_format: 'b64_json',
+        }).reply(200, mockedImageResponseBase64)
+
+        await runCommand(Cmd, [
+          'DIFFUSION',
+          '--app=app2',
+          `--prompt=${prompt}`,
+          '--opts={"response_format":"b64_json"}',
+        ])
+
+        expect(stdout.output).to.eq(mockedImageBase64)
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+    })
+
+    context('with --json flag, but no --output, for Base64 response format', function () {
+      it('sends the prompt to the service and shows the JSON response', async function () {
+        const prompt = 'Generate a mocked image'
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/images/generations', {
+          model: 'stable-diffusion-xl',
+          prompt,
+          response_format: 'b64_json',
+        }).reply(200, mockedImageResponseBase64)
+
+        await runCommand(Cmd, [
+          'DIFFUSION',
+          '--app=app2',
+          `--prompt=${prompt}`,
+          '--opts={"response_format":"b64_json"}',
+          '--json',
+        ])
+
+        expect(JSON.parse(stdout.output)).to.deep.equal(mockedImageResponseBase64)
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+    })
+
+    context('with --output option, but no --json, for Base64 response format', function () {
+      it('sends the prompt to the service, decodes the Base64 content and writes it to the indicated file', async function () {
+        const prompt = 'Generate a mocked image'
+        const writeFileSyncMock = sandbox.stub(fs, 'writeFileSync')
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/images/generations', {
+          model: 'stable-diffusion-xl',
+          prompt,
+          response_format: 'b64_json',
+        }).reply(200, mockedImageResponseBase64)
+
+        await runCommand(Cmd, [
+          'DIFFUSION',
+          '--app=app2',
+          `--prompt=${prompt}`,
+          '--opts={"response_format":"b64_json"}',
+          '--output=output-image.png',
+        ])
+
+        expect(writeFileSyncMock.calledWith(
+          'output-image.png',
+          Buffer.from(mockedImageContent),
+        )).to.be.true
+        expect(stdout.output).to.eq('')
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+    })
+
+    context('with --output and --json options, for Base64 response format', function () {
+      it('sends the prompt to the service and writes full JSON response to the indicated file', async function () {
+        const prompt = 'Generate a mocked image'
+        const writeFileSyncMock = sandbox.stub(fs, 'writeFileSync')
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/images/generations', {
+          model: 'stable-diffusion-xl',
+          prompt,
+          response_format: 'b64_json',
+        }).reply(200, mockedImageResponseBase64)
+
+        await runCommand(Cmd, [
+          'DIFFUSION',
+          '--app=app2',
+          `--prompt=${prompt}`,
+          '--opts={"response_format":"b64_json"}',
+          '--output=image-response.json',
+          '--json',
+        ])
+
+        expect(writeFileSyncMock.calledWith(
+          'image-response.json',
+          JSON.stringify(mockedImageResponseBase64, null, 2),
+        )).to.be.true
+        expect(stdout.output).to.eq('')
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+    })
+
+    context('without --json or --output options, for URL response format', function () {
+      it('sends the prompt to the service and attempts to open the URL on the default browser', async function () {
+        const openUrlStub = sandbox.stub(openUrl, 'openUrl').onFirstCall().resolves()
+        const prompt = 'Generate a mocked image'
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/images/generations', {
+          model: 'stable-diffusion-xl',
+          prompt,
+        }).reply(200, mockedImageResponseUrl)
+
+        await runCommand(Cmd, [
+          'DIFFUSION',
+          '--app=app2',
+          `--prompt=${prompt}`,
+        ])
+
+        expect(openUrlStub.calledWith(mockedImageUrl, undefined, 'view the image')).to.be.true
+      })
+    })
+
+    context('with --json flag, but no --output, for URL response format', function () {
+      it('sends the prompt to the service and shows the JSON response', async function () {
+        const prompt = 'Generate a mocked image'
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/images/generations', {
+          model: 'stable-diffusion-xl',
+          prompt,
+        }).reply(200, mockedImageResponseUrl)
+
+        await runCommand(Cmd, [
+          'DIFFUSION',
+          '--app=app2',
+          `--prompt=${prompt}`,
+          '--json',
+        ])
+
+        expect(JSON.parse(stdout.output)).to.deep.equal(mockedImageResponseUrl)
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+    })
+
+    context('with --output option, but no --json, for URL response format', function () {
+      it('sends the prompt to the service and writes the URL to the indicated file', async function () {
+        const prompt = 'Generate a mocked image'
+        const writeFileSyncMock = sandbox.stub(fs, 'writeFileSync')
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/images/generations', {
+          model: 'stable-diffusion-xl',
+          prompt,
+        }).reply(200, mockedImageResponseUrl)
+
+        await runCommand(Cmd, [
+          'DIFFUSION',
+          '--app=app2',
+          `--prompt=${prompt}`,
+          '--output=image-url.txt',
+        ])
+
+        expect(writeFileSyncMock.calledWith(
+          'image-url.txt',
+          mockedImageUrl,
+        )).to.be.true
+        expect(stdout.output).to.eq('')
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+    })
+
+    context('with --output and --json options, for URL response format', function () {
+      it('sends the prompt to the service and writes full JSON response to the indicated file', async function () {
+        const prompt = 'Generate a mocked image'
+        const writeFileSyncMock = sandbox.stub(fs, 'writeFileSync')
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/images/generations', {
+          model: 'stable-diffusion-xl',
+          prompt,
+        }).reply(200, mockedImageResponseUrl)
+
+        await runCommand(Cmd, [
+          'DIFFUSION',
+          '--app=app2',
+          `--prompt=${prompt}`,
+          '--output=image-response.json',
+          '--json',
+        ])
+
+        expect(writeFileSyncMock.calledWith(
+          'image-response.json',
+          JSON.stringify(mockedImageResponseUrl, null, 2),
         )).to.be.true
         expect(stdout.output).to.eq('')
         expect(stripAnsi(stderr.output)).to.eq('')
