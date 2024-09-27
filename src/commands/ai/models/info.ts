@@ -52,9 +52,15 @@ export default class Info extends Command {
         const isModelAddon = inferenceRegex.test(addonType)
 
         if (isModelAddon) {
-          provisionedModelsInfo.push({name: addonInfo.addon_service?.name, modelId: addonInfo.addon_service?.id})
+          provisionedModelsInfo.push({
+            addonName: addonInfo.addon_service?.name,
+            modelResource: addonInfo.name,
+            modelId: addonInfo.addon_service?.id,
+          })
         }
       }
+
+      // for ()
 
       console.log('provisionedModelsInfo', provisionedModelsInfo)
     }
