@@ -26,8 +26,8 @@ export default class Info extends Command {
     const {args, flags} = await this.parse(Info)
     const {app} = flags
     const {modelResource} = args
-    const synthesizedModels: any = []
-    let listOfProvisionedModels: any = []
+    const synthesizedModels: Array<ModelResource> = []
+    let listOfProvisionedModels: Array<ModelResource>  = []
 
     const modelInfo = async () => {
       const modelInfoResponse = await this.herokuAI.get<ModelResource>(`/models/${this.apiModelId}`, {
@@ -50,13 +50,13 @@ export default class Info extends Command {
         await this.configureHerokuAIClient(modelResource, app)
 
         const {body: currentModelResource} = await modelInfo() || {body: null}
-        synthesizedModels.push(currentModelResource)
+        synthesizedModels.push(currentModelResource!)
       } else {
         for (const addonModel of collectedModels) {
           await this.configureHerokuAIClient(addonModel.modelResource, app)
 
           const {body: currentModelResource} = await modelInfo() || {body: null}
-          synthesizedModels.push(currentModelResource)
+          synthesizedModels.push(currentModelResource!)
         }
       }
 
