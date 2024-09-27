@@ -1,5 +1,3 @@
-// import color from '@heroku-cli/color'
-import {ux} from '@oclif/core'
 import {Config} from '@oclif/core'
 import {APIClient} from '@heroku-cli/command'
 import * as Heroku from '@heroku-cli/schema'
