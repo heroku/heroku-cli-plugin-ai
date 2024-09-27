@@ -186,8 +186,9 @@ export default abstract class extends Command {
     }
 
     // 5. If we resolved for an add-on, check that it's a Managed Inference add-on or throw a NotFound error.
-    if (resolvedAddon && resolvedAddon.addon_service.name !== this.addonServiceSlug)
+    if (resolvedAddon && resolvedAddon.addon_service.name !== this.addonServiceSlug) {
       throw new NotFound(addonIdentifier, appIdentifier)
+    }
 
     // 6. If we resolved for an add-on but not for an attachment yet, try to resolve the attachment
     if (resolvedAddon && !resolvedAttachment) {
