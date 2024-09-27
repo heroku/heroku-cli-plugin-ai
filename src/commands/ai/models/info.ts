@@ -26,22 +26,51 @@ export default class Info extends Command {
     const {args, flags} = await this.parse(Info)
     const {app} = flags
     const {modelResource} = args
-    if (modelResource) {
-      await this.configureHerokuAIClient(modelResource, app)
-      const modelResourceResponse = await this.herokuAI.get<ModelResource>(`/models/${this.apiModelId}`, {
-        headers: {authorization: `Bearer ${this.apiKey}`},
-      })
-        .catch(error => {
-          console.log('WE ARE HERE4')
-          if (error.statusCode === 404) {
-            ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
-          } else {
-            throw error
-          }
+    const synthesizedModels: any = []
+
+    const getModelDetails = async (collectedModels: Array<Heroku.AddOn> | string) => {
+      if (typeof collectedModels === 'string') {
+        const modelResource = collectedModels
+        await this.configureHerokuAIClient(modelResource, app)
+
+        const modelResourceResponse = await this.herokuAI.get<ModelResource>(`/models/${this.apiModelId}`, {
+          headers: {authorization: `Bearer ${this.apiKey}`},
         })
-      const {body: currentModelResource} = modelResourceResponse || {body: null}
-      if (currentModelResource)
-        this.displayModelResource(currentModelResource)
+          .catch(error => {
+            console.log('WE ARE HERE4')
+            if (error.statusCode === 404) {
+              ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
+            } else {
+              throw error
+            }
+          })
+        synthesizedModels.push(modelResourceResponse)
+      } else {
+        for (const addonModel of collectedModels) {
+          await this.configureHerokuAIClient(addonModel.modelResource, app)
+
+          const modelResourceResponse = await this.herokuAI.get<ModelResource>(`/models/${this.apiModelId}`, {
+            headers: {authorization: `Bearer ${this.apiKey}`},
+          })
+            .catch(error => {
+              console.log('WE ARE HERE4')
+              if (error.statusCode === 404) {
+                ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
+              } else {
+                throw error
+              }
+            })
+          const {body: currentModelResource} = modelResourceResponse || {body: null}
+          synthesizedModels.push(currentModelResource)
+        }
+      }
+
+      return synthesizedModels
+    }
+
+    if (modelResource) {
+      const listOfProvisionedModels = await getModelDetails(modelResource)
+      console.log('listOfProvisionedModels', listOfProvisionedModels)
     } else {
       const provisionedModelsInfo: Record<string, string | undefined>[] = []
       const inferenceRegex = /inference/
@@ -60,10 +89,13 @@ export default class Info extends Command {
         }
       }
 
-      // for ()
+      const listOfProvisionedModels = await getModelDetails(provisionedModelsInfo)
 
-      console.log('provisionedModelsInfo', provisionedModelsInfo)
+      console.log('listOfProvisionedModels', listOfProvisionedModels)
+      // console.log('provisionedModelsInfo', provisionedModelsInfo)
     }
+
+    // this.displayModelResource()
   }
 
   // add model names to array
