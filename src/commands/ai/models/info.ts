@@ -7,8 +7,8 @@ import {ModelInstance} from '../../../lib/ai/types'
 export default class Info extends Command {
   static description = 'get the current status of all the AI model resources attached to your app or a specific resource'
   static examples = [
-    '$ heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app',
-    '$ heroku ai:models:info --app example-app',
+    'heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app',
+    'heroku ai:models:info --app example-app',
   ]
 
   static flags = {
@@ -26,7 +26,7 @@ export default class Info extends Command {
     const {modelResource} = args
     if (modelResource) {
       await this.configureHerokuAIClient(modelResource, app)
-      const modelResourceResponse = await this.herokuAI.get<ModelInstance>(`/models/${this.addonAttachment.id}`)
+      const modelResourceResponse = await this.herokuAI.get<ModelInstance>(`/models/${this.modelId}`)
         .catch(error => {
           if (error.statusCode === 404) {
             ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
