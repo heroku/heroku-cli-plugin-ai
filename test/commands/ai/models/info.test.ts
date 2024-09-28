@@ -8,7 +8,7 @@ import heredoc from 'tsheredoc'
 import stripAnsi from '../../../helpers/strip-ansi'
 import {CLIError} from '@oclif/core/lib/errors'
 
-describe.only('ai:models:info', function () {
+describe('ai:models:info', function () {
   const {env} = process
   let api: nock.Scope
   let herokuAI: nock.Scope
