@@ -2,10 +2,11 @@ import {expect} from 'chai'
 import {stdout, stderr} from 'stdout-stderr'
 import Cmd from '../../../../src/commands/ai/models/info'
 import {runCommand} from '../../../run-command'
-import {modelResource, addon1Attachment1, addon1} from '../../../helpers/fixtures'
+import {modelResource, addon1Attachment1, addon1, mockAPIErrors} from '../../../helpers/fixtures'
 import nock from 'nock'
 import heredoc from 'tsheredoc'
 import stripAnsi from '../../../helpers/strip-ansi'
+import {CLIError} from '@oclif/core/lib/errors'
 
 describe.only('ai:models:info', function () {
   const {env} = process
@@ -127,40 +128,35 @@ describe.only('ai:models:info', function () {
     })
   })
 
-  // context('when provisioned model name is incorrectly inputted', function () {
-  //   beforeEach(function () {
-  //     process.env = {}
-  //     api = nock('https://api.heroku.com:443')
-  //   })
+  context('when provisioned model name is incorrectly inputted', function () {
+    const incorrectModelName = 'inference-regular-WRONG'
 
-  //   afterEach(function () {
-  //     process.env = env
-  //     nock.cleanAll()
-  //   })
+    beforeEach(function () {
+      process.env = {}
+      api = nock('https://api.heroku.com:443')
+    })
 
-  //   it('shows an error message', async function () {
-  //     api
-  //       .post('/actions/addons/resolve',
-  //         {addon: addon1.name, app: addon1Attachment1.app?.name})
-  //       .reply(200, [addon1])
-  //       .get(`/addons/${addon1.id}/addon-attachments`)
-  //       .reply(200, [addon1Attachment1])
-  //       .get(`/apps/${addon1Attachment1.app?.id}/config-vars`)
-  //       .reply(200, {
-  //         INFERENCE_KEY: 's3cr3t_k3y',
-  //         INFERENCE_MODEL_ID: 'claude-3-haiku',
-  //         INFERENCE_URL: 'inference.heroku.com',
-  //       })
-  //     nock('https://inference.heroku.com')
-  //       .get(`/models/${addon1Attachment1.id}`)
-  //       .reply(404, {error: 'Model not found'})
+    afterEach(function () {
+      process.env = env
+      nock.cleanAll()
+    })
 
-  //     await runCommand(Cmd, [
-  //       '--app',
-  //       'app1',
-  //       'inference-regular-74659',
-  //     ])
-  //     expect(stripAnsi(stderr.output)).to.eq(' Warning: inference-regular-74659 is not yet provisioned.\n Run heroku ai:wait to wait until the instance is provisioned.\n')
-  //   })
-  // })
+    it('shows an error message', async function () {
+      api
+        .post('/actions/addons/resolve',
+          {addon: incorrectModelName, app: addon1Attachment1.app?.name})
+        .reply(404, mockAPIErrors.modelsInfoErrorResponse)
+
+      try {
+        await runCommand(Cmd, [
+          incorrectModelName,
+          '--app',
+          'app1',
+        ])
+      } catch (error) {
+        const {message} = error as CLIError
+        expect(stripAnsi(message)).contains(mockAPIErrors.modelsInfoErrorResponse.message)
+      }
+    })
+  })
 })

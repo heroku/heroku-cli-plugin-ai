@@ -47,6 +47,10 @@ export const mockAPIErrors = {
     id: 'error',
     message: 'Example API Error',
   },
+  modelsInfoErrorResponse: {
+    id: 'error',
+    message: 'Example API Error',
+  },
 }
 
 export const modelResource: ModelResource = {
