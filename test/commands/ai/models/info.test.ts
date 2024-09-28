@@ -8,7 +8,7 @@ import heredoc from 'tsheredoc'
 import stripAnsi from '../../../helpers/strip-ansi'
 import {CLIError} from '@oclif/core/lib/errors'
 
-describe('ai:models:info', function () {
+describe.only('ai:models:info', function () {
   const {env} = process
   let api: nock.Scope
   let herokuAI: nock.Scope
@@ -49,8 +49,11 @@ describe('ai:models:info', function () {
       ])
 
       expect(stripAnsi(stdout.output)).to.contain(heredoc`
+
+        === claude-3-sonnet
+
         Avg Performance: latency 0.4sec, 28 tokens/sec
-        Base Model ID:   claude-3-haiku
+        Base Model ID:   claude-3-sonnet
         Ready:           Yes
         Tokens In:       0 tokens this period
         Tokens Out:      0 tokens this period
@@ -114,11 +117,15 @@ describe('ai:models:info', function () {
       ])
 
       expect(stdout.output).to.contain(heredoc`
+        === claude-3-sonnet  
+        
         Avg Performance: latency 0.4sec, 28 tokens/sec
         Base Model ID:   claude-3-haiku
         Ready:           Yes
         Tokens In:       0 tokens this period
         Tokens Out:      0 tokens this period
+
+        === claude-3-sonnet
 
         Avg Performance: latency 0.4sec, 28 tokens/sec
         Base Model ID:   claude-3-haiku

@@ -54,7 +54,7 @@ export const mockAPIErrors = {
 }
 
 export const modelResource: ModelResource = {
-  plan: 'claude-3-haiku',
+  model_id: 'claude-3-haiku',
   ready: 'Yes',
   created: '2023-01-21T13:02:37.320+00.00',
   tokens_in: '0 tokens this period',

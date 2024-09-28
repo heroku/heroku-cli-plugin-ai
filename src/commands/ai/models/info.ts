@@ -92,8 +92,9 @@ export default class Info extends Command {
   displayModelResource(modelResources: ModelResource[]) {
     for (const modelResource of modelResources) {
       ux.log()
+      ux.styledHeader(modelResource.model_id)
       ux.styledObject({
-        'Base Model ID': modelResource.plan,
+        'Base Model ID': modelResource.model_id,
         Ready: modelResource.ready,
         'Tokens In': modelResource.tokens_in,
         'Tokens Out': modelResource.tokens_out,
