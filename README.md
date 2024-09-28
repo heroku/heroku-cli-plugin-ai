@@ -31,6 +31,7 @@ USAGE
 * [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
 * [`heroku ai:models:destroy MODELRESOURCE`](#heroku-aimodelsdestroy-modelresource)
 * [`heroku ai:models:detach MODEL_RESOURCE`](#heroku-aimodelsdetach-model_resource)
+* [`heroku ai:models:info [MODELRESOURCE]`](#heroku-aimodelsinfo-modelresource)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
@@ -174,6 +175,32 @@ EXAMPLES
 ```
 
 _See code: [dist/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/detach.ts)_
+
+## `heroku ai:models:info [MODELRESOURCE]`
+
+get the current status of all the AI model resources attached to your app or a specific resource
+
+```
+USAGE
+  $ heroku ai:models:info [MODELRESOURCE] -a <value> [-r <value>]
+
+ARGUMENTS
+  MODELRESOURCE  The resource ID or alias of the model resource to check.
+
+FLAGS
+  -a, --app=<value>     (required) app to run command against
+  -r, --remote=<value>  git remote of app to use
+
+DESCRIPTION
+  get the current status of all the AI model resources attached to your app or a specific resource
+
+EXAMPLES
+  $ heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app
+
+  $ heroku ai:models:info --app example-app
+```
+
+_See code: [dist/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-integration/blob/v0.0.0/dist/commands/ai/models/info.ts)_
 
 ## `heroku ai:models:list`
 

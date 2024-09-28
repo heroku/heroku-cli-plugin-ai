@@ -71,6 +71,7 @@
     "lint": "eslint . --ext .ts --config .eslintrc.json",
     "posttest": "yarn lint",
     "test": "nyc mocha --forbid-only",
+    "test:local": "nyc mocha",
     "version": "oclif readme && git add README.md"
   }
 }
