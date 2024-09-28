@@ -48,12 +48,12 @@ describe.only('ai:models:info', function () {
         'app1',
       ])
 
-      expect(stripAnsi(stdout.output)).to.contain(heredoc`
+      expect(stripAnsi(stdout.output)).to.equal(heredoc`
 
-        === claude-3-sonnet
+        === claude-3-haiku
 
         Avg Performance: latency 0.4sec, 28 tokens/sec
-        Base Model ID:   claude-3-sonnet
+        Base Model ID:   claude-3-haiku
         Ready:           Yes
         Tokens In:       0 tokens this period
         Tokens Out:      0 tokens this period
@@ -116,8 +116,9 @@ describe.only('ai:models:info', function () {
         'app1',
       ])
 
-      expect(stdout.output).to.contain(heredoc`
-        === claude-3-sonnet  
+      expect(stdout.output).to.equal(heredoc`
+
+        === claude-3-haiku
         
         Avg Performance: latency 0.4sec, 28 tokens/sec
         Base Model ID:   claude-3-haiku
@@ -125,7 +126,7 @@ describe.only('ai:models:info', function () {
         Tokens In:       0 tokens this period
         Tokens Out:      0 tokens this period
 
-        === claude-3-sonnet
+        === claude-3-haiku
 
         Avg Performance: latency 0.4sec, 28 tokens/sec
         Base Model ID:   claude-3-haiku
