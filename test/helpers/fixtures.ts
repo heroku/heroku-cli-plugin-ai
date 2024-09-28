@@ -1,34 +1,34 @@
 import * as Heroku from '@heroku-cli/schema'
-import {ModelResource} from '../../src/lib/ai/types'
+import {ChatCompletionResponse, EmbeddingResponse, ImageResponse, ModelResource} from '../../src/lib/ai/types'
 
 export const availableModels = [
   {
-    model_id: 'stable-diffusion-xl',
-    type: ['Text-to-image'],
-  },
-  {
-    model_id: 'claude-3-5-sonnet',
-    type: ['Text-to-text'],
-  },
-  {
-    model_id: 'claude-3-opus',
-    type: ['Text-to-text'],
-  },
-  {
     model_id: 'claude-3-sonnet',
-    type: ['Text-to-text'],
+    type: ['Text-to-Text'],
   },
   {
     model_id: 'claude-3-haiku',
-    type: ['Text-to-text'],
+    type: ['Text-to-Text'],
   },
   {
     model_id: 'cohere-embed-english',
-    type: ['Text-to-text', 'Embedding'],
+    type: ['Embedding'],
   },
   {
     model_id: 'cohere-embed-multilingual',
-    type: ['Text-to-text', 'Embedding'],
+    type: ['Embedding'],
+  },
+  {
+    model_id: 'stable-diffusion-xl',
+    type: ['Text-to-Image'],
+  },
+  {
+    model_id: 'claude-3-5-sonnet',
+    type: ['Text-to-Text'],
+  },
+  {
+    model_id: 'claude-3-opus',
+    type: ['Text-to-Text'],
   },
 ]
 
@@ -259,4 +259,144 @@ export const addon1ProvisionedWithAttachmentName: Heroku.AddOn = {
     'CLAUDE_HAIKU_ID',
     'CLAUDE_HAIKU_URL',
   ],
+}
+
+export const chatCompletionResponse: ChatCompletionResponse = {
+  id: 'chatcmpl-17f8f365f941de720ad38',
+  object: 'chat.completion',
+  created: 1234567890,
+  model: 'claude-3-sonnet',
+  system_fingerprint: 'heroku-inf-zzuqrd',
+  choices: [
+    {
+      index: 0,
+      message: {
+        role: 'assistant',
+        content: "Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.",
+        refusal: null,
+      },
+      finish_reason: 'stop',
+    },
+  ],
+  usage: {
+    prompt_tokens: 13,
+    completion_tokens: 26,
+    total_tokens: 39,
+  },
+}
+
+export const addon5: Heroku.AddOn = {
+  addon_service: {
+    id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
+    name: 'inference',
+  },
+  app: {
+    id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+    name: 'app2',
+  },
+  id: 'c0addaa4-d2e2-4da4-bf93-c522af6790f9',
+  name: 'inference-colorful-79696',
+  plan: {
+    id: 'de948fb0-48c4-4f47-912d-745817a80f05',
+    name: 'inference:stable-diffusion-xl',
+  },
+}
+
+export const addon5Attachment1: Heroku.AddOnAttachment = {
+  addon: {
+    id: 'c0addaa4-d2e2-4da4-bf93-c522af6790f9',
+    name: 'inference-colorful-79696',
+    app: {
+      id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+      name: 'app2',
+    },
+  },
+  app: {
+    id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+    name: 'app2',
+  },
+  id: '87f6f66f-8ad3-4787-b895-bc79c2641342',
+  name: 'DIFFUSION',
+}
+
+export const imageContent = 'Let’s pretend this is an image'
+export const imageContentBase64 = 'TGV04oCZcyBwcmV0ZW5kIHRoaXMgaXMgYW4gaW1hZ2U='
+export const imageUrl = 'https://example.com/image.png'
+
+export const imageResponseBase64: ImageResponse = {
+  created: 1234567890,
+  data: [{
+    b64_json: imageContentBase64,
+    revised_prompt: '',
+  }],
+}
+
+export const imageResponseUrl: ImageResponse = {
+  created: 1234567890,
+  data: [{
+    url: imageUrl,
+    revised_prompt: '',
+  }],
+}
+
+export const addon6: Heroku.AddOn = {
+  addon_service: {
+    id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
+    name: 'inference',
+  },
+  app: {
+    id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+    name: 'app2',
+  },
+  id: 'f4be4855-2639-443b-bc96-4080f62da7f2',
+  name: 'inference-crystalline-08560',
+  plan: {
+    id: '808ebff3-813e-425c-812f-3c6c4241b4af',
+    name: 'inference:cohere-embed-multilingual',
+  },
+}
+
+export const addon6Attachment1: Heroku.AddOnAttachment = {
+  addon: {
+    id: 'f4be4855-2639-443b-bc96-4080f62da7f2',
+    name: 'inference-crystalline-08560',
+    app: {
+      id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+      name: 'app2',
+    },
+  },
+  app: {
+    id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
+    name: 'app2',
+  },
+  id: '6156e9ef-3cad-4049-965a-b616a21883f1',
+  name: 'EMBEDDINGS',
+}
+
+export const embeddingsVector = [
+  0.017089844,
+  0.029556274,
+  -0.047729492,
+  0.025772095,
+  -0.03060913,
+  -0.0309906,
+  -0.010574341,
+  -0.030792236,
+]
+
+export const stringifiedEmbeddingsVector = embeddingsVector.toString()
+
+export const embeddingsResponse: EmbeddingResponse = {
+  object: 'list',
+  data: [{
+    object: 'embeddings',
+    index: 0,
+    embeddings: embeddingsVector,
+  }],
+  model: 'cohere-embed-multilingual',
+  usage: {
+    prompt_tokens: 13,
+    completion_tokens: 0,
+    total_tokens: 13,
+  },
 }

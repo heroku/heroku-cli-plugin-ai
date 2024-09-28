@@ -3,7 +3,6 @@ import {APIClient, Command} from '@heroku-cli/command'
 import * as Heroku from '@heroku-cli/schema'
 import {ux} from '@oclif/core'
 import heredoc from 'tsheredoc'
-// import {inspect} from 'node:util'
 import {HerokuAPIError} from '@heroku-cli/command/lib/api-client'
 
 export class NotFound extends Error {
@@ -60,7 +59,7 @@ export default abstract class extends Command {
     const defaultHeaders = {
       ...this.heroku.defaults.headers,
       accept: 'application/json',
-      'user-agent': `heroku-cli-plugin-ai/${this.config.version} ${this.config.platform}`,
+      'user-agent': `heroku-cli-plugin-ai/${process.env.npm_package_version} ${this.config.platform}`,
     }
     delete defaultHeaders.authorization
 
