@@ -4,6 +4,9 @@
   "version": "0.0.1",
   "author": "Heroku",
   "bugs": "https://github.com/heroku/heroku-cli-plugin-ai/issues",
+  "publishConfig": {
+    "access": "restricted"
+  },
   "dependencies": {
     "@heroku-cli/color": "^2",
     "@heroku-cli/command": "^11",
