@@ -1,7 +1,7 @@
 {
   "name": "@heroku/plugin-ai",
   "description": "Heroku CLI plugin for Heroku AI add-on",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Heroku",
   "bugs": "https://github.com/heroku/heroku-cli-plugin-ai/issues",
   "publishConfig": {
