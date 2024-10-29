@@ -36,6 +36,11 @@ export default class Create extends Command {
     const {app, as, confirm} = flags
     const {model_name: modelName} = args
 
+    ux.warn(
+      '\n\nHeroku Managed Inference and Agents is a pilot service. Currently offered models are powered by AWS Bedrock. ' +
+      'Generative AI may provide inaccurate information.\n'
+    )
+
     try {
       const addon = await createAddon(
         this.heroku,
