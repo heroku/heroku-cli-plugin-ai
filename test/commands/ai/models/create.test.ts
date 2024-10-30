@@ -44,8 +44,10 @@ describe('ai:models:create', function () {
         'claude-3-haiku',
         '--app=app1',
       ])
-      expect(stripAnsi(stderr.output)).to.eq(heredoc`
-        Creating inference:claude-3-haiku on app1...
+      expect(stripAnsi(stderr.output)).to.include(
+        'Heroku Managed Inference and Agents is a pilot service.'
+      )
+      expect(stripAnsi(stderr.output)).to.include(heredoc`
         Creating inference:claude-3-haiku on app1... free
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
@@ -73,8 +75,10 @@ describe('ai:models:create', function () {
         '--app=app1',
         '--as=CLAUDE_HAIKU',
       ])
-      expect(stripAnsi(stderr.output)).to.eq(heredoc`
-        Creating inference:claude-3-haiku on app1...
+      expect(stripAnsi(stderr.output)).to.include(
+        'Heroku Managed Inference and Agents is a pilot service.'
+      )
+      expect(stripAnsi(stderr.output)).to.include(heredoc`
         Creating inference:claude-3-haiku on app1... free
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
