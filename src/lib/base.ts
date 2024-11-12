@@ -254,7 +254,7 @@ export default abstract class extends Command {
   get addonServiceSlug(): string {
     return this._addonServiceSlug ||
       process.env.HEROKU_INFERENCE_ADDON ||
-      'inference'
+      'heroku-inference'
   }
 
   get apiKey(): string {
