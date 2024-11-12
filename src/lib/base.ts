@@ -51,7 +51,7 @@ export default abstract class extends Command {
   private _apiModelId?: string
   private _apiUrl?: string
   private _herokuAI?: APIClient
-  private _defaultInferenceHost: string = process.env.HEROKU_INFERENCE_HOST || 'inference.heroku.com'
+  private _defaultInferenceHost: string = process.env.HEROKU_INFERENCE_HOST || 'us.inference.heroku.com'
 
   protected async configureHerokuAIClient(addonIdentifier?: string, appIdentifier?: string): Promise<void> {
     this._herokuAI = new APIClient(this.config)
@@ -70,7 +70,7 @@ export default abstract class extends Command {
 
       this._apiKey = configVars[this.apiKeyConfigVarName]
       this._apiModelId = configVars[this.apiModelIdConfigVarName] ||
-        this.addon.plan.name?.split(':')[1] // Fallback to plan name (e.g. "inference:claude-3-haiku" => "claude-3-haiku"
+        this.addon.plan.name?.split(':')[1] // Fallback to plan name (e.g. "heroku-inference:claude-3-haiku" => "claude-3-haiku"
       this._apiUrl = configVars[this.apiUrlConfigVarName]
       this._addonServiceSlug = this.addon.addon_service.name
       this._herokuAI.defaults.host = this.apiUrl
@@ -254,7 +254,7 @@ export default abstract class extends Command {
   get addonServiceSlug(): string {
     return this._addonServiceSlug ||
       process.env.HEROKU_INFERENCE_ADDON ||
-      'inference'
+      'heroku-inference'
   }
 
   get apiKey(): string {

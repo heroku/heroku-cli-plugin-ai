@@ -17,7 +17,7 @@ describe('ai:models:info', function () {
     beforeEach(function () {
       process.env = {}
       api = nock('https://api.heroku.com:443')
-      herokuAI = nock('https://inference.heroku.com')
+      herokuAI = nock('https://us.inference.heroku.com')
     })
 
     afterEach(function () {
@@ -36,7 +36,7 @@ describe('ai:models:info', function () {
         .reply(200, {
           INFERENCE_KEY: 's3cr3t_k3y',
           INFERENCE_MODEL_ID: 'claude-3-haiku',
-          INFERENCE_URL: 'inference.heroku.com',
+          INFERENCE_URL: 'us.inference.heroku.com',
         })
       herokuAI
         .get('/models/claude-3-haiku')
@@ -88,7 +88,7 @@ describe('ai:models:info', function () {
         .reply(200, {
           INFERENCE_KEY: 's3cr3t_k3y',
           INFERENCE_MODEL_ID: 'claude-3-haiku',
-          INFERENCE_URL: 'inference.heroku.com',
+          INFERENCE_URL: 'us.inference.heroku.com',
         })
       herokuAI
         .get('/models/claude-3-haiku')
@@ -105,7 +105,7 @@ describe('ai:models:info', function () {
         .reply(200, {
           INFERENCE_KEY: 's3cr3t_k3y',
           INFERENCE_MODEL_ID: 'claude-3-haiku',
-          INFERENCE_URL: 'inference.heroku.com',
+          INFERENCE_URL: 'us.inference.heroku.com',
         })
       herokuAI
         .get('/models/claude-3-haiku')

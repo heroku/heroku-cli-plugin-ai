@@ -84,7 +84,7 @@ describe('attempt a request using the Heroku AI client', function () {
 
   context('when the command doesn’t require a resource name', function () {
     it('makes a request to the default host', async function () {
-      const defaultApiHost = nock('https://inference.heroku.com')
+      const defaultApiHost = nock('https://us.inference.heroku.com')
         .get('/models')
         .reply(200, [])
 
@@ -275,21 +275,21 @@ describe('attempt a request using the Heroku AI client', function () {
     context('when using the add-on plan slug and no app, matching multiple model resources', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: 'inference:claude-3-opus', app: null})
+          .post('/actions/addons/resolve', {addon: 'heroku-inference:claude-3-opus', app: null})
           .reply(200, [addon2, addon2, addon4])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: 'inference:claude-3-opus', app: null})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference:claude-3-opus', app: null})
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on attachment.', resource: 'add_on attachment'})
       })
 
       it('returns an ambiguous identifier error message', async function () {
         try {
           await runCommand(CommandConfiguredWithResourceName, [
-            'inference:claude-3-opus',
+            'heroku-inference:claude-3-opus',
           ])
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match inference:claude-3-opus: ${addon2.name}, ${addon4.name}.
+            Multiple model resources match heroku-inference:claude-3-opus: ${addon2.name}, ${addon4.name}.
             Specify the model resource by its name instead.
           `)
         }
@@ -301,9 +301,9 @@ describe('attempt a request using the Heroku AI client', function () {
     context('when using the add-on plan slug and app, matching a single resource', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: 'inference:claude-3-opus', app: 'app2'})
+          .post('/actions/addons/resolve', {addon: 'heroku-inference:claude-3-opus', app: 'app2'})
           .reply(200, [addon4])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: 'inference:claude-3-opus', app: 'app2'})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference:claude-3-opus', app: 'app2'})
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on attachment.', resource: 'add_on attachment'})
           .get(`/addons/${addon4.id}/addon-attachments`)
           .reply(200, [addon4Attachment1])
@@ -321,7 +321,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .reply(200, {})
 
         await runCommand(CommandConfiguredWithResourceName, [
-          'inference:claude-3-opus',
+          'heroku-inference:claude-3-opus',
           '--app=app2',
         ])
 
@@ -547,9 +547,9 @@ describe('attempt a request using the Heroku AI client', function () {
     context('when using the add-on plan slug, matching a single resource on the accessible app', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: 'inference:claude-3-opus', app: null})
+          .post('/actions/addons/resolve', {addon: 'heroku-inference:claude-3-opus', app: null})
           .reply(200, [addon4])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: 'inference:claude-3-opus', app: null})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference:claude-3-opus', app: null})
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on attachment.', resource: 'add_on attachment'})
           .get(`/addons/${addon4.id}/addon-attachments`)
           .reply(200, [addon4Attachment1])
@@ -567,7 +567,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .reply(200, {})
 
         await runCommand(CommandConfiguredWithResourceName, [
-          'inference:claude-3-opus',
+          'heroku-inference:claude-3-opus',
         ])
 
         expect(stderr.output).to.equal('')

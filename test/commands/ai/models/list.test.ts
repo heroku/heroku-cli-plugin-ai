@@ -13,7 +13,7 @@ describe('ai:models:list', function () {
 
   beforeEach(function () {
     process.env = {}
-    herokuAI = nock('https://inference.heroku.com')
+    herokuAI = nock('https://us.inference.heroku.com')
   })
 
   afterEach(function () {

@@ -30,7 +30,7 @@ describe('ai:models:call', function () {
     process.env = {}
     sandbox = sinon.createSandbox()
     api = nock('https://api.heroku.com')
-    defaultInferenceApi = nock('https://inference.heroku.com')
+    defaultInferenceApi = nock('https://us.inference.heroku.com')
       .get('/available-models')
       .reply(200, availableModels)
   })
