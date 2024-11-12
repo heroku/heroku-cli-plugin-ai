@@ -51,7 +51,7 @@ export default abstract class extends Command {
   private _apiModelId?: string
   private _apiUrl?: string
   private _herokuAI?: APIClient
-  private _defaultInferenceHost: string = process.env.HEROKU_INFERENCE_HOST || 'inference.heroku.com'
+  private _defaultInferenceHost: string = process.env.HEROKU_INFERENCE_HOST || 'us.inference.heroku.com'
 
   protected async configureHerokuAIClient(addonIdentifier?: string, appIdentifier?: string): Promise<void> {
     this._herokuAI = new APIClient(this.config)
