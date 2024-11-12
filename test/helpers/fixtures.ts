@@ -65,7 +65,7 @@ export const modelResource: ModelResource = {
 export const addon1: Heroku.AddOn = {
   addon_service: {
     id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
-    name: 'inference',
+    name: 'heroku-inference',
   },
   app: {
     id: 'aa7ce11f-4e9d-4175-a85f-2440ce66a428',
@@ -75,14 +75,14 @@ export const addon1: Heroku.AddOn = {
   name: 'inference-regular-74659',
   plan: {
     id: '927beee9-dc83-4bcc-b1f7-70c091ece601',
-    name: 'inference:claude-3-haiku',
+    name: 'heroku-inference:claude-3-haiku',
   },
 }
 
 export const addon2: Heroku.AddOn = {
   addon_service: {
     id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
-    name: 'inference',
+    name: 'heroku-inference',
   },
   app: {
     id: 'aa7ce11f-4e9d-4175-a85f-2440ce66a428',
@@ -92,14 +92,14 @@ export const addon2: Heroku.AddOn = {
   name: 'inference-shaped-00003',
   plan: {
     id: '717e554c-5098-42a5-8a03-ed7a1675f9f2',
-    name: 'inference:claude-3-opus',
+    name: 'heroku-inference:claude-3-opus',
   },
 }
 
 export const addon3: Heroku.AddOn = {
   addon_service: {
     id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
-    name: 'inference',
+    name: 'heroku-inference',
   },
   app: {
     id: 'aa7ce11f-4e9d-4175-a85f-2440ce66a428',
@@ -109,14 +109,14 @@ export const addon3: Heroku.AddOn = {
   name: 'inference-animate-91825',
   plan: {
     id: 'ed27942a-929f-40d4-b145-a09361c53ecf',
-    name: 'inference:claude-3-sonnet',
+    name: 'heroku-inference:claude-3-sonnet',
   },
 }
 
 export const addon4: Heroku.AddOn = {
   addon_service: {
     id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
-    name: 'inference',
+    name: 'heroku-inference',
   },
   app: {
     id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
@@ -126,7 +126,7 @@ export const addon4: Heroku.AddOn = {
   name: 'inference-crystalline-68941',
   plan: {
     id: '717e554c-5098-42a5-8a03-ed7a1675f9f2',
-    name: 'inference:claude-3-opus',
+    name: 'heroku-inference:claude-3-opus',
   },
 }
 
@@ -246,7 +246,7 @@ export const addon1Provisioned: Heroku.AddOn = {
       unit: 'month',
       contract: false,
     },
-    name: 'inference:claude-3-haiku',
+    name: 'heroku-inference:claude-3-haiku',
   },
   provision_message: 'Heroku AI model resource provisioned successfully',
   state: 'provisioned',
@@ -288,7 +288,7 @@ export const chatCompletionResponse: ChatCompletionResponse = {
 export const addon5: Heroku.AddOn = {
   addon_service: {
     id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
-    name: 'inference',
+    name: 'heroku-inference',
   },
   app: {
     id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
@@ -298,7 +298,7 @@ export const addon5: Heroku.AddOn = {
   name: 'inference-colorful-79696',
   plan: {
     id: 'de948fb0-48c4-4f47-912d-745817a80f05',
-    name: 'inference:stable-diffusion-xl',
+    name: 'heroku-inference:stable-diffusion-xl',
   },
 }
 
@@ -342,7 +342,7 @@ export const imageResponseUrl: ImageResponse = {
 export const addon6: Heroku.AddOn = {
   addon_service: {
     id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d',
-    name: 'inference',
+    name: 'heroku-inference',
   },
   app: {
     id: 'd0256f69-a6ea-45ad-93e5-3911eac0d216',
@@ -352,7 +352,7 @@ export const addon6: Heroku.AddOn = {
   name: 'inference-crystalline-08560',
   plan: {
     id: '808ebff3-813e-425c-812f-3c6c4241b4af',
-    name: 'inference:cohere-embed-multilingual',
+    name: 'heroku-inference:cohere-embed-multilingual',
   },
 }
 

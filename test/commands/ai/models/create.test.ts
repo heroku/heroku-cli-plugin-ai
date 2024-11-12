@@ -33,7 +33,7 @@ describe('ai:models:create', function () {
       api
         .post('/apps/app1/addons', {
           config: {},
-          plan: {name: 'inference:claude-3-haiku'},
+          plan: {name: 'heroku-inference:claude-3-haiku'},
           attachment: {},
         })
         .reply(200, addon1Provisioned)
@@ -48,7 +48,7 @@ describe('ai:models:create', function () {
         'Heroku Managed Inference and Agents is a pilot service.'
       )
       expect(stripAnsi(stderr.output)).to.include(heredoc`
-        Creating inference:claude-3-haiku on app1... free
+        Creating heroku-inference:claude-3-haiku on app1... free
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
@@ -63,7 +63,7 @@ describe('ai:models:create', function () {
       api
         .post('/apps/app1/addons', {
           config: {},
-          plan: {name: 'inference:claude-3-haiku'},
+          plan: {name: 'heroku-inference:claude-3-haiku'},
           attachment: {name: 'CLAUDE_HAIKU'},
         })
         .reply(200, addon1ProvisionedWithAttachmentName)
@@ -79,7 +79,7 @@ describe('ai:models:create', function () {
         'Heroku Managed Inference and Agents is a pilot service.'
       )
       expect(stripAnsi(stderr.output)).to.include(heredoc`
-        Creating inference:claude-3-haiku on app1... free
+        Creating heroku-inference:claude-3-haiku on app1... free
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
@@ -95,7 +95,7 @@ describe('ai:models:create', function () {
       api
         .post('/apps/app1/addons', {
           config: {},
-          plan: {name: 'inference:claude-3-haiku'},
+          plan: {name: 'heroku-inference:claude-3-haiku'},
           attachment: {name: 'CLAUDE_HAIKU'},
         })
         .reply(423, {
@@ -105,7 +105,7 @@ describe('ai:models:create', function () {
         .post('/apps/app1/addons', {
           config: {},
           confirm: 'app1',
-          plan: {name: 'inference:claude-3-haiku'},
+          plan: {name: 'heroku-inference:claude-3-haiku'},
           attachment: {name: 'CLAUDE_HAIKU'},
         })
         .reply(200, addon1ProvisionedWithAttachmentName)
@@ -130,7 +130,7 @@ describe('ai:models:create', function () {
         .post('/apps/app1/addons', {
           config: {},
           confirm: 'app1',
-          plan: {name: 'inference:claude-3-haiku'},
+          plan: {name: 'heroku-inference:claude-3-haiku'},
           attachment: {name: 'CLAUDE_HAIKU'},
         })
         .reply(200, addon1ProvisionedWithAttachmentName)
@@ -155,7 +155,7 @@ describe('ai:models:create', function () {
       api
         .post('/apps/app1/addons', {
           config: {},
-          plan: {name: 'inference:claude-3-haiku'},
+          plan: {name: 'heroku-inference:claude-3-haiku'},
           attachment: {name: 'CLAUDE_HAIKU'},
         })
         .reply(423, {
@@ -185,7 +185,7 @@ describe('ai:models:create', function () {
         .post('/apps/app1/addons', {
           config: {},
           confirm: 'wrong-app-name',
-          plan: {name: 'inference:claude-3-haiku'},
+          plan: {name: 'heroku-inference:claude-3-haiku'},
           attachment: {name: 'CLAUDE_HAIKU'},
         })
         .reply(423, {
@@ -213,11 +213,11 @@ describe('ai:models:create', function () {
 
   context('when using an invalid model name argument', function () {
     beforeEach(function () {
-      const message = 'Couldn\'t find either the add-on service or the add-on plan of "inference:not-a-model-name".'
+      const message = 'Couldn\'t find either the add-on service or the add-on plan of "heroku-inference:not-a-model-name".'
       api
         .post('/apps/app1/addons', {
           config: {},
-          plan: {name: 'inference:not-a-model-name'},
+          plan: {name: 'heroku-inference:not-a-model-name'},
           attachment: {},
         })
         .reply(422, {id: 'invalid_params', message})
@@ -247,7 +247,7 @@ describe('ai:models:create', function () {
       api
         .post('/apps/app1/addons', {
           config: {},
-          plan: {name: 'inference:claude-3-haiku'},
+          plan: {name: 'heroku-inference:claude-3-haiku'},
           attachment: {name: 'wrong-alias'},
         })
         .reply(422, {id: 'invalid_params', message})
