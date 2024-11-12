@@ -50,7 +50,7 @@ DESCRIPTION
   Opens documentation for Heroku AI in your web browser.
 ```
 
-_See code: [dist/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.3/dist/commands/ai/docs.ts)_
+_See code: [dist/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.4/dist/commands/ai/docs.ts)_
 
 ## `heroku ai:models`
 
@@ -96,7 +96,7 @@ EXAMPLES
   $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app --as MY_CS35
 ```
 
-_See code: [dist/commands/ai/models/attach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.3/dist/commands/ai/models/attach.ts)_
+_See code: [dist/commands/ai/models/attach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.4/dist/commands/ai/models/attach.ts)_
 
 ## `heroku ai:models:call MODEL_RESOURCE`
 
@@ -129,7 +129,7 @@ EXAMPLES
   $ heroku ai:models:call sdxl --app my-app --prompt "Generate an image of a sunset" --opts '{"quality":"hd"}' -o sunset.png
 ```
 
-_See code: [dist/commands/ai/models/call.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.3/dist/commands/ai/models/call.ts)_
+_See code: [dist/commands/ai/models/call.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.4/dist/commands/ai/models/call.ts)_
 
 ## `heroku ai:models:create MODEL_NAME`
 
@@ -158,7 +158,7 @@ EXAMPLES
   $ heroku ai:models:create stable-diffusion-xl --app example-app --as my_sdxl
 ```
 
-_See code: [dist/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.3/dist/commands/ai/models/create.ts)_
+_See code: [dist/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.4/dist/commands/ai/models/create.ts)_
 
 ## `heroku ai:models:destroy MODELRESOURCE`
 
@@ -184,7 +184,7 @@ EXAMPLES
   $ heroku ai:models:destroy claude-3-5-sonnet-acute-43973
 ```
 
-_See code: [dist/commands/ai/models/destroy.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.3/dist/commands/ai/models/destroy.ts)_
+_See code: [dist/commands/ai/models/destroy.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.4/dist/commands/ai/models/destroy.ts)_
 
 ## `heroku ai:models:detach MODEL_RESOURCE`
 
@@ -208,7 +208,7 @@ EXAMPLES
   $ heroku ai:models:detach claude-3-5-sonnet-acute-41518 --app example-app
 ```
 
-_See code: [dist/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.3/dist/commands/ai/models/detach.ts)_
+_See code: [dist/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.4/dist/commands/ai/models/detach.ts)_
 
 ## `heroku ai:models:info [MODELRESOURCE]`
 
@@ -234,7 +234,7 @@ EXAMPLES
   $ heroku ai:models:info --app example-app
 ```
 
-_See code: [dist/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.3/dist/commands/ai/models/info.ts)_
+_See code: [dist/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.4/dist/commands/ai/models/info.ts)_
 
 ## `heroku ai:models:list`
 
@@ -254,5 +254,5 @@ EXAMPLES
   $ heroku ai:models:list
 ```
 
-_See code: [dist/commands/ai/models/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.3/dist/commands/ai/models/list.ts)_
+_See code: [dist/commands/ai/models/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.4/dist/commands/ai/models/list.ts)_
 <!-- commandsstop -->
