@@ -11,7 +11,7 @@ export type ModelName =
   'claude-3-haiku' |
   'claude-3-5-haiku' |
   'cohere-embed-multilingual' |
-  'stable-image-ultra' 
+  'stable-image-ultra'
 
 export type ModelType = 'text-to-image' | 'text-to-text' | 'text-to-embedding'
 
