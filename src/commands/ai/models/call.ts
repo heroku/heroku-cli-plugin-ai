@@ -66,6 +66,7 @@ export default class Call extends Command {
     // Not sure why `type` is an array in ModelListItem, we use the type from the first entry.
     const modelType = availableModels.find(m => m.model_id === this.apiModelId)?.type[0]
 
+    // Note: modelType will always be lower case.  MarcusBlankenship 11/13/24.
     switch (modelType) {
     case 'text-to-embedding': {
       const embedding = await this.createEmbedding(prompt, options)
