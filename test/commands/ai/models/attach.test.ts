@@ -26,7 +26,7 @@ describe('ai:models:attach', function () {
       .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
       .reply(200, {
         INFERENCE_MAROON_KEY: 's3cr3t_k3y',
-        INFERENCE_MAROON_MODEL_ID: 'claude-3-sonnet',
+        INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
         INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
       })
   })

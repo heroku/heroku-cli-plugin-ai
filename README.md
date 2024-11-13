@@ -155,7 +155,7 @@ EXAMPLES
   # Provision access to an AI model and attach it to your app with a default name:
   $ heroku ai:models:create claude-3-5-sonnet --app example-app
   # Provision access to an AI model and attach it to your app with a custom name:
-  $ heroku ai:models:create stable-diffusion-xl --app example-app --as my_sdxl
+  $ heroku ai:models:create stable-image-ultra --app example-app --as my_sdxl
 ```
 
 _See code: [dist/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.4/dist/commands/ai/models/create.ts)_

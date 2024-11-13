@@ -66,20 +66,20 @@ export default class Call extends Command {
     // Not sure why `type` is an array in ModelListItem, we use the type from the first entry.
     const modelType = availableModels.find(m => m.model_id === this.apiModelId)?.type[0]
 
-    switch (modelType) {
-    case 'Embedding': {
+    switch (modelType.toLowerCase()) {
+    case 'text-to-embedding': {
       const embedding = await this.createEmbedding(prompt, options)
       await this.displayEmbedding(embedding, output, json)
       break
     }
 
-    case 'Text-to-Image': {
+    case 'text-to-image': {
       const image = await this.generateImage(prompt, options)
       await this.displayImageResult(image, output, browser, json)
       break
     }
 
-    case 'Text-to-Text': {
+    case 'text-to-text': {
       const completion = await this.createChatCompletion(prompt, options)
       await this.displayChatCompletion(completion, output, json)
       break

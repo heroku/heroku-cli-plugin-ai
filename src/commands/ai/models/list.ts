@@ -9,7 +9,7 @@ const displayModels = (models: ModelList) => {
       get: ({model_id}: any) => model_id,
     },
     types: {
-      get: ({type}: any) => type.join(', ').replace(/-/g, ' '),
+      get: ({type}: any) => type.join(', '),
     },
   }, {'no-header': true})
 }

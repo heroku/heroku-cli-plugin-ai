@@ -3,38 +3,34 @@ import {ChatCompletionResponse, EmbeddingResponse, ImageResponse, ModelResource}
 
 export const availableModels = [
   {
-    model_id: 'claude-3-sonnet',
-    type: ['Text-to-Text'],
+    model_id: 'claude-3-5-sonnet',
+    type: ['text-to-text'],
+  },
+  {
+    model_id: 'claude-3-5-sonnet-latest',
+    type: ['text-to-text'],
   },
   {
     model_id: 'claude-3-haiku',
-    type: ['Text-to-Text'],
+    type: ['text-to-text'],
   },
   {
-    model_id: 'cohere-embed-english',
-    type: ['Embedding'],
+    model_id: 'claude-3-5-haiku',
+    type: ['text-to-text'],
   },
   {
     model_id: 'cohere-embed-multilingual',
-    type: ['Embedding'],
+    type: ['text-to-embedding'],
   },
   {
-    model_id: 'stable-diffusion-xl',
-    type: ['Text-to-Image'],
-  },
-  {
-    model_id: 'claude-3-5-sonnet',
-    type: ['Text-to-Text'],
-  },
-  {
-    model_id: 'claude-3-opus',
-    type: ['Text-to-Text'],
+    model_id: 'stable-image-ultra',
+    type: ['text-to-image'],
   },
 ]
 
 export const mockConfigVars = {
   INFERENCE_KEY: 's3cr3t_k3y',
-  INFERENCE_MODEL_ID: 'claude-3-opus',
+  INFERENCE_MODEL_ID: 'claude-3-5-sonnet-latest',
   INFERENCE_URL: 'inference-eu.heroku.com',
 }
 
@@ -92,7 +88,7 @@ export const addon2: Heroku.AddOn = {
   name: 'inference-shaped-00003',
   plan: {
     id: '717e554c-5098-42a5-8a03-ed7a1675f9f2',
-    name: 'heroku-inference:claude-3-opus',
+    name: 'heroku-inference:claude-3-5-sonnet-latest',
   },
 }
 
@@ -109,7 +105,7 @@ export const addon3: Heroku.AddOn = {
   name: 'inference-animate-91825',
   plan: {
     id: 'ed27942a-929f-40d4-b145-a09361c53ecf',
-    name: 'heroku-inference:claude-3-sonnet',
+    name: 'heroku-inference:claude-3-5-sonnet-latest',
   },
 }
 
@@ -126,7 +122,7 @@ export const addon4: Heroku.AddOn = {
   name: 'inference-crystalline-68941',
   plan: {
     id: '717e554c-5098-42a5-8a03-ed7a1675f9f2',
-    name: 'heroku-inference:claude-3-opus',
+    name: 'heroku-inference:claude-3-5-sonnet-latest',
   },
 }
 
@@ -265,7 +261,7 @@ export const chatCompletionResponse: ChatCompletionResponse = {
   id: 'chatcmpl-17f8f365f941de720ad38',
   object: 'chat.completion',
   created: 1234567890,
-  model: 'claude-3-sonnet',
+  model: 'claude-3-5-sonnet-latest',
   system_fingerprint: 'heroku-inf-zzuqrd',
   choices: [
     {
@@ -298,7 +294,7 @@ export const addon5: Heroku.AddOn = {
   name: 'inference-colorful-79696',
   plan: {
     id: 'de948fb0-48c4-4f47-912d-745817a80f05',
-    name: 'heroku-inference:stable-diffusion-xl',
+    name: 'heroku-inference:stable-image-ultra',
   },
 }
 
