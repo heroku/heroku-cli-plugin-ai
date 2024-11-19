@@ -53,7 +53,7 @@ describe('ai:models:call', function () {
         .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
         .reply(200, {
           INFERENCE_MAROON_KEY: 's3cr3t_k3y',
-          INFERENCE_MAROON_MODEL_ID: 'claude-3-sonnet',
+          INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
           INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
         })
     })
@@ -64,7 +64,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/chat/completions', {
-          model: 'claude-3-sonnet',
+          model: 'claude-3-5-sonnet-latest',
           messages: [{role: 'user', content: prompt}],
         }).reply(200, chatCompletionResponse)
 
@@ -87,7 +87,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/chat/completions', {
-          model: 'claude-3-sonnet',
+          model: 'claude-3-5-sonnet-latest',
           messages: [{role: 'user', content: prompt}],
         }).reply(200, chatCompletionResponse)
 
@@ -136,7 +136,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/chat/completions', {
-          model: 'claude-3-sonnet',
+          model: 'claude-3-5-sonnet-latest',
           messages: [{role: 'user', content: prompt}],
           stream: false,
           temperature: 0.7,
@@ -182,7 +182,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/chat/completions', {
-          model: 'claude-3-sonnet',
+          model: 'claude-3-5-sonnet-latest',
           messages: [{role: 'user', content: prompt}],
           stream: false,
           temperature: 0.7,
@@ -214,7 +214,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/chat/completions', {
-          model: 'claude-3-sonnet',
+          model: 'claude-3-5-sonnet-latest',
           messages: [{role: 'user', content: prompt}],
           stream: false,
           temperature: 0.5,
@@ -243,7 +243,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/chat/completions', {
-          model: 'claude-3-sonnet',
+          model: 'claude-3-5-sonnet-latest',
           messages: [{role: 'user', content: prompt}],
         }).reply(200, chatCompletionResponse)
 
@@ -273,7 +273,7 @@ describe('ai:models:call', function () {
         .get(`/apps/${addon5Attachment1.app?.id}/config-vars`)
         .reply(200, {
           DIFFUSION_KEY: 's3cr3t_k3y',
-          DIFFUSION_MODEL_ID: 'stable-diffusion-xl',
+          DIFFUSION_MODEL_ID: 'stable-image-ultra',
           DIFFUSION_URL: 'inference-eu.heroku.com',
         })
     })
@@ -284,7 +284,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/images/generations', {
-          model: 'stable-diffusion-xl',
+          model: 'stable-image-ultra',
           prompt,
           response_format: 'base64',
         }).reply(200, imageResponseBase64)
@@ -307,7 +307,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/images/generations', {
-          model: 'stable-diffusion-xl',
+          model: 'stable-image-ultra',
           prompt,
           response_format: 'base64',
         }).reply(200, imageResponseBase64)
@@ -332,7 +332,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/images/generations', {
-          model: 'stable-diffusion-xl',
+          model: 'stable-image-ultra',
           prompt,
           response_format: 'base64',
         }).reply(200, imageResponseBase64)
@@ -361,7 +361,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/images/generations', {
-          model: 'stable-diffusion-xl',
+          model: 'stable-image-ultra',
           prompt,
           response_format: 'base64',
         }).reply(200, imageResponseBase64)
@@ -391,7 +391,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/images/generations', {
-          model: 'stable-diffusion-xl',
+          model: 'stable-image-ultra',
           prompt,
         }).reply(200, imageResponseUrl)
 
@@ -411,7 +411,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/images/generations', {
-          model: 'stable-diffusion-xl',
+          model: 'stable-image-ultra',
           prompt,
         }).reply(200, imageResponseUrl)
 
@@ -434,7 +434,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/images/generations', {
-          model: 'stable-diffusion-xl',
+          model: 'stable-image-ultra',
           prompt,
         }).reply(200, imageResponseUrl)
 
@@ -461,7 +461,7 @@ describe('ai:models:call', function () {
         inferenceApi = nock('https://inference-eu.heroku.com', {
           reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
         }).post('/v1/images/generations', {
-          model: 'stable-diffusion-xl',
+          model: 'stable-image-ultra',
           prompt,
         }).reply(200, imageResponseUrl)
 

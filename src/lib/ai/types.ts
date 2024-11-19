@@ -6,15 +6,14 @@
  * Model names and types
  */
 export type ModelName =
-  'stable-diffusion-xl' |
   'claude-3-5-sonnet' |
-  'claude-3-opus' |
-  'claude-3-sonnet' |
+  'claude-3-5-sonnet-latest' |
   'claude-3-haiku' |
-  'cohere-embed-english' |
-  'cohere-embed-multilingual'
+  'claude-3-5-haiku' |
+  'cohere-embed-multilingual' |
+  'stable-image-ultra'
 
-export type ModelType = 'Text-to-Image' | 'Text-to-Text' | 'Embedding'
+export type ModelType = 'text-to-image' | 'text-to-text' | 'text-to-embedding'
 
 /**
  * Object schema for each collection item returned by the Model List endpoint.

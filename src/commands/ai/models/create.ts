@@ -19,7 +19,7 @@ export default class Create extends Command {
     # Provision access to an AI model and attach it to your app with a default name:
     heroku ai:models:create claude-3-5-sonnet --app example-app
     # Provision access to an AI model and attach it to your app with a custom name:
-    heroku ai:models:create stable-diffusion-xl --app example-app --as my_sdxl
+    heroku ai:models:create stable-image-ultra --app example-app --as diffusion
   `
   static flags = {
     app: flags.app({

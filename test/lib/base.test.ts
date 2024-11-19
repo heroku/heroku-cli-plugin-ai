@@ -275,21 +275,21 @@ describe('attempt a request using the Heroku AI client', function () {
     context('when using the add-on plan slug and no app, matching multiple model resources', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: 'heroku-inference:claude-3-opus', app: null})
+          .post('/actions/addons/resolve', {addon: 'heroku-inference:claude-3-5-sonnet-latest', app: null})
           .reply(200, [addon2, addon2, addon4])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference:claude-3-opus', app: null})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference:claude-3-5-sonnet-latest', app: null})
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on attachment.', resource: 'add_on attachment'})
       })
 
       it('returns an ambiguous identifier error message', async function () {
         try {
           await runCommand(CommandConfiguredWithResourceName, [
-            'heroku-inference:claude-3-opus',
+            'heroku-inference:claude-3-5-sonnet-latest',
           ])
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match heroku-inference:claude-3-opus: ${addon2.name}, ${addon4.name}.
+            Multiple model resources match heroku-inference:claude-3-5-sonnet-latest: ${addon2.name}, ${addon4.name}.
             Specify the model resource by its name instead.
           `)
         }
@@ -301,16 +301,16 @@ describe('attempt a request using the Heroku AI client', function () {
     context('when using the add-on plan slug and app, matching a single resource', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: 'heroku-inference:claude-3-opus', app: 'app2'})
+          .post('/actions/addons/resolve', {addon: 'heroku-inference:claude-3-5-sonnet-latest', app: 'app2'})
           .reply(200, [addon4])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference:claude-3-opus', app: 'app2'})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference:claude-3-5-sonnet-latest', app: 'app2'})
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on attachment.', resource: 'add_on attachment'})
           .get(`/addons/${addon4.id}/addon-attachments`)
           .reply(200, [addon4Attachment1])
           .get(`/apps/${addon4Attachment1.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_KEY: 's3cr3t_k3y',
-            INFERENCE_MODEL_ID: 'claude-3-opus',
+            INFERENCE_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_URL: 'inference-eu.heroku.com',
           })
       })
@@ -321,7 +321,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .reply(200, {})
 
         await runCommand(CommandConfiguredWithResourceName, [
-          'heroku-inference:claude-3-opus',
+          'heroku-inference:claude-3-5-sonnet-latest',
           '--app=app2',
         ])
 
@@ -373,7 +373,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/apps/${addon2Attachment2.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_PINK_KEY: 's3cr3t_k3y',
-            INFERENCE_PINK_MODEL_ID: 'claude-3-opus',
+            INFERENCE_PINK_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_PINK_URL: 'inference-eu.heroku.com',
           })
       })
@@ -403,7 +403,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_MAROON_KEY: 's3cr3t_k3y',
-            INFERENCE_MAROON_MODEL_ID: 'claude-3-sonnet',
+            INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
           })
       })
@@ -432,7 +432,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_MAROON_KEY: 's3cr3t_k3y',
-            INFERENCE_MAROON_MODEL_ID: 'claude-3-sonnet',
+            INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
           })
       })
@@ -462,7 +462,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/apps/${addon3Attachment2.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_JADE_KEY: 's3cr3t_k3y',
-            INFERENCE_JADE_MODEL_ID: 'claude-3-sonnet',
+            INFERENCE_JADE_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_JADE_URL: 'inference-eu.heroku.com',
           })
       })
@@ -492,7 +492,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/apps/${addon2Attachment1.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_CYAN_KEY: 's3cr3t_k3y',
-            INFERENCE_CYAN_MODEL_ID: 'claude-3-sonnet',
+            INFERENCE_CYAN_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_CYAN_URL: 'inference-eu.heroku.com',
           })
       })
@@ -525,7 +525,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/apps/${addon4Attachment1.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_KEY: 's3cr3t_k3y',
-            INFERENCE_MODEL_ID: 'claude-3-opus',
+            INFERENCE_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_URL: 'inference-eu.heroku.com',
           })
       })
@@ -547,16 +547,16 @@ describe('attempt a request using the Heroku AI client', function () {
     context('when using the add-on plan slug, matching a single resource on the accessible app', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: 'heroku-inference:claude-3-opus', app: null})
+          .post('/actions/addons/resolve', {addon: 'heroku-inference:claude-3-5-sonnet-latest', app: null})
           .reply(200, [addon4])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference:claude-3-opus', app: null})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference:claude-3-5-sonnet-latest', app: null})
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on attachment.', resource: 'add_on attachment'})
           .get(`/addons/${addon4.id}/addon-attachments`)
           .reply(200, [addon4Attachment1])
           .get(`/apps/${addon4Attachment1.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_KEY: 's3cr3t_k3y',
-            INFERENCE_MODEL_ID: 'claude-3-opus',
+            INFERENCE_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_URL: 'inference-eu.heroku.com',
           })
       })
@@ -567,7 +567,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .reply(200, {})
 
         await runCommand(CommandConfiguredWithResourceName, [
-          'heroku-inference:claude-3-opus',
+          'heroku-inference:claude-3-5-sonnet-latest',
         ])
 
         expect(stderr.output).to.equal('')
@@ -618,7 +618,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/apps/${addon3Attachment2.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_JADE_KEY: 's3cr3t_k3y',
-            INFERENCE_JADE_MODEL_ID: 'claude-3-sonnet',
+            INFERENCE_JADE_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_JADE_URL: 'inference-eu.heroku.com',
           })
       })
@@ -652,7 +652,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/apps/${addon3Attachment2.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_JADE_KEY: 's3cr3t_k3y',
-            INFERENCE_JADE_MODEL_ID: 'claude-3-sonnet',
+            INFERENCE_JADE_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_JADE_URL: 'inference-eu.heroku.com',
           })
       })
@@ -707,7 +707,7 @@ describe('attempt a request using the Heroku AI client', function () {
           .get(`/apps/${addon3Attachment2.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_JADE_KEY: 's3cr3t_k3y',
-            INFERENCE_JADE_MODEL_ID: 'claude-3-sonnet',
+            INFERENCE_JADE_MODEL_ID: 'claude-3-5-sonnet-latest',
             INFERENCE_JADE_URL: 'inference-eu.heroku.com',
           })
       })
