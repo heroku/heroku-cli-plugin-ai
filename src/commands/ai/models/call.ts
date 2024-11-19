@@ -17,7 +17,7 @@ export default class Call extends Command {
   static description = 'make an inference request to a specific AI model resource'
   static examples = [
     'heroku ai:models:call my_llm --app my-app --prompt "What is the meaning of life?"',
-    'heroku ai:models:call sdxl --app my-app --prompt "Generate an image of a sunset" --opts \'{"quality":"hd"}\' -o sunset.png',
+    'heroku ai:models:call diffusion --app my-app --prompt "Generate an image of a sunset" --opts \'{"quality":"hd"}\' -o sunset.png',
   ]
 
   static flags = {
