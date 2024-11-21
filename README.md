@@ -108,10 +108,11 @@ USAGE
     [--opts <value>] [-o <value>] [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  The resource ID or alias of the model to call.
+  MODEL_RESOURCE  The resource ID or alias of the model to call. The --app flag must be included if an alias is used.
 
 FLAGS
-  -a, --app=<value>     app to run command against
+  -a, --app=<value>     The name or ID of the app. If an alias for the MODEL_RESOURCE argument is used, this flag is
+                        required.
   -j, --json            Output response as JSON
   -o, --output=<value>  The file path where the command writes the model response.
   -p, --prompt=<value>  (required) The input prompt for the model.
