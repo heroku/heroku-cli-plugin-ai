@@ -19,13 +19,13 @@ export default class Info extends Command {
   }
 
   static args = {
-    modelResource: Args.string({description: 'The resource ID or alias of the model resource to check.'}),
+    model_resource: Args.string({description: 'the resource ID or alias of the model resource to check'}),
   }
 
   public async run(): Promise<any> {
     const {args, flags} = await this.parse(Info)
     const {app} = flags
-    const {modelResource} = args
+    const {model_resource: modelResource} = args
     const synthesizedModels: Array<ModelResource> = []
     let listOfProvisionedModels: Array<ModelResource>  = []
 
