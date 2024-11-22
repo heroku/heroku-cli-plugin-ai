@@ -29,7 +29,7 @@ describe('ai:models:destroy', function () {
       } catch (error) {
         const {message} = error as CLIError
         expect(stripAnsi(message)).contains('Missing 1 required arg:')
-        expect(stripAnsi(message)).contains('modelResource  The resource ID or alias of the model resource to destroy.')
+        expect(stripAnsi(message)).contains('model_resource  the resource ID or alias of the model resource to destroy')
       }
     })
   })
