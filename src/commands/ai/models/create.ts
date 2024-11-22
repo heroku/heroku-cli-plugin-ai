@@ -9,7 +9,7 @@ import Command from '../../../lib/base'
 export default class Create extends Command {
   static args = {
     model_name: Args.string({
-      description: 'The name of the model to provision access for',
+      description: 'the name of the model to provision access for',
       required: true,
     }),
   }
@@ -23,7 +23,7 @@ export default class Create extends Command {
   `
   static flags = {
     app: flags.app({
-      description: 'The name of the Heroku app to attach the model to',
+      description: 'the name of the Heroku app to attach the model to',
       required: true,
     }),
     as: flags.string({description: 'alias name for model resource'}),
