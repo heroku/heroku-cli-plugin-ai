@@ -9,7 +9,7 @@ import {openUrl} from '../../../lib/open-url'
 export default class Call extends Command {
   static args = {
     model_resource: Args.string({
-      description: 'The resource ID or alias of the model to call.',
+      description: 'the resource ID or alias of the model to call',
       required: true,
     }),
   }
@@ -28,24 +28,24 @@ export default class Call extends Command {
     //   default: false,
     // }),
     browser: flags.string({description: 'browser to open URLs with (example: "firefox", "safari")'}),
-    json: flags.boolean({char: 'j', description: 'Output response as JSON'}),
+    json: flags.boolean({char: 'j', description: 'output response as JSON'}),
     optfile: flags.string({
-      description: 'Additional options for model inference, provided as a JSON config file.',
+      description: 'additional options for model inference, provided as a JSON config file',
       required: false,
     }),
     opts: flags.string({
-      description: 'Additional options for model inference, provided as a JSON string.',
+      description: 'additional options for model inference, provided as a JSON string',
       required: false,
     }),
     output: flags.string({
       char: 'o',
       // description: 'The file path where the command writes the model response. If used with --interactive, this flag writes the entire exchange when the session closes.',
-      description: 'The file path where the command writes the model response.',
+      description: 'the file path where the command writes the model response',
       required: false,
     }),
     prompt: flags.string({
       char: 'p',
-      description: 'The input prompt for the model.',
+      description: 'the input prompt for the model',
       required: true,
     }),
     remote: flags.remote(),
