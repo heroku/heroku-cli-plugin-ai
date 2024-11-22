@@ -15,7 +15,7 @@ export default class Destroy extends Command {
   }
 
   static args = {
-    modelResource: Args.string({required: true, description: 'The resource ID or alias of the model resource to destroy.'}),
+    model_resource: Args.string({required: true, description: 'the resource ID or alias of the model resource to destroy'}),
   }
 
   static examples = [
@@ -25,7 +25,7 @@ export default class Destroy extends Command {
   public async run(): Promise<void> {
     const {flags, args} = await this.parse(Destroy)
     const {app, confirm} = flags
-    const {modelResource} = args
+    const {model_resource: modelResource} = args
     const force = flags.force || process.env.HEROKU_FORCE === '1'
 
     await this.configureHerokuAIClient(modelResource, app)
