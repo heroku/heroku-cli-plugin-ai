@@ -108,7 +108,7 @@ USAGE
     [--opts <value>] [-o <value>] [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  The resource ID or alias of the model to call. The --app flag must be included if an alias is used.
+  MODEL_RESOURCE Resource ID or alias of the model to call. The --app flag must be included if an alias is used.
 
 FLAGS
   -a, --app=<value>     The name or ID of the app. If an alias for the MODEL_RESOURCE argument is used, this flag is
