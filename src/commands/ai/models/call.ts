@@ -16,7 +16,7 @@ import {openUrl} from '../../../lib/open-url'
 export default class Call extends Command {
   static args = {
     model_resource: Args.string({
-      description: 'The resource ID or alias of the model to call. The --app flag must be included if an alias is used.',
+      description: 'Resource ID or alias of the model to call. The --app flag must be included if an alias is used.',
       required: true,
     }),
   }
