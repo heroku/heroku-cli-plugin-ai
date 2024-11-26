@@ -19,7 +19,7 @@ export default class Info extends Command {
   }
 
   static args = {
-    modelResource: Args.string({description: 'The resource ID or alias of the model resource to check.'}),
+    modelResource: Args.string({description: 'Resource ID or alias of the model resource to check.'}),
   }
 
   public async run(): Promise<any> {
