@@ -30,9 +30,9 @@ USAGE
 * [`heroku ai:models:attach MODEL_RESOURCE`](#heroku-aimodelsattach-model_resource)
 * [`heroku ai:models:call MODEL_RESOURCE`](#heroku-aimodelscall-model_resource)
 * [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
-* [`heroku ai:models:destroy MODELRESOURCE`](#heroku-aimodelsdestroy-modelresource)
+* [`heroku ai:models:destroy MODEL_RESOURCE`](#heroku-aimodelsdestroy-model_resource)
 * [`heroku ai:models:detach MODEL_RESOURCE`](#heroku-aimodelsdetach-model_resource)
-* [`heroku ai:models:info [MODELRESOURCE]`](#heroku-aimodelsinfo-modelresource)
+* [`heroku ai:models:info [MODEL_RESOURCE]`](#heroku-aimodelsinfo-model_resource)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
@@ -79,7 +79,7 @@ USAGE
   $ heroku ai:models:attach [MODEL_RESOURCE] -a <value> [--as <value>] [--confirm <value>] [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  The resource ID or alias of the model resource to attach.
+  MODEL_RESOURCE  resource ID or alias of the model resource to attach
 
 FLAGS
   -a, --app=<value>     (required) app to run command against
@@ -113,13 +113,13 @@ ARGUMENTS
 FLAGS
   -a, --app=<value>     Name or ID of the app. This flag is required if an alias is used for the MODEL_RESOURCE
                         argument.
-  -j, --json            Output response as JSON
-  -o, --output=<value>  The file path where the command writes the model response.
-  -p, --prompt=<value>  (required) The input prompt for the model.
+  -j, --json            output response as JSON
+  -o, --output=<value>  the file path where the command writes the model response
+  -p, --prompt=<value>  (required) the input prompt for the model
   -r, --remote=<value>  git remote of app to use
   --browser=<value>     browser to open URLs with (example: "firefox", "safari")
-  --optfile=<value>     Additional options for model inference, provided as a JSON config file.
-  --opts=<value>        Additional options for model inference, provided as a JSON string.
+  --optfile=<value>     additional options for model inference, provided as a JSON config file
+  --opts=<value>        additional options for model inference, provided as a JSON string
 
 DESCRIPTION
   make an inference request to a specific AI model resource
@@ -141,10 +141,10 @@ USAGE
   $ heroku ai:models:create [MODEL_NAME] -a <value> [--as <value>] [--confirm <value>] [-r <value>]
 
 ARGUMENTS
-  MODEL_NAME  The name of the model to provision access for
+  MODEL_NAME  name of the model to provision access for
 
 FLAGS
-  -a, --app=<value>     (required) The name of the Heroku app to attach the model to
+  -a, --app=<value>     (required) name of the Heroku app to attach the model to
   -r, --remote=<value>  git remote of app to use
   --as=<value>          alias name for model resource
   --confirm=<value>     overwrite existing config vars or existing add-on attachments
@@ -161,16 +161,16 @@ EXAMPLES
 
 _See code: [dist/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.5/dist/commands/ai/models/create.ts)_
 
-## `heroku ai:models:destroy MODELRESOURCE`
+## `heroku ai:models:destroy MODEL_RESOURCE`
 
 destroy an existing AI model resource
 
 ```
 USAGE
-  $ heroku ai:models:destroy [MODELRESOURCE] -a <value> [-c <value>] [-f] [-r <value>]
+  $ heroku ai:models:destroy [MODEL_RESOURCE] -a <value> [-c <value>] [-f] [-r <value>]
 
 ARGUMENTS
-  MODELRESOURCE  The resource ID or alias of the model resource to destroy.
+  MODEL_RESOURCE  resource ID or alias of the model resource to destroy
 
 FLAGS
   -a, --app=<value>      (required) app to run command against
@@ -189,21 +189,21 @@ _See code: [dist/commands/ai/models/destroy.ts](https://github.com/heroku/heroku
 
 ## `heroku ai:models:detach MODEL_RESOURCE`
 
-Detach a model resource from an app.
+detach a model resource from an app
 
 ```
 USAGE
   $ heroku ai:models:detach [MODEL_RESOURCE] -a <value> [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  The resource ID or alias of the model resource to detach
+  MODEL_RESOURCE  resource ID or alias of the model resource to detach
 
 FLAGS
-  -a, --app=<value>     (required) The name of the Heroku app to detach the model resource from.
+  -a, --app=<value>     (required) name of the Heroku app to detach the model resource from
   -r, --remote=<value>  git remote of app to use
 
 DESCRIPTION
-  Detach a model resource from an app.
+  detach a model resource from an app
 
 EXAMPLES
   $ heroku ai:models:detach claude-3-5-sonnet-acute-41518 --app example-app
@@ -211,16 +211,16 @@ EXAMPLES
 
 _See code: [dist/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.5/dist/commands/ai/models/detach.ts)_
 
-## `heroku ai:models:info [MODELRESOURCE]`
+## `heroku ai:models:info [MODEL_RESOURCE]`
 
 get the current status of all the AI model resources attached to your app or a specific resource
 
 ```
 USAGE
-  $ heroku ai:models:info [MODELRESOURCE] -a <value> [-r <value>]
+  $ heroku ai:models:info [MODEL_RESOURCE] -a <value> [-r <value>]
 
 ARGUMENTS
-  MODELRESOURCE  Resource ID or alias of the model resource to check.
+  MODEL_RESOURCE  resource ID or alias of the model resource to check
 
 FLAGS
   -a, --app=<value>     (required) app to run command against

@@ -5,15 +5,15 @@ import * as Heroku from '@heroku-cli/schema'
 import Command from '../../../lib/base'
 
 export default class Detach extends Command {
-  static description = 'Detach a model resource from an app.'
+  static description = 'detach a model resource from an app'
   static flags = {
-    app: flags.app({description: 'The name of the Heroku app to detach the model resource from.', required: true}),
+    app: flags.app({description: 'name of the Heroku app to detach the model resource from', required: true}),
     remote: flags.remote(),
   }
 
   static args = {
     model_resource: Args.string({
-      description: 'The resource ID or alias of the model resource to detach',
+      description: 'resource ID or alias of the model resource to detach',
       required: true,
     }),
   }
