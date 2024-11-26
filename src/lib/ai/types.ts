@@ -117,6 +117,49 @@ export type ChatCompletionChoice = {
   } | null
 }
 
+export interface ChatCompletionRequest {
+  messages: ChatMessage[];
+  model: string;
+  temperature?: number;
+  top_p?: number;
+  n?: number;
+  stream?: boolean;
+  stop?: string | string[];
+  max_tokens?: number;
+  presence_penalty?: number;
+  frequency_penalty?: number;
+  tools?: Tool[];
+  tool_choice?: 'none' | 'auto' | ToolChoice;
+  user?: string;
+}
+
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant' | 'tool';
+  content: string;
+  name?: string;
+  tool_calls?: ToolCall[];
+}
+
+export interface Tool {
+  type: 'function';
+  function: {
+    name: string;
+    description?: string;
+    parameters: {
+      type: 'object';
+      properties: Record<string, any>;
+      required?: string[];
+    };
+  };
+}
+
+export interface ToolChoice {
+  type: 'function';
+  function: {
+    name: string;
+  };
+}
+
 /**
  * Chat completion response schema.
  */
@@ -158,6 +201,70 @@ export type Image = {
   readonly url?: string | null
 }
 
+export type ImageRequest = {
+  prompt: string,
+  model: string,
+  n: number,
+  quality: string,
+  response_format: ResponseFormat,
+  size: string,
+  style: string,
+  user: string,
+  sampler: SamplerType,
+  seed: number,
+  steps: number,
+  cfg_scale: number,
+  clip_guidance_preset: ClipGuidancePreset,
+  style_preset: StylePreset
+}
+
+export enum ResponseFormat {
+  Url = 'url',
+  Base64 = 'base64',
+}
+
+export enum SamplerType {
+  DDIM = 'DDIM',
+  DDPM = 'DDPM',
+  KDPMPP2M = 'K_DPMPP_2M',
+  KDPMPP2SANCESTRAL = 'K_DPMPP_2S_ANCESTRAL',
+  KDPM2 = 'K_DPM_2',
+  KDPM2ANCESTRAL = 'K_DPM_2_ANCESTRAL',
+  KEULER = 'K_EULER',
+  KEULERANCESTRAL = 'K_EULER_ANCESTRAL',
+  KHEUN = 'K_HEUN',
+  KLMS = 'K_LMS',
+}
+
+export enum ClipGuidancePreset {
+  None = 'NONE',
+  FastBlue = 'FAST_BLUE',
+  FastGreen = 'FAST_GREEN',
+  SimpleSlow = 'SIMPLE SLOW',
+  Slower = 'SLOWER',
+  Slowest = 'SLOWEST',
+}
+
+export enum StylePreset {
+  '3DModel' = '3DModel',
+  AnalogFilm = 'analog-film',
+  Anime = 'anime',
+  Cinematic = 'cinematic',
+  ComicBook = 'comic-book',
+  DigitalArt = 'digital-art',
+  Enhance = 'enhance',
+  FantasyArt = 'fantasy-art',
+  Isometric = 'isometric',
+  LineArt = 'line-art',
+  LowPoly = 'low-poly',
+  ModelingCompound = 'modeling-compound',
+  NeonPunk = 'neon-punk',
+  Origami = 'origami',
+  Photographic = 'photographic',
+  PixelArt = 'pixel-art',
+  TileTexture = 'tile-texture',
+}
+
 /**
  * Image response schema.
  */
@@ -178,6 +285,14 @@ export type Embedding = {
   readonly embeddings: Array<number>
   /** The object type, which is always "embeddings" */
   readonly object: 'embeddings'
+}
+
+export interface CreateEmbeddingRequest {
+  model: string;
+  input: string | string[] | number[];
+  user?: string;
+  encoding_format?: 'float' | 'base64';
+  dimensions?: number;
 }
 
 /**

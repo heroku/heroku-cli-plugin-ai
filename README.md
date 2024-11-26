@@ -108,10 +108,11 @@ USAGE
     [--opts <value>] [-o <value>] [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  The resource ID or alias of the model to call.
+  MODEL_RESOURCE  Resource ID or alias of the model to call. The --app flag must be included if an alias is used.
 
 FLAGS
-  -a, --app=<value>     app to run command against
+  -a, --app=<value>     Name or ID of the app. This flag is required if an alias is used for the MODEL_RESOURCE
+                        argument.
   -j, --json            Output response as JSON
   -o, --output=<value>  The file path where the command writes the model response.
   -p, --prompt=<value>  (required) The input prompt for the model.
@@ -219,7 +220,7 @@ USAGE
   $ heroku ai:models:info [MODELRESOURCE] -a <value> [-r <value>]
 
 ARGUMENTS
-  MODELRESOURCE  The resource ID or alias of the model resource to check.
+  MODELRESOURCE  Resource ID or alias of the model resource to check.
 
 FLAGS
   -a, --app=<value>     (required) app to run command against
