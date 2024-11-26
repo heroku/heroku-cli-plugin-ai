@@ -1,23 +1,31 @@
-import fs from 'node:fs'
-import {stdout, stderr} from 'stdout-stderr'
+import * as client from '@heroku-cli/command'
 import {expect} from 'chai'
 import nock from 'nock'
+import fs from 'node:fs'
 import sinon from 'sinon'
+import {stderr, stdout} from 'stdout-stderr'
+import heredoc from 'tsheredoc'
 import Cmd from '../../../../src/commands/ai/models/call'
 import * as openUrl from '../../../../src/lib/open-url'
-import stripAnsi from '../../../helpers/strip-ansi'
-import {runCommand} from '../../../run-command'
 import {
-  addon3, addon3Attachment1,
-  addon5, addon5Attachment1,
-  addon6, addon6Attachment1,
+  addon3,
+  addon3Attachment1,
+  addon5,
+  addon5Attachment1,
+  addon6,
+  addon6Attachment1,
   availableModels,
   chatCompletionResponse,
   embeddingsResponse,
-  imageContentBase64, imageContent, imageResponseBase64, imageResponseUrl, imageUrl,
+  imageContent,
+  imageContentBase64,
+  imageResponseBase64,
+  imageResponseUrl,
+  imageUrl,
   stringifiedEmbeddingsVector,
 } from '../../../helpers/fixtures'
-import heredoc from 'tsheredoc'
+import stripAnsi from '../../../helpers/strip-ansi'
+import {runCommand} from '../../../run-command'
 
 describe('ai:models:call', function () {
   const {env} = process
@@ -33,6 +41,8 @@ describe('ai:models:call', function () {
     defaultInferenceApi = nock('https://us.inference.heroku.com')
       .get('/available-models')
       .reply(200, availableModels)
+
+    sandbox.replaceGetter(client.APIClient.prototype, 'auth', () => '1234')
   })
 
   afterEach(function () {
@@ -42,6 +52,7 @@ describe('ai:models:call', function () {
     inferenceApi.done()
     nock.cleanAll()
     sandbox.restore()
+    sinon.restore()
   })
 
   context('when targeting a LLM (Text-to-Text) model resource', function () {
@@ -256,7 +267,7 @@ describe('ai:models:call', function () {
 
         expect(writeFileSyncMock.calledWith(
           'model-output.txt',
-          "Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.",
+          'Hello! I\'m an AI assistant created by a company called Anthropic. It\'s nice to meet you.',
         )).to.be.true
         expect(stdout.output).to.eq('')
         expect(stripAnsi(stderr.output)).to.eq('')
