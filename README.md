@@ -79,7 +79,7 @@ USAGE
   $ heroku ai:models:attach [MODEL_RESOURCE] -a <value> [--as <value>] [--confirm <value>] [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  the resource ID or alias of the model resource to attach
+  MODEL_RESOURCE  resource ID or alias of the model resource to attach
 
 FLAGS
   -a, --app=<value>     (required) app to run command against
@@ -108,10 +108,11 @@ USAGE
     [--opts <value>] [-o <value>] [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  the resource ID or alias of the model to call
+  MODEL_RESOURCE  Resource ID or alias of the model to call. The --app flag must be included if an alias is used.
 
 FLAGS
-  -a, --app=<value>     app to run command against
+  -a, --app=<value>     Name or ID of the app. This flag is required if an alias is used for the MODEL_RESOURCE
+                        argument.
   -j, --json            output response as JSON
   -o, --output=<value>  the file path where the command writes the model response
   -p, --prompt=<value>  (required) the input prompt for the model
@@ -140,10 +141,10 @@ USAGE
   $ heroku ai:models:create [MODEL_NAME] -a <value> [--as <value>] [--confirm <value>] [-r <value>]
 
 ARGUMENTS
-  MODEL_NAME  the name of the model to provision access for
+  MODEL_NAME  name of the model to provision access for
 
 FLAGS
-  -a, --app=<value>     (required) the name of the Heroku app to attach the model to
+  -a, --app=<value>     (required) name of the Heroku app to attach the model to
   -r, --remote=<value>  git remote of app to use
   --as=<value>          alias name for model resource
   --confirm=<value>     overwrite existing config vars or existing add-on attachments
@@ -169,7 +170,7 @@ USAGE
   $ heroku ai:models:destroy [MODEL_RESOURCE] -a <value> [-c <value>] [-f] [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  the resource ID or alias of the model resource to destroy
+  MODEL_RESOURCE  resource ID or alias of the model resource to destroy
 
 FLAGS
   -a, --app=<value>      (required) app to run command against
@@ -195,10 +196,10 @@ USAGE
   $ heroku ai:models:detach [MODEL_RESOURCE] -a <value> [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  the resource ID or alias of the model resource to detach
+  MODEL_RESOURCE  resource ID or alias of the model resource to detach
 
 FLAGS
-  -a, --app=<value>     (required) the name of the Heroku app to detach the model resource from
+  -a, --app=<value>     (required) name of the Heroku app to detach the model resource from
   -r, --remote=<value>  git remote of app to use
 
 DESCRIPTION
@@ -219,7 +220,7 @@ USAGE
   $ heroku ai:models:info [MODEL_RESOURCE] -a <value> [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  the resource ID or alias of the model resource to check
+  MODEL_RESOURCE  resource ID or alias of the model resource to check
 
 FLAGS
   -a, --app=<value>     (required) app to run command against
