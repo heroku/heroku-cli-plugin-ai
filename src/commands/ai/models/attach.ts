@@ -8,7 +8,7 @@ import Command from '../../../lib/base'
 export default class Attach extends Command {
   static args = {
     model_resource: Args.string({
-      description: 'the resource ID or alias of the model resource to attach',
+      description: 'resource ID or alias of the model resource to attach',
       required: true,
     }),
   }
