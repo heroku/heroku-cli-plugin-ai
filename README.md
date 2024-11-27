@@ -76,24 +76,25 @@ attach an existing model resource to an app
 
 ```
 USAGE
-  $ heroku ai:models:attach [MODEL_RESOURCE] -a <value> [--as <value>] [--confirm <value>] [-r <value>]
+  $ heroku ai:models:attach [MODEL_RESOURCE] -s <value> -t <value> [--as <value>] [--confirm <value>] [-r <value>]
 
 ARGUMENTS
   MODEL_RESOURCE  The resource ID or alias of the model resource to attach.
 
 FLAGS
-  -a, --app=<value>     (required) app to run command against
-  -r, --remote=<value>  git remote of app to use
-  --as=<value>          alias name for model resource
-  --confirm=<value>     overwrite existing resource with same name
+  -r, --remote=<value>      git remote of target app to use
+  -s, --source-app=<value>  (required) source app for model resource
+  -t, --target-app=<value>  (required) target app for model resource
+  --as=<value>              alias name for model resource
+  --confirm=<value>         overwrite existing resource with same name
 
 DESCRIPTION
   attach an existing model resource to an app
 
 EXAMPLES
-  $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app
+  $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app
 
-  $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app --as MY_CS35
+  $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app --as MY_CS35
 ```
 
 _See code: [dist/commands/ai/models/attach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.5/dist/commands/ai/models/attach.ts)_

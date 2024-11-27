@@ -15,15 +15,16 @@ export default class Attach extends Command {
 
   static description = 'attach an existing model resource to an app'
   static examples = [
-    'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app',
-    'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app --as MY_CS35',
+    'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app',
+    'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app --as MY_CS35',
   ]
 
   static flags = {
     as: flags.string({description: 'alias name for model resource'}),
     confirm: flags.string({description: 'overwrite existing resource with same name'}),
-    app: flags.app({required: true}),
-    remote: flags.remote(),
+    'source-app': flags.string({required: true, description: 'source app for model resource', char: 's'}),
+    'target-app': flags.app({required: true, description: 'target app for model resource', char: 't'}),
+    remote: flags.remote({description: 'git remote of target app to use'}),
   }
 
   public async run(): Promise<void> {
