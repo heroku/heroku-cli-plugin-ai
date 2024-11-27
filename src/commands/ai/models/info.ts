@@ -44,18 +44,28 @@ export default class Info extends Command {
       return modelInfoResponse
     }
 
+    const addModelProperties = (modelResource: ModelResource | null, alias: string, resourceId: string) => {
+      const currentModelResource = modelResource
+      currentModelResource!.model_alias = alias
+      currentModelResource!.model_resource_id = resourceId
+
+      return currentModelResource
+    }
+
     const getModelDetails = async (collectedModels: Array<Heroku.AddOn> | string) => {
       if (typeof collectedModels === 'string') {
         const modelResource = collectedModels
         await this.configureHerokuAIClient(modelResource, app)
 
-        const {body: currentModelResource} = await modelInfo() || {body: null}
+        let {body: currentModelResource} = await modelInfo() || {body: null}
+        currentModelResource = addModelProperties(currentModelResource, this.modelAlias, this.addonResourceId)
         synthesizedModels.push(currentModelResource!)
       } else {
         for (const addonModel of collectedModels) {
           await this.configureHerokuAIClient(addonModel.modelResource, app)
 
-          const {body: currentModelResource} = await modelInfo() || {body: null}
+          let {body: currentModelResource} = await modelInfo() || {body: null}
+          currentModelResource = addModelProperties(currentModelResource, this.modelAlias, this.addonResourceId)
           synthesizedModels.push(currentModelResource!)
         }
       }
@@ -95,6 +105,8 @@ export default class Info extends Command {
       ux.styledHeader(modelResource.model_id)
       ux.styledObject({
         'Base Model ID': modelResource.model_id,
+        'Model Alias': modelResource.model_alias,
+        'Model Resource ID': modelResource.model_resource_id,
         Ready: modelResource.ready,
         'Tokens In': modelResource.tokens_in,
         'Tokens Out': modelResource.tokens_out,

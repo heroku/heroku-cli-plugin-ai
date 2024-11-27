@@ -42,6 +42,8 @@ export type ModelInfo = {
  */
 export type ModelResource = {
   model_id: ModelName
+  model_resource_id: string
+  model_alias: string
   ready: string
   created: string
   tokens_in: string
