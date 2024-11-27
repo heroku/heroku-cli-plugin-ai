@@ -30,7 +30,7 @@ export default class Attach extends Command {
   public async run(): Promise<void> {
     const {flags,  args} = await this.parse(Attach)
     const {model_resource: modelResource} = args
-    const {as, confirm} = flags as string
+    const {as, confirm} = flags
     const sourceApp = flags['source-app'] as string
     const targetApp = flags['target-app'] as string
 
