@@ -52,6 +52,7 @@ describe('ai:models:create', function () {
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
+        Model name: inference-regular-74659
         Added INFERENCE_KEY, INFERENCE_MODEL_ID, INFERENCE_URL to app1
         Use heroku ai:docs to view documentation.
       `)
@@ -83,6 +84,8 @@ describe('ai:models:create', function () {
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
+        Model name: inference-regular-74659
+        Model alias: CLAUDE_HAIKU
         Added CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL to app1
         Use heroku ai:docs to view documentation.
       `)
@@ -119,6 +122,8 @@ describe('ai:models:create', function () {
       expect(stripAnsi(stderr.output)).to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
+        Model name: inference-regular-74659
+        Model alias: CLAUDE_HAIKU
         Added CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL to app1
         Use heroku ai:docs to view documentation.
       `)
@@ -145,6 +150,8 @@ describe('ai:models:create', function () {
       expect(stripAnsi(stderr.output)).not.to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
+        Model name: inference-regular-74659
+        Model alias: CLAUDE_HAIKU
         Added CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL to app1
         Use heroku ai:docs to view documentation.
       `)
