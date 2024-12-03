@@ -19,10 +19,10 @@ describe('ai:models:attach', function () {
     process.env = {}
     sandbox = sinon.createSandbox()
     api = nock('https://api.heroku.com:443')
-      .post('/actions/addons/resolve', {addon: addon3.name, app: null})
-      .reply(200, [addon3])
-      .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: null})
+      .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: 'app1'})
       .reply(200, [addon3Attachment1])
+      .get(`/apps/${addon3.app?.id}/addons/${addon3.id}`)
+      .reply(200, addon3)
       .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
       .reply(200, {
         INFERENCE_MAROON_KEY: 's3cr3t_k3y',
@@ -48,7 +48,8 @@ describe('ai:models:attach', function () {
 
       await runCommand(Cmd, [
         'inference-animate-91825',
-        '--app=app2',
+        '--target-app=app2',
+        '--source-app=app1',
       ])
 
       expect(stdout.output).to.eq('')
@@ -78,7 +79,8 @@ describe('ai:models:attach', function () {
 
       await runCommand(Cmd, [
         'inference-animate-91825',
-        '--app=app2',
+        '--target-app=app2',
+        '--source-app=app1',
         '--as=CLAUDE_SONNET',
       ])
 
@@ -120,7 +122,8 @@ describe('ai:models:attach', function () {
 
       await runCommand(Cmd, [
         'inference-animate-91825',
-        '--app=app2',
+        '--target-app=app2',
+        '--source-app=app1',
         '--as=CLAUDE_SONNET',
       ])
 
@@ -155,7 +158,8 @@ describe('ai:models:attach', function () {
 
       await runCommand(Cmd, [
         'inference-animate-91825',
-        '--app=app2',
+        '--target-app=app2',
+        '--source-app=app1',
         '--as=CLAUDE_SONNET',
         '--confirm=app2',
       ])
@@ -188,7 +192,8 @@ describe('ai:models:attach', function () {
       try {
         await runCommand(Cmd, [
           'inference-animate-91825',
-          '--app=app2',
+          '--target-app=app2',
+          '--source-app=app1',
           '--as=CLAUDE_SONNET',
         ])
       } catch (error: unknown) {
@@ -218,7 +223,8 @@ describe('ai:models:attach', function () {
       try {
         await runCommand(Cmd, [
           'inference-animate-91825',
-          '--app=app2',
+          '--target-app=app2',
+          '--source-app=app1',
           '--as=CLAUDE_SONNET',
           '--confirm=wrong-app-name',
         ])
@@ -249,7 +255,8 @@ describe('ai:models:attach', function () {
       try {
         await runCommand(Cmd, [
           'inference-animate-91825',
-          '--app=app2',
+          '--target-app=app2',
+          '--source-app=app1',
           '--as=wrong-alias',
         ])
       } catch (error: unknown) {

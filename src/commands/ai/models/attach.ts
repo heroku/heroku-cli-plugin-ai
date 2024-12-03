@@ -15,33 +15,32 @@ export default class Attach extends Command {
 
   static description = 'attach an existing model resource to an app'
   static examples = [
-    'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app',
-    'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --app example-app --as MY_CS35',
+    'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app',
+    'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app --as MY_CS35',
   ]
 
   static flags = {
     as: flags.string({description: 'alias name for model resource'}),
-    confirm: flags.string({description: 'overwrite existing resource with same name'}),
-    app: flags.app({required: true}),
-    remote: flags.remote(),
+    confirm: flags.string({description: 'overwrite existing attached resource with same name'}),
+    'source-app': flags.string({char: 's', description: 'source app for model resource', required: true}),
+    'target-app': flags.app({char: 't', description: 'target app for model resource', required: true}),
+    remote: flags.remote({description: 'git remote of target app to use'}),
   }
 
   public async run(): Promise<void> {
     const {flags,  args} = await this.parse(Attach)
     const {model_resource: modelResource} = args
-    const {app, as, confirm} = flags
+    const {as, confirm} = flags
+    const sourceApp = flags['source-app'] as string
+    const targetApp = flags['target-app'] as string
 
-    // Here, we purposely resolve the model resource without passing the app name in the flags
-    // to the configuration method, because the app flag the user passes in is the target app
-    // where the attachment will be created and it's probably a different app from the one
-    // where the model resource is provisioned (the billed app).
-    await this.configureHerokuAIClient(modelResource)
+    await this.configureHerokuAIClient(modelResource, sourceApp)
     const attachment = await trapConfirmationRequired<Required<Heroku.AddOnAttachment>>(
-      app, confirm, (confirmed?: string) => this.createAttachment(app, as, confirmed)
+      targetApp, confirm, (confirmed?: string) => this.createAttachment(targetApp, as, confirmed)
     )
 
-    ux.action.start(`Setting ${color.cyan(attachment.name || '')} config vars and restarting ${color.app(app)}`)
-    const {body: releases} = await this.heroku.get<Array<Required<Heroku.Release>>>(`/apps/${app}/releases`, {
+    ux.action.start(`Setting ${color.attachment(attachment.name || '')} config vars and restarting ${color.app(targetApp)}`)
+    const {body: releases} = await this.heroku.get<Array<Required<Heroku.Release>>>(`/apps/${targetApp}/releases`, {
       partial: true, headers: {Range: 'version ..; max=1, order=desc'},
     })
     ux.action.stop(`done, v${releases[0].version}`)
@@ -52,7 +51,7 @@ export default class Attach extends Command {
       name: as, app: {name: app}, addon: {name: this.addon.name}, confirm: confirmed,
     }
 
-    ux.action.start(`Attaching ${color.addon(this.addon.name || '')}${as ? ' as ' + color.cyan(as) : ''} to ${color.app(app)}`)
+    ux.action.start(`Attaching ${color.addon(this.addon.name || '')}${as ? ' as ' + color.attachment(as) : ''} to ${color.app(app)}`)
     const {body: attachment} = await this.heroku.post<Required<Heroku.AddOnAttachment>>('/addon-attachments', {body}).catch(error => {
       ux.action.stop('')
       handlePlatformApiErrors(error, {as})
