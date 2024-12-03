@@ -3,6 +3,7 @@ import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import * as Heroku from '@heroku-cli/schema'
 import Command from '../../../lib/base'
+import {HerokuAPIError} from '@heroku-cli/command/lib/api-client'
 
 export default class Detach extends Command {
   static description = 'detach a model resource from an app'
@@ -13,7 +14,7 @@ export default class Detach extends Command {
 
   static args = {
     model_resource: Args.string({
-      description: 'resource ID or alias of the model resource to detach',
+      description: 'alias of the model resource to detach',
       required: true,
     }),
   }
@@ -31,7 +32,13 @@ export default class Detach extends Command {
 
     ux.action.start(`Detaching ${color.cyan(aiAddon.name || '')} from ${color.magenta(app)}`)
 
-    await this.heroku.delete(`/addon-attachments/${aiAddon.id}`)
+    try {
+      await this.heroku.delete(`/addon-attachments/${aiAddon.id}`)
+    } catch {
+      ux.action.stop('')
+      const error = `We can’t find the model alias ${modelResource}. Check your spelling.`
+      throw error
+    }
 
     ux.action.stop()
 
