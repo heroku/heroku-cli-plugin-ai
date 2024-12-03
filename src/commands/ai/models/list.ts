@@ -31,6 +31,6 @@ export default class List extends Command {
 
     const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
     displayModels(availableModels)
-    ux.log('\nSee https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models for more info.')
+    ux.log('\nSee https://devcenter.heroku.com/articles/heroku-inference_model-cards for more info.')
   }
 }
