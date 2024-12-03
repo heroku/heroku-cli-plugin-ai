@@ -45,6 +45,8 @@ export default async function (
     ux.log(addon.provision_message)
   }
 
+  ux.log(`Model name: ${color.configVar(addon.name)}${options.as ? `\nModel alias: ${color.configVar(options.as)}` : ''}`)
+
   ux.log(
     `Added ${addon.config_vars.map((c: string) => color.configVar(c)).join(', ')} to ${color.app(addon.app.name)}`
   )
