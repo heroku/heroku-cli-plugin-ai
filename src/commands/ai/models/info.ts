@@ -44,12 +44,8 @@ export default class Info extends Command {
       return modelInfoResponse
     }
 
-    const addModelProperties = (modelResource: ModelResource | null, alias: string, resourceId: string) => {
-      const currentModelResource = modelResource
-      currentModelResource!.model_alias = alias
-      currentModelResource!.model_resource_id = resourceId
-
-      return currentModelResource
+    const addModelProperties = (alias: string, resourceId: string, modelResource: ModelResource = {} as ModelResource) => {
+      return Object.assign(modelResource, {model_alias: alias, model_resource_id: resourceId})
     }
 
     const getModelDetails = async (collectedModels: Array<Heroku.AddOn> | string) => {
@@ -57,15 +53,15 @@ export default class Info extends Command {
         const modelResource = collectedModels
         await this.configureHerokuAIClient(modelResource, app)
 
-        let {body: currentModelResource} = await modelInfo() || {body: null}
-        currentModelResource = addModelProperties(currentModelResource, this.modelAlias, this.addonResourceId)
+        let {body: currentModelResource} = await modelInfo() ?? {body: {} as ModelResource}
+        currentModelResource = addModelProperties(this.modelAlias, this.addonResourceId, currentModelResource)
         synthesizedModels.push(currentModelResource!)
       } else {
         for (const addonModel of collectedModels) {
           await this.configureHerokuAIClient(addonModel.modelResource, app)
 
-          let {body: currentModelResource} = await modelInfo() || {body: null}
-          currentModelResource = addModelProperties(currentModelResource, this.modelAlias, this.addonResourceId)
+          let {body: currentModelResource} = await modelInfo() ?? {body: {} as ModelResource}
+          currentModelResource = addModelProperties(this.modelAlias, this.addonResourceId, currentModelResource)
           synthesizedModels.push(currentModelResource!)
         }
       }
