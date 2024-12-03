@@ -52,11 +52,13 @@ describe('ai:models:info', function () {
 
         === claude-3-haiku
 
-        Avg Performance: latency 0.4sec, 28 tokens/sec
-        Base Model ID:   claude-3-haiku
-        Ready:           Yes
-        Tokens In:       0 tokens this period
-        Tokens Out:      0 tokens this period
+        Avg Performance:   latency 0.4sec, 28 tokens/sec
+        Base Model ID:     claude-3-haiku
+        Model Alias:       INFERENCE
+        Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
+        Ready:             Yes
+        Tokens In:         0 tokens this period
+        Tokens Out:        0 tokens this period
         `)
 
       expect(stderr.output).to.eq('')
@@ -120,19 +122,23 @@ describe('ai:models:info', function () {
 
         === claude-3-haiku
         
-        Avg Performance: latency 0.4sec, 28 tokens/sec
-        Base Model ID:   claude-3-haiku
-        Ready:           Yes
-        Tokens In:       0 tokens this period
-        Tokens Out:      0 tokens this period
+        Avg Performance:   latency 0.4sec, 28 tokens/sec
+        Base Model ID:     claude-3-haiku
+        Model Alias:       INFERENCE
+        Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
+        Ready:             Yes
+        Tokens In:         0 tokens this period
+        Tokens Out:        0 tokens this period
 
         === claude-3-haiku
 
-        Avg Performance: latency 0.4sec, 28 tokens/sec
-        Base Model ID:   claude-3-haiku
-        Ready:           Yes
-        Tokens In:       0 tokens this period
-        Tokens Out:      0 tokens this period
+        Avg Performance:   latency 0.4sec, 28 tokens/sec
+        Base Model ID:     claude-3-haiku
+        Model Alias:       INFERENCE
+        Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
+        Ready:             Yes
+        Tokens In:         0 tokens this period
+        Tokens Out:        0 tokens this period
         `)
     })
   })

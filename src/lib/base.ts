@@ -47,6 +47,7 @@ export default abstract class extends Command {
   private _addon?: Required<Heroku.AddOn>
   private _addonAttachment?: Required<Heroku.AddOnAttachment>
   private _addonServiceSlug?: string
+  private _addonResourceId?: string
   private _apiKey?: string
   private _apiModelId?: string
   private _apiUrl?: string
@@ -73,6 +74,7 @@ export default abstract class extends Command {
         this.addon.plan.name?.split(':')[1] // Fallback to plan name (e.g. "heroku-inference:claude-3-haiku" => "claude-3-haiku"
       this._apiUrl = configVars[this.apiUrlConfigVarName]
       this._addonServiceSlug = this.addon.addon_service.name
+      this._addonResourceId = this.addon.id
       this._herokuAI.defaults.host = this.apiUrl
       this._herokuAI.defaults.headers = {
         ...defaultHeaders,
@@ -257,6 +259,13 @@ export default abstract class extends Command {
       'heroku-inference'
   }
 
+  get addonResourceId(): string {
+    if (this.addon && this._addonResourceId)
+      return this._addonResourceId
+
+    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+  }
+
   get apiKey(): string {
     if (this.addon && this._apiKey)
       return this._apiKey
@@ -266,6 +275,10 @@ export default abstract class extends Command {
 
   get apiKeyConfigVarName(): string {
     return `${this.addonAttachment.name.toUpperCase()}_KEY`
+  }
+
+  get modelAlias(): string {
+    return this.addonAttachment.name
   }
 
   get apiModelId(): string | undefined {
