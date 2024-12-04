@@ -86,7 +86,7 @@ FLAGS
   -s, --source-app=<value>  (required) source app for model resource
   -t, --target-app=<value>  (required) target app for model resource
   --as=<value>              alias name for model resource
-  --confirm=<value>         overwrite existing resource with same name
+  --confirm=<value>         overwrite existing attached resource with same name
 
 DESCRIPTION
   attach an existing model resource to an app
