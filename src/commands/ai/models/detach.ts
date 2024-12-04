@@ -19,7 +19,7 @@ export default class Detach extends Command {
     }),
   }
 
-  static example = 'heroku ai:models:detach claude-3-5-sonnet-acute-41518 --app example-app'
+  static example = 'heroku ai:models:detach EXAMPLE_MODEL_ALIAS --app example-app'
 
   public async run(): Promise<void> {
     const {flags, args} = await this.parse(Detach)
@@ -32,13 +32,11 @@ export default class Detach extends Command {
 
     ux.action.start(`Detaching ${color.cyan(aiAddon.name || '')} from ${color.magenta(app)}`)
 
-    try {
-      await this.heroku.delete(`/addon-attachments/${aiAddon.id}`)
-    } catch {
+    await this.heroku.delete(`/addon-attachments/${aiAddon.id}`).catch(error => {
       ux.action.stop('')
-      const error = `We can’t find the model alias ${modelResource}. Check your spelling.`
-      throw error
-    }
+      const error_ = error instanceof HerokuAPIError ? new Error(`We can’t find the model alias ${modelResource}. Check your spelling.`) : error.message
+      ux.error(error_, {exit: 1})
+    })
 
     ux.action.stop()
 
