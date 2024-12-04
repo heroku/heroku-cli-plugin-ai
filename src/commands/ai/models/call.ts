@@ -11,7 +11,6 @@ import {
   ModelList,
 } from '../../../lib/ai/types'
 import Command from '../../../lib/base'
-import {openUrl} from '../../../lib/open-url'
 
 export default class Call extends Command {
   static args = {
@@ -37,7 +36,6 @@ export default class Call extends Command {
     //   description: 'Use interactive mode for conversation beyond the initial prompt (not available on all models)',
     //   default: false,
     // }),
-    browser: flags.string({description: 'browser to open URLs with (example: "firefox", "safari")'}),
     json: flags.boolean({char: 'j', description: 'output response as JSON'}),
     optfile: flags.string({
       description: 'additional options for model inference, provided as a JSON config file',
@@ -64,7 +62,7 @@ export default class Call extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(Call)
     const {model_resource: modelResource} = args
-    const {app, browser, json, optfile, opts, output, prompt} = flags
+    const {app, json, optfile, opts, output, prompt} = flags
 
     // Initially, configure the default client to fetch the available model classes
     await this.configureHerokuAIClient()
@@ -86,7 +84,7 @@ export default class Call extends Command {
 
     case 'text-to-image': {
       const image = await this.generateImage(prompt, options as ImageRequest)
-      await this.displayImageResult(image, output, browser, json)
+      await this.displayImageResult(image, output, json)
       break
     }
 
@@ -195,7 +193,7 @@ export default class Call extends Command {
     return imageResponse
   }
 
-  private async displayImageResult(image: ImageResponse, output?: string, browser?: string, json = false) {
+  private async displayImageResult(image: ImageResponse, output?: string, json = false) {
     if (image.data[0].b64_json) {
       if (output) {
         const content = json ? JSON.stringify(image, null, 2) : Buffer.from(image.data[0].b64_json, 'base64')
@@ -210,8 +208,6 @@ export default class Call extends Command {
         fs.writeFileSync(output, json ? JSON.stringify(image, null, 2) : image.data[0].url)
       else if (json)
         ux.styledJSON(image)
-      else
-        await openUrl(image.data[0].url, browser, 'view the image')
       return
     }
 
