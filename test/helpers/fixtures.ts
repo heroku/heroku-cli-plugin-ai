@@ -37,7 +37,7 @@ export const mockConfigVars = {
 export const mockAPIErrors = {
   modelsListErrorResponse: {
     id: 'error',
-    message: 'Failed to retrieve the list of available models. Check the Heroku Status page https://status.heroku.com/ for system outages. After all incidents have resolved, try again. You can also see a list of models at https://devcenter.heroku.com/articles/heroku-inference_model-cards.',
+    message: 'Failed to retrieve the list of available models. Check the Heroku Status page https://status.heroku.com/ for system outages. After all incidents have resolved, try again. You can also see a list of models at https://devcenter.heroku.com/articles/heroku-inference-api-model-cards.',
   },
   modelsDestroyErrorResponse: {
     id: 'error',
