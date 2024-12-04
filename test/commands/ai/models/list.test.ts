@@ -34,13 +34,13 @@ describe('ai:models:list', function () {
     expect(stdout.output).to.match(/claude-3-haiku\s+text-to-text/)
     expect(stdout.output).to.match(/cohere-embed-multilingual\s+text-to-embedding/)
     expect(stdout.output).to.match(/stable-image-ultra\s+text-to-image/)
-    expect(stdout.output).to.contain('See https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models for more info')
+    expect(stdout.output).to.contain('See https://devcenter.heroku.com/articles/heroku-inference-api-model-cards for more info')
     expect(stderr.output).to.eq('')
   })
 
   it('warns if no models are available', async function () {
     const statusURL = 'https://status.heroku.com/'
-    const modelsDevCenterURL = 'https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models'
+    const modelsDevCenterURL = 'https://devcenter.heroku.com/articles/heroku-inference-api-model-cards'
 
     herokuAI
       .get('/available-models')

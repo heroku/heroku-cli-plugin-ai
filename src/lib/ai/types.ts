@@ -21,6 +21,7 @@ export type ModelType = 'text-to-image' | 'text-to-text' | 'text-to-embedding'
 export type ModelListItem = {
   model_id: ModelName
   type: Array<ModelType>
+  link: string
 }
 
 /**
