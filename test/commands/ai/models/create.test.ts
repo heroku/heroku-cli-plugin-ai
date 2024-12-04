@@ -45,7 +45,7 @@ describe('ai:models:create', function () {
         '--app=app1',
       ])
       expect(stripAnsi(stderr.output)).to.include(
-        'Heroku Managed Inference and Agents is a pilot service.'
+        'Heroku Managed Inference and Agent is a pilot or beta service'
       )
       expect(stripAnsi(stderr.output)).to.include(heredoc`
         Creating heroku-inference:claude-3-haiku on app1... free
@@ -77,7 +77,7 @@ describe('ai:models:create', function () {
         '--as=CLAUDE_HAIKU',
       ])
       expect(stripAnsi(stderr.output)).to.include(
-        'Heroku Managed Inference and Agents is a pilot service.'
+        'Heroku Managed Inference and Agent is a pilot or beta service'
       )
       expect(stripAnsi(stderr.output)).to.include(heredoc`
         Creating heroku-inference:claude-3-haiku on app1... free
