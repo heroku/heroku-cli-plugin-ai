@@ -43,6 +43,14 @@ export class AmbiguousError extends Error {
   public readonly id = 'multiple_matches'
 }
 
+// This function only exists because the
+// heroku-cli-command legacy heroku client
+// uses funky logic to prepend 'https://' to the request url
+// See logic here --> https://github.com/heroku/heroku-cli-command/blob/32f1010c7a949948aac2b5ce1526dc65824a616c/src/command.ts#L38
+const stripHttps = (url: string) => {
+  return url.startsWith('https://') ? url.slice(8) : url
+}
+
 export default abstract class extends Command {
   private _addon?: Required<Heroku.AddOn>
   private _addonAttachment?: Required<Heroku.AddOnAttachment>
@@ -75,7 +83,7 @@ export default abstract class extends Command {
       this._apiUrl = configVars[this.apiUrlConfigVarName]
       this._addonServiceSlug = this.addon.addon_service.name
       this._addonResourceId = this.addon.id
-      this._herokuAI.defaults.host = this.apiUrl
+      this._herokuAI.defaults.host = stripHttps(this.apiUrl)
       this._herokuAI.defaults.headers = {
         ...defaultHeaders,
         authorization: `Bearer ${this.apiKey}`,
