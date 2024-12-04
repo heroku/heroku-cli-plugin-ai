@@ -5,10 +5,9 @@ import Command from '../../../lib/base'
 import {ModelResource} from '../../../lib/ai/types'
 
 export default class Info extends Command {
-  static description = 'get the current status of the specified AI model resource attached to your app'
+  static description = 'get the current status of an AI model resource attached to your app'
   static examples = [
     'heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app',
-    'heroku ai:models:info --app example-app',
   ]
 
   static flags = {
@@ -31,7 +30,7 @@ export default class Info extends Command {
       })
         .catch(error => {
           if (error.statusCode === 404) {
-            ux.warn(`We can’t find a model resource called ${color.addon(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
+            ux.warn(`We can’t find a model resource called ${color.addon(modelResource)}.\nRun ${color.cmd('heroku addons -a <app>')} to see a list of model resources.`)
           } else {
             throw error
           }
