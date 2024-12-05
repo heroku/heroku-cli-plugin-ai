@@ -34,7 +34,7 @@ export class AmbiguousError extends Error {
   constructor(public readonly matches: string[], addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
       Multiple model resources match ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}: ${matches.map(match => color.addon(match)).join(', ')}.
-      Specify the model resource by its name instead.
+      Specify the model resource by its alias instead.
     `
     super(message)
   }
