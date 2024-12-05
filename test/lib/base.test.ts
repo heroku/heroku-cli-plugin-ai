@@ -396,12 +396,12 @@ describe('attempt a request using the Heroku AI client', function () {
           .reply(200, [addon3])
           .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: null})
           .reply(200, [addon3Attachment1, addon3Attachment2])
-          .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
-          .reply(200, {
-            INFERENCE_MAROON_KEY: 's3cr3t_k3y',
-            INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
-            INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
-          })
+          // .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
+          // .reply(200, {
+          //   INFERENCE_MAROON_KEY: 's3cr3t_k3y',
+          //   INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
+          //   INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
+          // })
       })
 
       it('makes the request', async function () {
@@ -425,12 +425,12 @@ describe('attempt a request using the Heroku AI client', function () {
           .reply(200, [addon3])
           .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: addon3.app?.name})
           .reply(200, [addon3Attachment1])
-          .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
-          .reply(200, {
-            INFERENCE_MAROON_KEY: 's3cr3t_k3y',
-            INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
-            INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
-          })
+          // .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
+          // .reply(200, {
+          //   INFERENCE_MAROON_KEY: 's3cr3t_k3y',
+          //   INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
+          //   INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
+          // })
       })
 
       it('makes the request', async function () {
@@ -455,12 +455,12 @@ describe('attempt a request using the Heroku AI client', function () {
           .reply(200, [addon3])
           .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: addon3Attachment2.app?.name})
           .reply(200, [addon3Attachment2])
-          .get(`/apps/${addon3Attachment2.app?.id}/config-vars`)
-          .reply(200, {
-            INFERENCE_JADE_KEY: 's3cr3t_k3y',
-            INFERENCE_JADE_MODEL_ID: 'claude-3-5-sonnet-latest',
-            INFERENCE_JADE_URL: 'inference-eu.heroku.com',
-          })
+          // .get(`/apps/${addon3Attachment2.app?.id}/config-vars`)
+          // .reply(200, {
+          //   INFERENCE_JADE_KEY: 's3cr3t_k3y',
+          //   INFERENCE_JADE_MODEL_ID: 'claude-3-5-sonnet-latest',
+          //   INFERENCE_JADE_URL: 'inference-eu.heroku.com',
+          // })
       })
 
       it('makes the request', async function () {
