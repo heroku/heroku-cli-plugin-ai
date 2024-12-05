@@ -27,7 +27,7 @@ export default class Create extends Command {
       required: true,
     }),
     as: flags.string({description: 'alias name for model resource'}),
-    confirm: flags.string({description: 'overwrite existing config vars or existing add-on attachments'}),
+    confirm: flags.string({description: 'overwrite existing config vars or existing add-on aliases'}),
     remote: flags.remote(),
   }
 
