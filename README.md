@@ -105,8 +105,8 @@ make an inference request to a specific AI model resource
 
 ```
 USAGE
-  $ heroku ai:models:call [MODEL_RESOURCE] -p <value> [-a <value>] [--browser <value>] [-j] [--optfile <value>]
-    [--opts <value>] [-o <value>] [-r <value>]
+  $ heroku ai:models:call [MODEL_RESOURCE] -p <value> [-a <value>] [-j] [--optfile <value>] [--opts <value>] [-o
+    <value>] [-r <value>]
 
 ARGUMENTS
   MODEL_RESOURCE  Resource ID or alias of the model to call. The --app flag must be included if an alias is used.
@@ -118,7 +118,6 @@ FLAGS
   -o, --output=<value>  the file path where the command writes the model response
   -p, --prompt=<value>  (required) the input prompt for the model
   -r, --remote=<value>  git remote of app to use
-  --browser=<value>     browser to open URLs with (example: "firefox", "safari")
   --optfile=<value>     additional options for model inference, provided as a JSON config file
   --opts=<value>        additional options for model inference, provided as a JSON string
 
