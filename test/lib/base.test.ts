@@ -337,10 +337,6 @@ describe('attempt a request using the Heroku AI client', function () {
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on.', resource: 'add_on'})
           .post('/actions/addon-attachments/resolve', {addon_attachment: 'INFERENCE', app: 'app1'})
           .reply(200, [addon2Attachment1, addon2Attachment2, addon3Attachment1])
-          .get(`/apps/${addon2Attachment1.app?.id}/addons/${addon2Attachment1.addon?.id}`)
-          .reply(200, addon2)
-          .get(`/apps/${addon3Attachment1.app?.id}/addons/${addon3Attachment1.addon?.id}`)
-          .reply(200, addon3)
       })
 
       it('returns an ambiguous identifier error message', async function () {
