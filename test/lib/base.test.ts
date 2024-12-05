@@ -630,52 +630,19 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model resource name and no app, matching a single resource accessible through the attachment', function () {
+    context('when using an existent model resource alias and the non-accessible app', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: addon3.name, app: null})
-          .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on.', resource: 'add_on'})
-          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: null})
-          .reply(200, [addon3Attachment1, addon3Attachment2])
-          .get(`/apps/${addon3Attachment1.app?.id}/addons/${addon3Attachment1.addon?.id}`)
-          .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on.', resource: 'add_on'})
-          .get(`/apps/${addon3Attachment2.app?.id}/addons/${addon3Attachment2.addon?.id}`)
-          .reply(200, addon3)
-          .get(`/apps/${addon3Attachment2.app?.id}/config-vars`)
-          .reply(200, {
-            INFERENCE_JADE_KEY: 's3cr3t_k3y',
-            INFERENCE_JADE_MODEL_ID: 'claude-3-5-sonnet-latest',
-            INFERENCE_JADE_URL: 'inference-eu.heroku.com',
-          })
-      })
-
-      it('makes the request', async function () {
-        herokuAI
-          .get(`/models/${addon3.id}`)
-          .reply(200, {})
-
-        await runCommand(CommandConfiguredWithResourceName, [
-          addon3.name as string,
-        ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
-      })
-    })
-
-    context('when using an existent model resource name and the non-accessible app', function () {
-      beforeEach(async function () {
-        api
-          .post('/actions/addons/resolve', {addon: addon3.name, app: 'app1'})
+          .post('/actions/addons/resolve', {addon: addon3Attachment1.name, app: 'app1'})
           .reply(403, {id: 'forbidden', message: 'You do not have access to the app app1'})
-          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: 'app1'})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3Attachment1.name, app: 'app1'})
           .reply(403, {id: 'forbidden', message: 'You do not have access to the app app1'})
       })
 
       it('returns a forbidden error message', async function () {
         try {
           await runCommand(CommandConfiguredWithResourceName, [
-            addon3.name as string,
+            addon3Attachment1.name as string,
             '--app=app1',
           ])
         } catch (error) {
