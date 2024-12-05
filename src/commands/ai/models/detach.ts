@@ -28,7 +28,7 @@ export default class Detach extends Command {
 
     await this.configureHerokuAIClient(modelResource, app)
 
-    const aiAddon = this.addon
+    const aiAddon = this.addonAttachment
 
     ux.action.start(`Detaching ${color.cyan(aiAddon.name || '')} from ${color.magenta(app)}`)
 
