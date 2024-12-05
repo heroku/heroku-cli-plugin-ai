@@ -232,7 +232,7 @@ describe('attempt a request using the Heroku AI client', function () {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
             Multiple model resources match heroku-inference: ${addon1.name}, ${addon2.name}, ${addon3.name}, ${addon4.name}.
-            Specify the model resource by its name instead.
+            Specify the model resource by its alias instead.
           `)
         }
 
@@ -290,7 +290,7 @@ describe('attempt a request using the Heroku AI client', function () {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
             Multiple model resources match heroku-inference:claude-3-5-sonnet-latest: ${addon2.name}, ${addon4.name}.
-            Specify the model resource by its name instead.
+            Specify the model resource by its alias instead.
           `)
         }
 
@@ -349,7 +349,7 @@ describe('attempt a request using the Heroku AI client', function () {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
             Multiple model resources match INFERENCE on app1: ${addon2Attachment1.name}, ${addon2Attachment2.name}, ${addon3Attachment1.name}.
-            Specify the model resource by its name instead.
+            Specify the model resource by its alias instead.
           `)
         }
 
@@ -594,7 +594,7 @@ describe('attempt a request using the Heroku AI client', function () {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
             Multiple model resources match INFERENCE on app2: ${addon3.name}, ${addon4.name}.
-            Specify the model resource by its name instead.
+            Specify the model resource by its alias instead.
           `)
         }
 
