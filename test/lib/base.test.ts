@@ -217,16 +217,16 @@ describe('attempt a request using the Heroku AI client', function () {
     context('when using the add-on service slug and no app, matching multiple model resources', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: 'inference', app: null})
+          .post('/actions/addons/resolve', {addon: 'heroku-inference', app: null})
           .reply(200, [addon1, addon2, addon2, addon3, addon3, addon4])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: 'inference', app: null})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference', app: null})
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on attachment.', resource: 'add_on attachment'})
       })
 
       it('returns an ambiguous identifier error message', async function () {
         try {
           await runCommand(CommandConfiguredWithResourceName, [
-            'inference',
+            'heroku-inference',
           ])
         } catch (error) {
           const {message} = error as Error
@@ -352,7 +352,7 @@ describe('attempt a request using the Heroku AI client', function () {
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match INFERENCE on app1: ${addon2.name}, ${addon3.name}.
+            Multiple model resources match INFERENCE on app1: ${addon2Attachment1.name}, ${addon2Attachment2.name}, ${addon3Attachment1.name}.
             Specify the model resource by its name instead.
           `)
         }
