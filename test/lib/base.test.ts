@@ -231,7 +231,7 @@ describe('attempt a request using the Heroku AI client', function () {
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match inference: ${addon1.name}, ${addon2.name}, ${addon3.name}, ${addon4.name}.
+            Multiple model resources match heroku-inference: ${addon1.name}, ${addon2.name}, ${addon3.name}, ${addon4.name}.
             Specify the model resource by its name instead.
           `)
         }
