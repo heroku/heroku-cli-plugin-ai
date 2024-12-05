@@ -147,7 +147,7 @@ FLAGS
   -a, --app=<value>     (required) name of the Heroku app to attach the model to
   -r, --remote=<value>  git remote of app to use
   --as=<value>          alias name for model resource
-  --confirm=<value>     overwrite existing config vars or existing add-on attachments
+  --confirm=<value>     overwrite existing config vars or existing add-on aliases
 
 DESCRIPTION
   provision access to an AI model
