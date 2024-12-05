@@ -23,7 +23,8 @@ describe('addons:detach', function () {
   it('detaches an add-on', async function () {
     const addonAppId = addon1.app?.id
     const addonId = addon1.id
-    const addonName = addon1.name
+    const addonAttachmentId = addon1Attachment1.id
+    const addonName = addon1Attachment1.name
     const appName = addon1.app?.name
 
     api
@@ -33,7 +34,7 @@ describe('addons:detach', function () {
       .reply(200, [addon1Attachment1])
       .get(`/apps/${addonAppId}/config-vars`)
       .reply(200, mockConfigVars)
-      .delete(`/addon-attachments/${addonId}`)
+      .delete(`/addon-attachments/${addonAttachmentId}`)
       .reply(200)
       .get(`/apps/${appName}/releases`)
       .reply(200, [{version: 10}])
