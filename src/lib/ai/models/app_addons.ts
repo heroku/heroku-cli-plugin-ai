@@ -8,7 +8,6 @@ export default async function (config: Config, app: string) {
   const {body: response} = await herokuClient.get<Heroku.AddOn>(`/apps/${app}/addons`, {
     headers: {'Accept-Expansion': 'plan'},
   }).catch(error => {
-    console.log('ERROR MESSAGE:', error.message)
     const error_ = error.body && error.body.message ? new Error(`The add-on was unable to be destroyed: ${error.body.message}.`) : new Error(`The add-on was unable to be destroyed: ${error}.`)
     throw error_
   })
