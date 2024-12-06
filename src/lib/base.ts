@@ -34,7 +34,7 @@ export class AmbiguousError extends Error {
   constructor(public readonly matches: string[], addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
       Multiple model resources match ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}: ${matches.map(match => color.addon(match)).join(', ')}.
-      Specify the model resource by its name instead.
+      Specify the model resource by its alias instead.
     `
     super(message)
   }
@@ -154,7 +154,12 @@ export default abstract class extends Command {
     const resolvedAddons = settledAddons.status === 'fulfilled' ? settledAddons.value.body : []
     const resolvedAttachments = settledAttachments.status === 'fulfilled' ? settledAttachments.value.body : []
 
-    // 3. Try to resolve the add-on through the add-ons resolver response.
+    // 3. If the addon attachment resolved, check for multiple attachments
+    if (resolvedAttachments && resolvedAttachments.length > 1) {
+      throw new AmbiguousError(resolvedAttachments.map((a: Required<Heroku.AddOnAttachment>) => a.name), addonIdentifier, appIdentifier)
+    }
+
+    // 4. Try to resolve the add-on through the add-ons resolver response.
     if (resolvedAddons.length > 0) {
       // The add-on resolver may duplicate add-ons when there's more than one attachment and the user has access to the different
       // apps where it's attached, so we dedup here trying to get a single result.
@@ -168,7 +173,7 @@ export default abstract class extends Command {
         throw new AmbiguousError(uniqueAddons.map(a => a.name), addonIdentifier, appIdentifier)
     }
 
-    // 4. If we didn't resolve for an add-on yet, try to do it through the add-on attachments resolver response.
+    // 5. If we didn't resolve for an add-on yet, try to do it through the add-on attachments resolver response.
     if (!resolvedAddon) {
       if (resolvedAttachments.length === 1) {
         resolvedAttachment = resolvedAttachments[0];
@@ -194,12 +199,12 @@ export default abstract class extends Command {
       }
     }
 
-    // 5. If we resolved for an add-on, check that it's a Managed Inference add-on or throw a NotFound error.
+    // 6. If we resolved for an add-on, check that it's a Managed Inference add-on or throw a NotFound error.
     if (resolvedAddon && resolvedAddon.addon_service.name !== this.addonServiceSlug) {
       throw new NotFound(addonIdentifier, appIdentifier)
     }
 
-    // 6. If we resolved for an add-on but not for an attachment yet, try to resolve the attachment
+    // 7. If we resolved for an add-on but not for an attachment yet, try to resolve the attachment
     if (resolvedAddon && !resolvedAttachment) {
       resolvedAttachment = resolvedAttachments.length === 1 ?
         resolvedAttachments[0] :
@@ -211,11 +216,11 @@ export default abstract class extends Command {
       }
     }
 
-    // 7. If we get to this point without the add-on or the attachment resolved, throw a NotFound error.
+    // 8. If we get to this point without the add-on or the attachment resolved, throw a NotFound error.
     if (!resolvedAddon || !resolvedAttachment)
       throw new NotFound(addonIdentifier, appIdentifier)
 
-    // 8. Return the resolved add-on and attachment.
+    // 9. Return the resolved add-on and attachment.
     return {addon: resolvedAddon, attachment: resolvedAttachment}
   }
 
@@ -262,8 +267,8 @@ export default abstract class extends Command {
   }
 
   get addonServiceSlug(): string {
-    return this._addonServiceSlug ||
-      process.env.HEROKU_INFERENCE_ADDON ||
+    return process.env.HEROKU_INFERENCE_ADDON ||
+      this._addonServiceSlug ||
       'heroku-inference'
   }
 

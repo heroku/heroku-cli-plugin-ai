@@ -217,22 +217,22 @@ describe('attempt a request using the Heroku AI client', function () {
     context('when using the add-on service slug and no app, matching multiple model resources', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: 'inference', app: null})
+          .post('/actions/addons/resolve', {addon: 'heroku-inference', app: null})
           .reply(200, [addon1, addon2, addon2, addon3, addon3, addon4])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: 'inference', app: null})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: 'heroku-inference', app: null})
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on attachment.', resource: 'add_on attachment'})
       })
 
       it('returns an ambiguous identifier error message', async function () {
         try {
           await runCommand(CommandConfiguredWithResourceName, [
-            'inference',
+            'heroku-inference',
           ])
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match inference: ${addon1.name}, ${addon2.name}, ${addon3.name}, ${addon4.name}.
-            Specify the model resource by its name instead.
+            Multiple model resources match heroku-inference: ${addon1.name}, ${addon2.name}, ${addon3.name}, ${addon4.name}.
+            Specify the model resource by its alias instead.
           `)
         }
 
@@ -290,7 +290,7 @@ describe('attempt a request using the Heroku AI client', function () {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
             Multiple model resources match heroku-inference:claude-3-5-sonnet-latest: ${addon2.name}, ${addon4.name}.
-            Specify the model resource by its name instead.
+            Specify the model resource by its alias instead.
           `)
         }
 
@@ -337,10 +337,6 @@ describe('attempt a request using the Heroku AI client', function () {
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on.', resource: 'add_on'})
           .post('/actions/addon-attachments/resolve', {addon_attachment: 'INFERENCE', app: 'app1'})
           .reply(200, [addon2Attachment1, addon2Attachment2, addon3Attachment1])
-          .get(`/apps/${addon2Attachment1.app?.id}/addons/${addon2Attachment1.addon?.id}`)
-          .reply(200, addon2)
-          .get(`/apps/${addon3Attachment1.app?.id}/addons/${addon3Attachment1.addon?.id}`)
-          .reply(200, addon3)
       })
 
       it('returns an ambiguous identifier error message', async function () {
@@ -352,8 +348,8 @@ describe('attempt a request using the Heroku AI client', function () {
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match INFERENCE on app1: ${addon2.name}, ${addon3.name}.
-            Specify the model resource by its name instead.
+            Multiple model resources match INFERENCE on app1: ${addon2Attachment1.name}, ${addon2Attachment2.name}, ${addon3Attachment1.name}.
+            Specify the model resource by its alias instead.
           `)
         }
 
@@ -393,41 +389,12 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model resource name with multiple attachments to different apps and no app', function () {
+    context('when using an existent model resource alias with multiple attachments to different apps and no app', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: addon3.name, app: null})
+          .post('/actions/addons/resolve', {addon: addon3Attachment1.name, app: null})
           .reply(200, [addon3])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: null})
-          .reply(200, [addon3Attachment1, addon3Attachment2])
-          .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
-          .reply(200, {
-            INFERENCE_MAROON_KEY: 's3cr3t_k3y',
-            INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
-            INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
-          })
-      })
-
-      it('makes the request', async function () {
-        herokuAI
-          .get(`/models/${addon3.id}`)
-          .reply(200, {})
-
-        await runCommand(CommandConfiguredWithResourceName, [
-          addon3.name as string,
-        ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
-      })
-    })
-
-    context('when using an existent model resource name with multiple attachments to different apps and the billing app', function () {
-      beforeEach(async function () {
-        api
-          .post('/actions/addons/resolve', {addon: addon3.name, app: addon3.app?.name})
-          .reply(200, [addon3])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: addon3.app?.name})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3Attachment1.name, app: null})
           .reply(200, [addon3Attachment1])
           .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
           .reply(200, {
@@ -439,11 +406,40 @@ describe('attempt a request using the Heroku AI client', function () {
 
       it('makes the request', async function () {
         herokuAI
-          .get(`/models/${addon3.id}`)
+          .get(`/models/${addon3Attachment1.addon?.id}`)
           .reply(200, {})
 
         await runCommand(CommandConfiguredWithResourceName, [
-          addon3.name as string,
+          addon3Attachment1.name as string,
+        ])
+
+        expect(stderr.output).to.equal('')
+        expect(stdout.output).to.equal('')
+      })
+    })
+
+    context('when using an existent model resource alias with multiple attachments to different apps and the billing app', function () {
+      beforeEach(async function () {
+        api
+          .post('/actions/addons/resolve', {addon: addon3Attachment1.name, app: addon3Attachment1.app?.name})
+          .reply(200, [addon3])
+          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3Attachment1.name, app: addon3Attachment1.app?.name})
+          .reply(200, [addon3Attachment1])
+          .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
+          .reply(200, {
+            INFERENCE_MAROON_KEY: 's3cr3t_k3y',
+            INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
+            INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
+          })
+      })
+
+      it('makes the request', async function () {
+        herokuAI
+          .get(`/models/${addon3Attachment1.addon?.id}`)
+          .reply(200, {})
+
+        await runCommand(CommandConfiguredWithResourceName, [
+          addon3Attachment1.name as string,
           '--app=app1',
         ])
 
@@ -452,12 +448,12 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model resource name with multiple attachments to different apps and the attached app', function () {
+    context('when using an existent model resource alias with multiple attachments to different apps and the attached app', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: addon3.name, app: addon3Attachment2.app?.name})
+          .post('/actions/addons/resolve', {addon: addon3Attachment2.name, app: addon3Attachment2.app?.name})
           .reply(200, [addon3])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: addon3Attachment2.app?.name})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3Attachment2.name, app: addon3Attachment2.app?.name})
           .reply(200, [addon3Attachment2])
           .get(`/apps/${addon3Attachment2.app?.id}/config-vars`)
           .reply(200, {
@@ -469,11 +465,11 @@ describe('attempt a request using the Heroku AI client', function () {
 
       it('makes the request', async function () {
         herokuAI
-          .get(`/models/${addon3.id}`)
+          .get(`/models/${addon3Attachment2.addon?.id}`)
           .reply(200, {})
 
         await runCommand(CommandConfiguredWithResourceName, [
-          addon3.name as string,
+          addon3Attachment2.name as string,
           '--app=app2',
         ])
 
@@ -482,13 +478,13 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model resource name with multiple attachments to the same app', function () {
+    context('when using an existent model resource alias with multiple attachments to the same app', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: addon2.name, app: null})
+          .post('/actions/addons/resolve', {addon: addon2Attachment1.name, app: null})
           .reply(200, [addon2])
-          .post('/actions/addon-attachments/resolve', {addon_attachment: addon2.name, app: null})
-          .reply(200, [addon2Attachment1, addon2Attachment2])
+          .post('/actions/addon-attachments/resolve', {addon_attachment: addon2Attachment1.name, app: null})
+          .reply(200, [addon2Attachment1])
           .get(`/apps/${addon2Attachment1.app?.id}/config-vars`)
           .reply(200, {
             INFERENCE_CYAN_KEY: 's3cr3t_k3y',
@@ -499,11 +495,11 @@ describe('attempt a request using the Heroku AI client', function () {
 
       it('makes the request', async function () {
         herokuAI
-          .get(`/models/${addon2.id}`)
+          .get(`/models/${addon2Attachment1.addon?.id}`)
           .reply(200, {})
 
         await runCommand(CommandConfiguredWithResourceName, [
-          addon2.name as string,
+          addon2Attachment1.name as string,
         ])
 
         expect(stderr.output).to.equal('')
@@ -582,10 +578,6 @@ describe('attempt a request using the Heroku AI client', function () {
           .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on.', resource: 'add_on'})
           .post('/actions/addon-attachments/resolve', {addon_attachment: 'INFERENCE', app: 'app2'})
           .reply(200, [addon3Attachment2, addon4Attachment1])
-          .get(`/apps/${addon3Attachment2.app?.id}/addons/${addon3Attachment2.addon?.id}`)
-          .reply(200, addon3)
-          .get(`/apps/${addon4Attachment1.app?.id}/addons/${addon4Attachment1.addon?.id}`)
-          .reply(200, addon4)
       })
 
       it('returns an ambiguous identifier error message', async function () {
@@ -597,8 +589,8 @@ describe('attempt a request using the Heroku AI client', function () {
         } catch (error) {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match INFERENCE on app2: ${addon3.name}, ${addon4.name}.
-            Specify the model resource by its name instead.
+            Multiple model resources match INFERENCE on app2: ${addon3Attachment2.name}, ${addon4Attachment1.name}.
+            Specify the model resource by its alias instead.
           `)
         }
 
@@ -638,52 +630,19 @@ describe('attempt a request using the Heroku AI client', function () {
       })
     })
 
-    context('when using an existent model resource name and no app, matching a single resource accessible through the attachment', function () {
+    context('when using an existent model resource alias and the non-accessible app', function () {
       beforeEach(async function () {
         api
-          .post('/actions/addons/resolve', {addon: addon3.name, app: null})
-          .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on.', resource: 'add_on'})
-          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: null})
-          .reply(200, [addon3Attachment1, addon3Attachment2])
-          .get(`/apps/${addon3Attachment1.app?.id}/addons/${addon3Attachment1.addon?.id}`)
-          .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on.', resource: 'add_on'})
-          .get(`/apps/${addon3Attachment2.app?.id}/addons/${addon3Attachment2.addon?.id}`)
-          .reply(200, addon3)
-          .get(`/apps/${addon3Attachment2.app?.id}/config-vars`)
-          .reply(200, {
-            INFERENCE_JADE_KEY: 's3cr3t_k3y',
-            INFERENCE_JADE_MODEL_ID: 'claude-3-5-sonnet-latest',
-            INFERENCE_JADE_URL: 'inference-eu.heroku.com',
-          })
-      })
-
-      it('makes the request', async function () {
-        herokuAI
-          .get(`/models/${addon3.id}`)
-          .reply(200, {})
-
-        await runCommand(CommandConfiguredWithResourceName, [
-          addon3.name as string,
-        ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
-      })
-    })
-
-    context('when using an existent model resource name and the non-accessible app', function () {
-      beforeEach(async function () {
-        api
-          .post('/actions/addons/resolve', {addon: addon3.name, app: 'app1'})
+          .post('/actions/addons/resolve', {addon: addon3Attachment1.name, app: 'app1'})
           .reply(403, {id: 'forbidden', message: 'You do not have access to the app app1'})
-          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: 'app1'})
+          .post('/actions/addon-attachments/resolve', {addon_attachment: addon3Attachment1.name, app: 'app1'})
           .reply(403, {id: 'forbidden', message: 'You do not have access to the app app1'})
       })
 
       it('returns a forbidden error message', async function () {
         try {
           await runCommand(CommandConfiguredWithResourceName, [
-            addon3.name as string,
+            addon3Attachment1.name as string,
             '--app=app1',
           ])
         } catch (error) {

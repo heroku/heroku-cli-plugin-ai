@@ -196,7 +196,7 @@ USAGE
   $ heroku ai:models:detach [MODEL_RESOURCE] -a <value> [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  resource ID or alias of the model resource to detach
+  MODEL_RESOURCE  alias of the model resource to detach
 
 FLAGS
   -a, --app=<value>     (required) name of the Heroku app to detach the model resource from
