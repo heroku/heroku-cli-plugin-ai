@@ -24,7 +24,7 @@ export default class Attach extends Command {
     confirm: flags.string({description: 'overwrite existing attached resource with same name'}),
     'source-app': flags.string({char: 's', description: 'source app for model resource', required: true}),
     'target-app': flags.app({char: 't', description: 'target app for model resource', required: true}),
-    remote: flags.remote({description: 'git remote of target app to use'}),
+    remote: flags.remote({description: 'git remote of target app'}),
   }
 
   public async run(): Promise<void> {

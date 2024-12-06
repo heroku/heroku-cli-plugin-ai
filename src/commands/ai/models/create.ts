@@ -9,7 +9,7 @@ import Command from '../../../lib/base'
 export default class Create extends Command {
   static args = {
     model_name: Args.string({
-      description: 'name of the model to provision access for',
+      description: 'name of the AI model to provision access for',
       required: true,
     }),
   }
@@ -23,10 +23,10 @@ export default class Create extends Command {
   `
   static flags = {
     app: flags.app({
-      description: 'name of the Heroku app to attach the model to',
+      description: 'name of the app to attach the model to',
       required: true,
     }),
-    as: flags.string({description: 'alias name for model resource'}),
+    as: flags.string({description: 'alias of model resource'}),
     confirm: flags.string({description: 'overwrite existing config vars or existing add-on aliases'}),
     remote: flags.remote(),
   }
