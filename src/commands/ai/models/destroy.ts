@@ -5,11 +5,11 @@ import confirmCommand from '../../../lib/confirmCommand'
 import Command from '../../../lib/base'
 
 export default class Destroy extends Command {
-  static description = 'destroy an existing AI model resource to destroy'
+  static description = 'destroy an existing AI model resource'
 
   static flags = {
     app: flags.app({required: true, description: 'app to run command against'}),
-    confirm: flags.string({char: 'c', description: 'app to run command against'}),
+    confirm: flags.string({char: 'c', description: 'set to app name to bypass confirm prompt'}),
     force: flags.boolean({char: 'f', description: 'allow destruction even if connected to other apps'}),
     remote: flags.remote({description: 'git remote of app to use'}),
   }

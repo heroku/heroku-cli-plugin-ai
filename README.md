@@ -109,10 +109,11 @@ USAGE
     <value>] [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  resource ID or alias of the model—the --app flag must be included if an alias is used
+  MODEL_RESOURCE  resource ID or alias of the model (the --app flag must be included if an alias is used)
 
 FLAGS
-  -a, --app=<value>     name or ID of the app—this flag is required if an alias is used for the MODEL_RESOURCE argument
+  -a, --app=<value>     name or ID of the app (this flag is required if an alias is used for the MODEL_RESOURCE
+                        argument)
   -j, --json            output response as JSON
   -o, --output=<value>  the file path where the command writes the model response
   -p, --prompt=<value>  (required) the input prompt for the model
@@ -162,7 +163,7 @@ _See code: [dist/commands/ai/models/create.ts](https://github.com/heroku/heroku-
 
 ## `heroku ai:models:destroy MODEL_RESOURCE`
 
-destroy an existing AI model resource to destroy
+destroy an existing AI model resource
 
 ```
 USAGE
@@ -173,12 +174,12 @@ ARGUMENTS
 
 FLAGS
   -a, --app=<value>      (required) app to run command against
-  -c, --confirm=<value>  app to run command against
+  -c, --confirm=<value>  set to app name to bypass confirm prompt
   -f, --force            allow destruction even if connected to other apps
   -r, --remote=<value>   git remote of app to use
 
 DESCRIPTION
-  destroy an existing AI model resource to destroy
+  destroy an existing AI model resource
 
 EXAMPLES
   $ heroku ai:models:destroy claude-3-5-sonnet-acute-43973
