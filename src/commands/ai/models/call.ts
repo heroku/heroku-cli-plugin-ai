@@ -15,7 +15,7 @@ import Command from '../../../lib/base'
 export default class Call extends Command {
   static args = {
     model_resource: Args.string({
-      description: 'Resource ID or alias of the model to call. The --app flag must be included if an alias is used.',
+      description: 'resource ID or alias of the model (the --app flag must be included if an alias is used)',
       required: true,
     }),
   }
@@ -29,7 +29,7 @@ export default class Call extends Command {
   static flags = {
     app: flags.app({
       required: false,
-      description: 'Name or ID of the app. This flag is required if an alias is used for the MODEL_RESOURCE argument.',
+      description: 'name or ID of the app (this flag is required if an alias is used for the MODEL_RESOURCE argument)',
     }),
     // interactive: flags.boolean({
     //   char: 'i',
