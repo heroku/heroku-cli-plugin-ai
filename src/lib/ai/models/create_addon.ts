@@ -48,7 +48,7 @@ export default async function (
   ux.log(`Model name: ${color.configVar(addon.name)}${options.as ? `\nModel alias: ${color.configVar(options.as)}` : ''}`)
 
   ux.log(
-    `Run ${color.cmd(`heroku config -a ${addon.app.name}`)} to view model config vars associated with this app.`
+    `Run ${color.cmd(`'heroku config -a ${addon.app.name}'`)} to view model config vars associated with this app.`
   )
 
   return addon
