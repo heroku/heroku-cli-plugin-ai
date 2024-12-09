@@ -255,3 +255,4 @@ EXAMPLES
 
 _See code: [dist/commands/ai/models/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.6/dist/commands/ai/models/list.ts)_
 <!-- commandsstop -->
+test
