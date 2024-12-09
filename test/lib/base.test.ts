@@ -153,7 +153,7 @@ describe('attempt a request using the Heroku AI client', function () {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
             We can’t find a model resource called inference-inexistent-00001.
-            Run heroku ai:models:info --app <value> to see a list of model resources.
+            Run heroku addons --app <value> to see a list of model resources.
           `)
         }
 
@@ -180,7 +180,7 @@ describe('attempt a request using the Heroku AI client', function () {
           const {message} = error as Error
           expect(stripAnsi(message)).to.equal(heredoc`
             We can’t find a model resource called ${addon1.name} on app2.
-            Run heroku ai:models:info --app app2 to see a list of model resources.
+            Run heroku addons --app app2 to see a list of model resources.
           `)
         }
 
