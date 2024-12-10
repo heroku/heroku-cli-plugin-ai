@@ -1,5 +1,5 @@
 {
-  "name": "@heroku-cli/plugin-ai",
+  "name": "@heroku/plugin-ai",
   "description": "Heroku CLI plugin for Heroku AI add-on",
   "version": "0.0.7",
   "author": "Heroku",
