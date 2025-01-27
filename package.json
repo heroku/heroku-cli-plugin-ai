@@ -32,7 +32,7 @@
     "eslint-plugin-mocha": "^10",
     "mocha": "^10",
     "nock": "^13",
-    "np": "7.7.0",
+    "np": "10.2.0",
     "nyc": "^15",
     "oclif": "2.2.0",
     "sinon": "^19",
