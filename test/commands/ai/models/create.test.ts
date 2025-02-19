@@ -239,7 +239,7 @@ describe('ai:models:create', function () {
       } catch (error: unknown) {
         const {message, oclif} = error as CLIError
         expect(stripAnsi(message)).to.eq(
-          'not-a-model-name is an invalid model name. Run heroku ai:models:list for a list of valid models.'
+          'not-a-model-name is an invalid model name. Run heroku ai:models:list for a list of valid models per region.'
         )
         expect(oclif.exit).to.eq(1)
       }

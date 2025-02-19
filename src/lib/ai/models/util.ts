@@ -37,7 +37,7 @@ export function handlePlatformApiErrors(error: unknown, cmdContext: {as?: string
 
     if (cmdContext.modelName && error.body.message?.includes('add-on plan')) {
       ux.error(
-        `${cmdContext.modelName} is an invalid model name. Run ${color.cmd('heroku ai:models:list')} for a list of valid models.`,
+        `${cmdContext.modelName} is an invalid model name. Run ${color.cmd('heroku ai:models:list')} for a list of valid models per region.`,
         {exit: 1},
       )
     }
