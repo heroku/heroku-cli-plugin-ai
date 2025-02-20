@@ -85,7 +85,7 @@ describe('ai:models:create', function () {
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
         Resource name: inference-regular-74659
-        Model alias: CLAUDE_HAIKU
+        Resource alias: CLAUDE_HAIKU
         Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
@@ -123,7 +123,7 @@ describe('ai:models:create', function () {
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
         Resource name: inference-regular-74659
-        Model alias: CLAUDE_HAIKU
+        Resource alias: CLAUDE_HAIKU
         Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
@@ -151,7 +151,7 @@ describe('ai:models:create', function () {
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
         Resource name: inference-regular-74659
-        Model alias: CLAUDE_HAIKU
+        Resource alias: CLAUDE_HAIKU
         Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
