@@ -52,7 +52,7 @@ describe('ai:models:create', function () {
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
-        Model name: inference-regular-74659
+        Resource name: inference-regular-74659
         Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
@@ -84,8 +84,8 @@ describe('ai:models:create', function () {
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
-        Model name: inference-regular-74659
-        Model alias: CLAUDE_HAIKU
+        Resource name: inference-regular-74659
+        Resource alias: CLAUDE_HAIKU
         Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
@@ -122,8 +122,8 @@ describe('ai:models:create', function () {
       expect(stripAnsi(stderr.output)).to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
-        Model name: inference-regular-74659
-        Model alias: CLAUDE_HAIKU
+        Resource name: inference-regular-74659
+        Resource alias: CLAUDE_HAIKU
         Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
@@ -150,8 +150,8 @@ describe('ai:models:create', function () {
       expect(stripAnsi(stderr.output)).not.to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
-        Model name: inference-regular-74659
-        Model alias: CLAUDE_HAIKU
+        Resource name: inference-regular-74659
+        Resource alias: CLAUDE_HAIKU
         Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
