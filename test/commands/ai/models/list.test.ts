@@ -29,7 +29,7 @@ describe('ai:models:list', function () {
 
     await runCommand(Cmd)
 
-    expect(stdout.output).to.match(/Model\s+Type\s+Region/)
+    expect(stdout.output).to.match(/Model\s+Type\s+Regions/)
 
     expect(stdout.output).to.match(/claude-3-5-sonnet\s+text-to-text\s+eu-central-1, us-east-1/)
     expect(stdout.output).to.match(/claude-3-5-sonnet-latest\s+text-to-text\s+us-east-1/)
