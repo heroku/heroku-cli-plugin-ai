@@ -11,7 +11,7 @@ const displayModels = (models: ModelList) => {
     type: {
       get: ({type}: any) => type.join(', '),
     },
-    regions: {
+    supported_regions: {
       get: ({regions}: any) => regions.join(', '),
     },
   }, {'no-header': false})
