@@ -68,6 +68,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc -b && oclif manifest && oclif readme && mv oclif.manifest.json ./dist/oclif.manifest.json && cp README.md ./dist/README.md",
     "lint": "eslint . --ext .ts --config .eslintrc.json",
+    "lint:fix": "eslint . --ext .ts --config .eslintrc.json --fix",
     "prepare": "yarn build",
     "posttest": "yarn lint",
     "test": "nyc mocha --forbid-only",
