@@ -3,20 +3,17 @@ import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import fs from 'node:fs'
 import {
-  type ChatCompletionRequest,
-  ChatCompletionResponse, type CreateEmbeddingRequest,
+  ChatCompletionResponse,
   EmbeddingResponse,
-  type ImageRequest,
   ImageResponse,
   ModelList,
 } from '../../../lib/ai/types'
 import Command from '../../../lib/base'
-import {openUrl} from '../../../lib/open-url'
 
 export default class Call extends Command {
   static args = {
     model_resource: Args.string({
-      description: 'Resource ID or alias of the model to call. The --app flag must be included if an alias is used.',
+      description: 'resource ID or alias of the model (the --app flag must be included if an alias is used)',
       required: true,
     }),
   }
@@ -30,14 +27,13 @@ export default class Call extends Command {
   static flags = {
     app: flags.app({
       required: false,
-      description: 'Name or ID of the app. This flag is required if an alias is used for the MODEL_RESOURCE argument.',
+      description: 'name or ID of the app (this flag is required if an alias is used for the MODEL_RESOURCE argument)',
     }),
     // interactive: flags.boolean({
     //   char: 'i',
     //   description: 'Use interactive mode for conversation beyond the initial prompt (not available on all models)',
     //   default: false,
     // }),
-    browser: flags.string({description: 'browser to open URLs with (example: "firefox", "safari")'}),
     json: flags.boolean({char: 'j', description: 'output response as JSON'}),
     optfile: flags.string({
       description: 'additional options for model inference, provided as a JSON config file',
@@ -64,7 +60,7 @@ export default class Call extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(Call)
     const {model_resource: modelResource} = args
-    const {app, browser, json, optfile, opts, output, prompt} = flags
+    const {app, json, optfile, opts, output, prompt} = flags
 
     // Initially, configure the default client to fetch the available model classes
     await this.configureHerokuAIClient()
@@ -79,19 +75,19 @@ export default class Call extends Command {
     // Note: modelType will always be lower case.  MarcusBlankenship 11/13/24.
     switch (modelType) {
     case 'text-to-embedding': {
-      const embedding = await this.createEmbedding(prompt, options as CreateEmbeddingRequest)
+      const embedding = await this.createEmbedding(prompt, options)
       await this.displayEmbedding(embedding, output, json)
       break
     }
 
     case 'text-to-image': {
-      const image = await this.generateImage(prompt, options as ImageRequest)
-      await this.displayImageResult(image, output, browser, json)
+      const image = await this.generateImage(prompt, options)
+      await this.displayImageResult(image, output, json)
       break
     }
 
     case 'text-to-text': {
-      const completion = await this.createChatCompletion(prompt, options as ChatCompletionRequest)
+      const completion = await this.createChatCompletion(prompt, options)
       await this.displayChatCompletion(completion, output, json)
       break
     }
@@ -148,11 +144,7 @@ export default class Call extends Command {
     return options
   }
 
-  private async createChatCompletion(prompt: string, options: ChatCompletionRequest = {} as ChatCompletionRequest) {
-    if (!this.isChatCompletionRequest(options)) {
-      return ux.error('Unexpected chat completion options', {exit: 1})
-    }
-
+  private async createChatCompletion<T = unknown>(prompt: string, options = {} as T) {
     const {body: chatCompletionResponse} = await this.herokuAI.post<ChatCompletionResponse>('/v1/chat/completions', {
       body: {
         ...options,
@@ -178,11 +170,7 @@ export default class Call extends Command {
     }
   }
 
-  private async generateImage(prompt: string, options: ImageRequest = {} as ImageRequest) {
-    if (!this.isImageRequest(options)) {
-      return ux.error('Unexpected image options', {exit: 1})
-    }
-
+  private async generateImage<T = unknown>(prompt: string, options = {} as T) {
     const {body: imageResponse} = await this.herokuAI.post<ImageResponse>('/v1/images/generations', {
       body: {
         ...options,
@@ -195,7 +183,7 @@ export default class Call extends Command {
     return imageResponse
   }
 
-  private async displayImageResult(image: ImageResponse, output?: string, browser?: string, json = false) {
+  private async displayImageResult(image: ImageResponse, output?: string, json = false) {
     if (image.data[0].b64_json) {
       if (output) {
         const content = json ? JSON.stringify(image, null, 2) : Buffer.from(image.data[0].b64_json, 'base64')
@@ -210,8 +198,6 @@ export default class Call extends Command {
         fs.writeFileSync(output, json ? JSON.stringify(image, null, 2) : image.data[0].url)
       else if (json)
         ux.styledJSON(image)
-      else
-        await openUrl(image.data[0].url, browser, 'view the image')
       return
     }
 
@@ -219,11 +205,7 @@ export default class Call extends Command {
     ux.error('Unexpected response format', {exit: 1})
   }
 
-  private async createEmbedding(input: string, options: CreateEmbeddingRequest = {} as CreateEmbeddingRequest) {
-    if (!this.isEmbeddingsRequest(options)) {
-      return ux.error('Unexpected embedding options', {exit: 1})
-    }
-
+  private async createEmbedding<T = unknown>(input: string, options = {} as T) {
     const {body: EmbeddingResponse} = await this.herokuAI.post<EmbeddingResponse>('/v1/embeddings', {
       body: {
         ...options,
@@ -244,59 +226,5 @@ export default class Call extends Command {
     } else {
       json ? ux.styledJSON(embedding) : ux.log(content)
     }
-  }
-
-  private isEmbeddingsRequest(obj: unknown): obj is CreateEmbeddingRequest {
-    const embeddingRequestKeys = new Set<keyof CreateEmbeddingRequest>([
-      'model',
-      'user',
-      'dimensions',
-      'encoding_format',
-      'input',
-    ])
-    const keys = Object.keys(obj ?? {})
-    return keys.every(key => embeddingRequestKeys.has(key as keyof CreateEmbeddingRequest))
-  }
-
-  private isImageRequest(obj: unknown): obj is ImageRequest {
-    const imageRequestKeys = new Set<keyof ImageRequest>([
-      'prompt',
-      'model',
-      'n',
-      'quality',
-      'response_format',
-      'size',
-      'style',
-      'user',
-      'sampler',
-      'seed',
-      'steps',
-      'cfg_scale',
-      'clip_guidance_preset',
-      'style_preset',
-    ])
-
-    const keys = Object.keys(obj ?? {})
-    return keys.every(key => imageRequestKeys.has(key as keyof ImageRequest))
-  }
-
-  private isChatCompletionRequest(obj: unknown): obj is ChatCompletionRequest {
-    const chatCompletionRequestKeys = new Set<keyof ChatCompletionRequest>([
-      'messages',
-      'model',
-      'temperature',
-      'top_p',
-      'n',
-      'stream',
-      'stop',
-      'max_tokens',
-      'presence_penalty',
-      'frequency_penalty',
-      'tools',
-      'tool_choice',
-      'user',
-    ])
-    const keys = Object.keys(obj ?? {})
-    return keys.every(key => chatCompletionRequestKeys.has(key as keyof ChatCompletionRequest))
   }
 }

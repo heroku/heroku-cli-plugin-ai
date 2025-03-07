@@ -6,7 +6,6 @@ import sinon from 'sinon'
 import {stderr, stdout} from 'stdout-stderr'
 import heredoc from 'tsheredoc'
 import Cmd from '../../../../src/commands/ai/models/call'
-import * as openUrl from '../../../../src/lib/open-url'
 import {
   addon3,
   addon3Attachment1,
@@ -392,27 +391,6 @@ describe('ai:models:call', function () {
         )).to.be.true
         expect(stdout.output).to.eq('')
         expect(stripAnsi(stderr.output)).to.eq('')
-      })
-    })
-
-    context('without --json or --output options, for URL response format', function () {
-      it('sends the prompt to the service and attempts to open the URL on the default browser', async function () {
-        const openUrlStub = sandbox.stub(openUrl, 'openUrl').onFirstCall().resolves()
-        const prompt = 'Generate a mocked image'
-        inferenceApi = nock('https://inference-eu.heroku.com', {
-          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
-        }).post('/v1/images/generations', {
-          model: 'stable-image-ultra',
-          prompt,
-        }).reply(200, imageResponseUrl)
-
-        await runCommand(Cmd, [
-          'inference-colorful-79696',
-          '--app=app2',
-          `--prompt=${prompt}`,
-        ])
-
-        expect(openUrlStub.calledWith(imageUrl, undefined, 'view the image')).to.be.true
       })
     })
 

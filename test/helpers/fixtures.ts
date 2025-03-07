@@ -5,26 +5,32 @@ export const availableModels = [
   {
     model_id: 'claude-3-5-sonnet',
     type: ['text-to-text'],
+    regions: ['eu-central-1', 'us-east-1'],
   },
   {
     model_id: 'claude-3-5-sonnet-latest',
     type: ['text-to-text'],
+    regions: ['us-east-1'],
   },
   {
     model_id: 'claude-3-haiku',
     type: ['text-to-text'],
+    regions: ['eu-central-1', 'us-east-1'],
   },
   {
     model_id: 'claude-3-5-haiku',
     type: ['text-to-text'],
+    regions: ['us-east-1'],
   },
   {
     model_id: 'cohere-embed-multilingual',
     type: ['text-to-embedding'],
+    regions: ['us-east-1'],
   },
   {
     model_id: 'stable-image-ultra',
     type: ['text-to-image'],
+    regions: ['eu-central-1', 'us-east-1'],
   },
 ]
 
@@ -37,7 +43,7 @@ export const mockConfigVars = {
 export const mockAPIErrors = {
   modelsListErrorResponse: {
     id: 'error',
-    message: 'Failed to retrieve the list of available models. Check the Heroku Status page https://status.heroku.com/ for system outages. After all incidents have resolved, try again. You can also see a list of models at https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models.',
+    message: 'Failed to retrieve the list of available models. Check the Heroku Status page https://status.heroku.com/ for system outages. After all incidents have resolved, try again. You can also see a list of models at https://devcenter.heroku.com/articles/heroku-inference-api-model-cards.',
   },
   modelsDestroyErrorResponse: {
     id: 'error',

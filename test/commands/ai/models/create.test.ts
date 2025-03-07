@@ -45,15 +45,15 @@ describe('ai:models:create', function () {
         '--app=app1',
       ])
       expect(stripAnsi(stderr.output)).to.include(
-        'Heroku Managed Inference and Agents is a pilot service.'
+        'Heroku Managed Inference and Agent is a pilot or beta service'
       )
       expect(stripAnsi(stderr.output)).to.include(heredoc`
         Creating heroku-inference:claude-3-haiku on app1... free
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
-        Model name: inference-regular-74659
-        Added INFERENCE_KEY, INFERENCE_MODEL_ID, INFERENCE_URL to app1
+        Resource name: inference-regular-74659
+        Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
     })
@@ -77,16 +77,16 @@ describe('ai:models:create', function () {
         '--as=CLAUDE_HAIKU',
       ])
       expect(stripAnsi(stderr.output)).to.include(
-        'Heroku Managed Inference and Agents is a pilot service.'
+        'Heroku Managed Inference and Agent is a pilot or beta service'
       )
       expect(stripAnsi(stderr.output)).to.include(heredoc`
         Creating heroku-inference:claude-3-haiku on app1... free
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
-        Model name: inference-regular-74659
-        Model alias: CLAUDE_HAIKU
-        Added CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL to app1
+        Resource name: inference-regular-74659
+        Resource alias: CLAUDE_HAIKU
+        Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
     })
@@ -122,9 +122,9 @@ describe('ai:models:create', function () {
       expect(stripAnsi(stderr.output)).to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
-        Model name: inference-regular-74659
-        Model alias: CLAUDE_HAIKU
-        Added CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL to app1
+        Resource name: inference-regular-74659
+        Resource alias: CLAUDE_HAIKU
+        Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
     })
@@ -150,9 +150,9 @@ describe('ai:models:create', function () {
       expect(stripAnsi(stderr.output)).not.to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
         Heroku AI model resource provisioned successfully
-        Model name: inference-regular-74659
-        Model alias: CLAUDE_HAIKU
-        Added CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_ID, CLAUDE_HAIKU_URL to app1
+        Resource name: inference-regular-74659
+        Resource alias: CLAUDE_HAIKU
+        Run 'heroku config -a app1' to view model config vars associated with this app.
         Use heroku ai:docs to view documentation.
       `)
     })
@@ -239,7 +239,7 @@ describe('ai:models:create', function () {
       } catch (error: unknown) {
         const {message, oclif} = error as CLIError
         expect(stripAnsi(message)).to.eq(
-          'not-a-model-name is an invalid model name. Run heroku ai:models:list for a list of valid models.'
+          'not-a-model-name is an invalid model name. Run heroku ai:models:list for a list of valid models per region.'
         )
         expect(oclif.exit).to.eq(1)
       }

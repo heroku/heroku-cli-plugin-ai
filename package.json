@@ -1,15 +1,12 @@
 {
   "name": "@heroku/plugin-ai",
   "description": "Heroku CLI plugin for Heroku AI add-on",
-  "version": "0.0.5",
+  "version": "0.0.9",
   "author": "Heroku",
   "bugs": "https://github.com/heroku/heroku-cli-plugin-ai/issues",
-  "publishConfig": {
-    "access": "restricted"
-  },
   "dependencies": {
     "@heroku-cli/color": "^2",
-    "@heroku-cli/command": "^11",
+    "@heroku-cli/command": "^11.5.0",
     "@heroku-cli/schema": "^1.0.25",
     "@oclif/core": "^2.16.0",
     "@oclif/plugin-help": "^5",
@@ -18,9 +15,9 @@
     "tsheredoc": "^1"
   },
   "devDependencies": {
+    "@heroku/http-call": "^5.4.0",
     "@oclif/test": "^2.3.28",
     "@types/mocha": "^10",
-    "@types/nock": "^11",
     "@types/node": "^22",
     "@types/sinon": "^17",
     "@typescript-eslint/eslint-plugin": "^6",
@@ -32,12 +29,11 @@
     "eslint-import-resolver-typescript": "^3",
     "eslint-plugin-import": "^2",
     "eslint-plugin-mocha": "^10",
-    "http-call": "^5",
     "mocha": "^10",
     "nock": "^13",
-    "np": "7.7.0",
+    "np": "^10.2.0",
     "nyc": "^15",
-    "oclif": "2.2.0",
+    "oclif": "^4.14.36",
     "sinon": "^19",
     "stdout-stderr": "^0",
     "strip-ansi": "^6",
@@ -45,7 +41,7 @@
     "typescript": "^5"
   },
   "engines": {
-    "node": ">=16.20.2"
+    "node": ">= 20"
   },
   "files": [
     "/dist"
@@ -72,6 +68,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc -b && oclif manifest && oclif readme && mv oclif.manifest.json ./dist/oclif.manifest.json && cp README.md ./dist/README.md",
     "lint": "eslint . --ext .ts --config .eslintrc.json",
+    "lint:fix": "eslint . --ext .ts --config .eslintrc.json --fix",
+    "prepare": "yarn build",
     "posttest": "yarn lint",
     "test": "nyc mocha --forbid-only",
     "test:local": "nyc mocha",

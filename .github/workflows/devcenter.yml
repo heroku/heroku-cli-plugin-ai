@@ -1,0 +1,21 @@
+name: Update AI Plugin Command DevCenter Documentation
+
+on:
+  workflow_dispatch:
+    inputs:
+      isStableRelease:
+        type: boolean
+        description: Is this a stable/prod release?
+        required: true
+        default: false
+
+jobs:
+  update-plugin-docs:
+    name: Update AI plugin DevCenter command docs
+    uses: heroku/frontend-github-workflows/.github/workflows/push-to-devcenter.yml@main
+    secrets: 
+      HEROKU_DEVCENTER_API_KEY: ${{ secrets.HEROKU_DEVCENTER_API_KEY }}
+    with:
+      isStableRelease: ${{ inputs.isStableRelease }}
+      articleTitle: Heroku Managed Inference and Agent Add-on CLI Commands
+      articleID: 8759

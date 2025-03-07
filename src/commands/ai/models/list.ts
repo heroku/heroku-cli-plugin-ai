@@ -8,10 +8,13 @@ const displayModels = (models: ModelList) => {
     model: {
       get: ({model_id}: any) => model_id,
     },
-    types: {
+    type: {
       get: ({type}: any) => type.join(', '),
     },
-  }, {'no-header': true})
+    supported_regions: {
+      get: ({regions}: any) => regions.join(', '),
+    },
+  }, {'no-header': false})
 }
 
 export default class List extends Command {
@@ -30,7 +33,8 @@ export default class List extends Command {
     const urlPath = '/available-models'
 
     const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
+
     displayModels(availableModels)
-    ux.log('\nSee https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models for more info.')
+    ux.log('\nSee https://devcenter.heroku.com/articles/heroku-inference-api-model-cards for more info.')
   }
 }

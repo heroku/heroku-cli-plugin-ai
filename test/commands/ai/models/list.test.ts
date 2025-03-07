@@ -28,19 +28,23 @@ describe('ai:models:list', function () {
       .reply(200, availableModels)
 
     await runCommand(Cmd)
-    expect(stdout.output).to.match(/claude-3-5-haiku\s+text-to-text/)
-    expect(stdout.output).to.match(/claude-3-5-sonnet\s+text-to-text/)
-    expect(stdout.output).to.match(/claude-3-5-sonnet-latest\s+text-to-text/)
-    expect(stdout.output).to.match(/claude-3-haiku\s+text-to-text/)
-    expect(stdout.output).to.match(/cohere-embed-multilingual\s+text-to-embedding/)
-    expect(stdout.output).to.match(/stable-image-ultra\s+text-to-image/)
-    expect(stdout.output).to.contain('See https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models for more info')
+
+    expect(stdout.output).to.match(/Model\s+Type\s+Supported regions/)
+
+    expect(stdout.output).to.match(/claude-3-5-sonnet\s+text-to-text\s+eu-central-1, us-east-1/)
+    expect(stdout.output).to.match(/claude-3-5-sonnet-latest\s+text-to-text\s+us-east-1/)
+    expect(stdout.output).to.match(/claude-3-haiku\s+text-to-text\s+eu-central-1, us-east-1/)
+    expect(stdout.output).to.match(/claude-3-5-haiku\s+text-to-text\s+us-east-1/)
+    expect(stdout.output).to.match(/cohere-embed-multilingual\s+text-to-embedding\s+us-east-1/)
+    expect(stdout.output).to.match(/stable-image-ultra\s+text-to-image\s+eu-central-1, us-east-1/)
+
+    expect(stdout.output).to.contain('See https://devcenter.heroku.com/articles/heroku-inference-api-model-cards for more info')
     expect(stderr.output).to.eq('')
   })
 
   it('warns if no models are available', async function () {
     const statusURL = 'https://status.heroku.com/'
-    const modelsDevCenterURL = 'https://devcenter.heroku.com/articles/rainbow-unicorn-princess-models'
+    const modelsDevCenterURL = 'https://devcenter.heroku.com/articles/heroku-inference-api-model-cards'
 
     herokuAI
       .get('/available-models')
