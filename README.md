@@ -32,7 +32,7 @@ USAGE
 * [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
 * [`heroku ai:models:destroy MODEL_RESOURCE`](#heroku-aimodelsdestroy-model_resource)
 * [`heroku ai:models:detach MODEL_RESOURCE`](#heroku-aimodelsdetach-model_resource)
-* [`heroku ai:models:info MODEL_RESOURCE`](#heroku-aimodelsinfo-model_resource)
+* [`heroku ai:models:info [MODEL_RESOURCE]`](#heroku-aimodelsinfo-model_resource)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
@@ -84,7 +84,7 @@ ARGUMENTS
 FLAGS
   -r, --remote=<value>      git remote of target app
   -s, --source-app=<value>  (required) source app for model resource
-  -t, --target-app=<value>  (required) target app for model resource
+  -t, --target-app=<value>  (required) [default: heroku-vscode] target app for model resource
       --as=<value>          alias name for model resource
       --confirm=<value>     overwrite existing attached resource with same name
 
@@ -112,8 +112,8 @@ ARGUMENTS
   MODEL_RESOURCE  resource ID or alias of the model (the --app flag must be included if an alias is used)
 
 FLAGS
-  -a, --app=<value>      name or ID of the app (this flag is required if an alias is used for the MODEL_RESOURCE
-                         argument)
+  -a, --app=<value>      [default: heroku-vscode] name or ID of the app (this flag is required if an alias is used for
+                         the MODEL_RESOURCE argument)
   -j, --json             output response as JSON
   -o, --output=<value>   the file path where the command writes the model response
   -p, --prompt=<value>   (required) the input prompt for the model
@@ -144,7 +144,7 @@ ARGUMENTS
   MODEL_NAME  name of the AI model to provision access for
 
 FLAGS
-  -a, --app=<value>      (required) name of the app to attach the model to
+  -a, --app=<value>      (required) [default: heroku-vscode] name of the app to attach the model to
   -r, --remote=<value>   git remote of app to use
       --as=<value>       alias of model resource
       --confirm=<value>  overwrite existing config vars or existing add-on aliases
@@ -173,7 +173,7 @@ ARGUMENTS
   MODEL_RESOURCE  resource ID or alias of the model resource to destroy
 
 FLAGS
-  -a, --app=<value>      (required) app to run command against
+  -a, --app=<value>      (required) [default: heroku-vscode] app to run command against
   -c, --confirm=<value>  set to app name to bypass confirm prompt
   -f, --force            allow destruction even if connected to other apps
   -r, --remote=<value>   git remote of app to use
@@ -199,7 +199,7 @@ ARGUMENTS
   MODEL_RESOURCE  alias of the model resource to detach
 
 FLAGS
-  -a, --app=<value>     (required) name of the app to detach the model resource from
+  -a, --app=<value>     (required) [default: heroku-vscode] name of the app to detach the model resource from
   -r, --remote=<value>  git remote of app to use
 
 DESCRIPTION
@@ -211,26 +211,28 @@ EXAMPLES
 
 _See code: [src/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.9/src/commands/ai/models/detach.ts)_
 
-## `heroku ai:models:info MODEL_RESOURCE`
+## `heroku ai:models:info [MODEL_RESOURCE]`
 
-get the current status of an AI model resource attached to your app
+get the current status of all the AI model resources attached to your app or a specific resource
 
 ```
 USAGE
-  $ heroku ai:models:info MODEL_RESOURCE -a <value> [-r <value>]
+  $ heroku ai:models:info [MODEL_RESOURCE] -a <value> [-r <value>]
 
 ARGUMENTS
   MODEL_RESOURCE  resource ID or alias of the model resource
 
 FLAGS
-  -a, --app=<value>     (required) app to run command against
+  -a, --app=<value>     (required) [default: heroku-vscode] app to run command against
   -r, --remote=<value>  git remote of app to use
 
 DESCRIPTION
-  get the current status of an AI model resource attached to your app
+  get the current status of all the AI model resources attached to your app or a specific resource
 
 EXAMPLES
   $ heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app
+
+  $ heroku ai:models:info --app example-app
 ```
 
 _See code: [src/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.9/src/commands/ai/models/info.ts)_
