@@ -32,7 +32,7 @@ USAGE
 * [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
 * [`heroku ai:models:destroy MODEL_RESOURCE`](#heroku-aimodelsdestroy-model_resource)
 * [`heroku ai:models:detach MODEL_RESOURCE`](#heroku-aimodelsdetach-model_resource)
-* [`heroku ai:models:info MODEL_RESOURCE`](#heroku-aimodelsinfo-model_resource)
+* [`heroku ai:models:info [MODEL_RESOURCE]`](#heroku-aimodelsinfo-model_resource)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
@@ -211,13 +211,13 @@ EXAMPLES
 
 _See code: [src/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.9/src/commands/ai/models/detach.ts)_
 
-## `heroku ai:models:info MODEL_RESOURCE`
+## `heroku ai:models:info [MODEL_RESOURCE]`
 
 get the current status of all the AI model resources attached to your app or a specific resource
 
 ```
 USAGE
-  $ heroku ai:models:info MODEL_RESOURCE -a <value> [-r <value>]
+  $ heroku ai:models:info [MODEL_RESOURCE] -a <value> [-r <value>]
 
 ARGUMENTS
   MODEL_RESOURCE  resource ID or alias of the model resource
