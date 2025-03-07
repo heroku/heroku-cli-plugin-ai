@@ -32,7 +32,7 @@ USAGE
 * [`heroku ai:models:create MODEL_NAME`](#heroku-aimodelscreate-model_name)
 * [`heroku ai:models:destroy MODEL_RESOURCE`](#heroku-aimodelsdestroy-model_resource)
 * [`heroku ai:models:detach MODEL_RESOURCE`](#heroku-aimodelsdetach-model_resource)
-* [`heroku ai:models:info MODEL_RESOURCE`](#heroku-aimodelsinfo-model_resource)
+* [`heroku ai:models:info [MODEL_RESOURCE]`](#heroku-aimodelsinfo-model_resource)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 
 ## `heroku ai:docs`
@@ -212,9 +212,9 @@ EXAMPLES
 
 _See code: [dist/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.5/dist/commands/ai/models/detach.ts)_
 
-## `heroku ai:models:info MODEL_RESOURCE`
+## `heroku ai:models:info [MODEL_RESOURCE]`
 
-get the current status of an AI model resource attached to your app
+get the current status of all the AI model resources attached to your app or a specific resource
 
 ```
 USAGE
@@ -228,10 +228,12 @@ FLAGS
   -r, --remote=<value>  git remote of app to use
 
 DESCRIPTION
-  get the current status of an AI model resource attached to your app
+  get the current status of all the AI model resources attached to your app or a specific resource
 
 EXAMPLES
   $ heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app
+
+  $ heroku ai:models:info --app example-app
 ```
 
 _See code: [dist/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.5/dist/commands/ai/models/info.ts)_
