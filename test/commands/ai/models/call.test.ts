@@ -135,6 +135,33 @@ describe('ai:models:call', function () {
         expect(stripAnsi(stderr.output)).to.eq('')
       })
 
+      it('works without --prompt flag when optfile contains messages', async function () {
+        const optfileContent = {
+          messages: [{role: 'user', content: 'Hello, who are you?'}],
+        }
+        const readFileSyncMock = sandbox
+          .stub(fs, 'readFileSync')
+          .returns(JSON.stringify(optfileContent))
+        inferenceApi = nock('https://inference-eu.heroku.com', {
+          reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+        }).post('/v1/chat/completions', {
+          model: 'claude-3-5-sonnet-latest',
+          messages: [{role: 'user', content: 'Hello, who are you?'}],
+        }).reply(200, chatCompletionResponse)
+
+        await runCommand(Cmd, [
+          'inference-animate-91825',
+          '--app=app1',
+          '--optfile=model-options.json',
+        ])
+
+        expect(readFileSyncMock.calledWith('model-options.json')).to.be.true
+        expect(stdout.output).to.eq(heredoc`
+          Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.
+        `)
+        expect(stripAnsi(stderr.output)).to.eq('')
+      })
+
       it('sends the prompt to the service with the specified options', async function () {
         const prompt = 'Hello, who are you?'
         const readFileSyncMock = sandbox
