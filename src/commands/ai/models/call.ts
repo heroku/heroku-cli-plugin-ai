@@ -82,7 +82,7 @@ export default class Call extends Command {
       const {parse: {output}} = error as CLIParseError
       ({args, flags} = output)
       if (!flags.prompt && !flags.optfile && !flags.opts) {
-        throw new Error('Either --prompt, --optfile, or --opts must be provided')
+        throw new Error('You must provide either --prompt, --optfile, or --opts.')
       }
     }
 
