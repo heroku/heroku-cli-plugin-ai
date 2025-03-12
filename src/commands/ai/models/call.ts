@@ -9,6 +9,22 @@ import {
   ModelList,
 } from '../../../lib/ai/types'
 import Command from '../../../lib/base'
+import {CLIParseErrorOptions, ParserOutput} from '@oclif/core/lib/interfaces/parser'
+
+type CLIParseError = CLIParseErrorOptions & {
+  parse: {
+    input: string,
+    output: ParserOutput<Call>
+  }
+}
+
+export type ChatCompletionRequest = {
+  model: string;
+  messages: Array<{
+    role: string;
+    content: string;
+  }>;
+} & {prompt: string}
 
 export default class Call extends Command {
   static args = {
@@ -58,7 +74,18 @@ export default class Call extends Command {
   }
 
   public async run(): Promise<void> {
-    const {args, flags} = await this.parse(Call)
+    let flags = {} as ParserOutput<Call>['flags']
+    let args = {} as ParserOutput<Call>['args']
+    try {
+      ({args, flags} = await this.parse(Call))
+    } catch (error) {
+      const {parse: {output}} = error as CLIParseError
+      ({args, flags} = output)
+      if (!flags.prompt && !flags.optfile && !flags.opts) {
+        throw new Error('You must provide either --prompt, --optfile, or --opts.')
+      }
+    }
+
     const {model_resource: modelResource} = args
     const {app, json, optfile, opts, output, prompt} = flags
 
@@ -104,7 +131,7 @@ export default class Call extends Command {
    * @param opts JSON string containing options.
    * @returns The parsed options as an object.
    */
-  private parseOptions(optfile?: string, opts?: string): unknown {
+  private parseOptions(optfile?: string, opts?: string): Record<string, unknown> {
     const options = {}
 
     if (optfile) {
@@ -144,15 +171,17 @@ export default class Call extends Command {
     return options
   }
 
-  private async createChatCompletion<T = unknown>(prompt: string, options = {} as T) {
+  private async createChatCompletion<T extends Record<string, unknown>>(prompt: string, options = {} as T) {
+    const {prompt: optsPrompt, messages = [], ...rest} = options
+    if (prompt) {
+      (messages as ChatCompletionRequest['messages']).push({role: 'user', content: prompt ?? optsPrompt})
+    }
+
     const {body: chatCompletionResponse} = await this.herokuAI.post<ChatCompletionResponse>('/v1/chat/completions', {
       body: {
-        ...options,
+        ...rest,
+        messages,
         model: this.apiModelId,
-        messages: [{
-          role: 'user',
-          content: prompt,
-        }],
       },
       headers: {authorization: `Bearer ${this.apiKey}`},
     })
@@ -170,12 +199,13 @@ export default class Call extends Command {
     }
   }
 
-  private async generateImage<T = unknown>(prompt: string, options = {} as T) {
+  private async generateImage<T extends Record<string, unknown>>(prompt: string, options = {} as T) {
+    const {prompt: optsPrompt, ...rest} = options
     const {body: imageResponse} = await this.herokuAI.post<ImageResponse>('/v1/images/generations', {
       body: {
-        ...options,
+        ...rest,
         model: this.apiModelId,
-        prompt,
+        prompt: prompt ?? optsPrompt,
       },
       headers: {authorization: `Bearer ${this.apiKey}`},
     })
@@ -205,12 +235,13 @@ export default class Call extends Command {
     ux.error('Unexpected response format', {exit: 1})
   }
 
-  private async createEmbedding<T = unknown>(input: string, options = {} as T) {
+  private async createEmbedding<T extends Record<string, unknown>>(input: string, options = {} as T) {
+    const {input: optsInput, ...rest} = options
     const {body: EmbeddingResponse} = await this.herokuAI.post<EmbeddingResponse>('/v1/embeddings', {
       body: {
-        ...options,
+        ...rest,
         model: this.apiModelId,
-        input,
+        input: input ?? optsInput,
       },
       headers: {authorization: `Bearer ${this.apiKey}`},
     })
