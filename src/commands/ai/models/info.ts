@@ -30,7 +30,7 @@ export default class Info extends Command {
     let listOfProvisionedModels: Array<ModelResource>  = []
 
     const modelInfo = async () => {
-      const modelInfoResponse = await this.herokuAI.get<ModelResource>(`/models/${this.apiModelId}`, {
+      const modelInfoResponse = await this.herokuAI.get<ModelResource>(`/models/${this.addon.id}`, {
         headers: {authorization: `Bearer ${this.apiKey}`},
       })
         .catch(error => {
@@ -104,8 +104,9 @@ export default class Info extends Command {
         'Model Alias': modelResource.model_alias,
         'Model Resource ID': modelResource.model_resource_id,
         Ready: modelResource.ready,
-        'Tokens In': modelResource.tokens_in,
-        'Tokens Out': modelResource.tokens_out,
+        'Tokens In': modelResource.meters?.input,
+        'Tokens Out': modelResource.meters?.output,
+        'Images Generated': modelResource.meters?.images,
         'Avg Performance': modelResource.avg_performance,
       })
     }
