@@ -12,7 +12,6 @@ describe('ai:models:info', function () {
   const {env} = process
   let api: nock.Scope
   let herokuAI: nock.Scope
-
   context('when provisioned model name is provided and is found', function () {
     beforeEach(function () {
       process.env = {}
@@ -39,7 +38,7 @@ describe('ai:models:info', function () {
           INFERENCE_URL: 'us.inference.heroku.com',
         })
       herokuAI
-        .get('/models/claude-3-haiku')
+        .get(`/models/${addon1.id}`)
         .reply(200, modelResource)
 
       await runCommand(Cmd, [
@@ -57,8 +56,8 @@ describe('ai:models:info', function () {
         Model Alias:       INFERENCE
         Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
         Ready:             Yes
-        Tokens In:         0 tokens this period
-        Tokens Out:        0 tokens this period
+        Tokens In:         0
+        Tokens Out:        0
         `)
 
       expect(stderr.output).to.eq('')
@@ -93,7 +92,7 @@ describe('ai:models:info', function () {
           INFERENCE_URL: 'us.inference.heroku.com',
         })
       herokuAI
-        .get('/models/claude-3-haiku')
+        .get(`/models/${addon1.id}`)
         .reply(200, modelResource)
       api
         .get(`/apps/${addon1.app?.name}/addons`)
@@ -110,7 +109,7 @@ describe('ai:models:info', function () {
           INFERENCE_URL: 'us.inference.heroku.com',
         })
       herokuAI
-        .get('/models/claude-3-haiku')
+        .get(`/models/${addon1.id}`)
         .reply(200, modelResource)
 
       await runCommand(Cmd, [
@@ -127,8 +126,8 @@ describe('ai:models:info', function () {
         Model Alias:       INFERENCE
         Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
         Ready:             Yes
-        Tokens In:         0 tokens this period
-        Tokens Out:        0 tokens this period
+        Tokens In:         0
+        Tokens Out:        0
 
         === claude-3-haiku
 
@@ -137,8 +136,8 @@ describe('ai:models:info', function () {
         Model Alias:       INFERENCE
         Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
         Ready:             Yes
-        Tokens In:         0 tokens this period
-        Tokens Out:        0 tokens this period
+        Tokens In:         0
+        Tokens Out:        0
         `)
     })
   })
