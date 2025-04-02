@@ -321,3 +321,20 @@ export type EmbeddingResponse = {
     readonly total_tokens: number
   }
 }
+
+/**
+ * Object schema for each collection item returned by the Add-on Usage Data endpoint.
+ */
+export type AddonsUsageData = {
+  id: string,
+  meters: {
+    storage: {
+      quantity: number,
+    },
+  },
+}
+
+/**
+ * Collection schema for Add-on Usage Data endpoint responses.
+ */
+export type AddonsUsageDataResponse = Array<AddonsUsageData>

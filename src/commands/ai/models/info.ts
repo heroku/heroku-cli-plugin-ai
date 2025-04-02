@@ -2,7 +2,7 @@ import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import Command from '../../../lib/base'
-import {ModelResource} from '../../../lib/ai/types'
+import {ModelResource, AddonsUsageData, AddonsUsageDataResponse} from '../../../lib/ai/types'
 import appAddons from '../../../lib/ai/models/app_addons'
 import * as Heroku from '@heroku-cli/schema'
 
@@ -69,23 +69,38 @@ export default class Info extends Command {
       return synthesizedModels
     }
 
+    const getAddonUsageDetails = async (app: string, addons: Array<Heroku.AddOn> | string) => {
+      const addonsUsageData = await this.heroku.get<AddonsUsageDataResponse>(`/teams/heroku/apps/${app}/usage`)
+      console.log("addonsUsageData", addonsUsageData)
+      return addonsUsageData
+    }
+
     if (modelResource) {
       listOfProvisionedModels = await getModelDetails(modelResource)
     } else {
-      const provisionedModelsInfo: Record<string, string | undefined>[] = []
+      const provisionedModelsInfo: Record<string, string | Record<string, Record<string, number>> | undefined>[] = []
       const inferenceRegex = /inference/
       const addonsResponse = await appAddons(this.config, app)
+      const {body: addonsUsageResponse} = await getAddonUsageDetails(app, addonsResponse as Array<Heroku.AddOn>)
 
       for (const addonInfo of addonsResponse as Array<Heroku.AddOn>) {
         const addonType = addonInfo.addon_service?.name || ''
         const isModelAddon = inferenceRegex.test(addonType)
 
         if (isModelAddon) {
-          provisionedModelsInfo.push({
-            addonName: addonInfo.addon_service?.name,
-            modelResource: addonInfo.name,
-            modelId: addonInfo.addon_service?.id,
-          })
+          const addonId = addonInfo.addon_service?.id
+
+          for (const addonUsageData of addonsUsageResponse as AddonsUsageDataResponse) {
+            if (addonUsageData.id === addonId) {
+              provisionedModelsInfo.push({
+                addonName: addonInfo.addon_service?.name,
+                modelResource: addonInfo.name,
+                modelId: addonInfo.addon_service?.id,
+                meters: addonUsageData.meters,
+              })
+            }
+          }
+
         }
       }
 
