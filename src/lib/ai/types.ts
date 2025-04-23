@@ -47,11 +47,8 @@ export type ModelResource = {
   model_alias: string
   ready: string
   created: string
-  meters: {
-    input?: number
-    output?: number
-    images?: number
-  }
+  tokens_in: string
+  tokens_out?: string
   avg_performance: string
 }
 
