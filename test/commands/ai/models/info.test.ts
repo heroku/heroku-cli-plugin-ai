@@ -57,8 +57,6 @@ describe('ai:models:info', function () {
         Model Alias:       INFERENCE
         Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
         Ready:             Yes
-        Tokens In:         0 tokens this period
-        Tokens Out:        0 tokens this period
         `)
 
       expect(stderr.output).to.eq('')
@@ -127,8 +125,6 @@ describe('ai:models:info', function () {
         Model Alias:       INFERENCE
         Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
         Ready:             Yes
-        Tokens In:         0 tokens this period
-        Tokens Out:        0 tokens this period
 
         === claude-3-haiku
 
@@ -137,8 +133,6 @@ describe('ai:models:info', function () {
         Model Alias:       INFERENCE
         Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
         Ready:             Yes
-        Tokens In:         0 tokens this period
-        Tokens Out:        0 tokens this period
         `)
     })
   })

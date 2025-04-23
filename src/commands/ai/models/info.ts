@@ -104,8 +104,6 @@ export default class Info extends Command {
         'Model Alias': modelResource.model_alias,
         'Model Resource ID': modelResource.model_resource_id,
         Ready: modelResource.ready,
-        'Tokens In': modelResource.tokens_in,
-        'Tokens Out': modelResource.tokens_out,
         'Avg Performance': modelResource.avg_performance,
       })
     }
