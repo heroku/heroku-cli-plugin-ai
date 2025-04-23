@@ -61,10 +61,6 @@ export const modelResource: ModelResource = {
   model_resource_id: 'b46be3d-d0e2-4b3f-b613-0a857115f71f',
   ready: 'Yes',
   created: '2023-01-21T13:02:37.320+00.00',
-  meters: {
-    input: 0,
-    output: 0,
-  },
   avg_performance: 'latency 0.4sec, 28 tokens/sec',
 }
 
