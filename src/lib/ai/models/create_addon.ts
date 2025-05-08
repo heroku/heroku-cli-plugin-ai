@@ -34,7 +34,11 @@ export default async function (
       throw error
     })
 
-    ux.action.stop(color.green(util.formatPriceText(addon.plan?.price || '')))
+    // TODO: This is a hack to show 'metered' as the price text.
+    // We should rely on the information returned from the API, but here we use a legacy
+    // variant for the add-on serialization and only variant '3.sdk' returns metered pricing.
+    // ux.action.stop(color.green(util.formatPriceText(addon.plan?.price || '')))
+    ux.action.stop(color.green('metered'))
 
     return addon
   }
