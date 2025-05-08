@@ -4,6 +4,7 @@ import * as Heroku from '@heroku-cli/schema'
 import {ux} from '@oclif/core'
 import heredoc from 'tsheredoc'
 import {HerokuAPIError} from '@heroku-cli/command/lib/api-client'
+import HTTP from '@heroku/http-call'
 
 export class NotFound extends Error {
   constructor(addonIdentifier: string, appIdentifier?: string) {
@@ -63,15 +64,13 @@ export default abstract class extends Command {
   private _defaultInferenceHost: string = process.env.HEROKU_INFERENCE_HOST || 'us.inference.heroku.com'
 
   protected async configureHerokuAIClient(addonIdentifier?: string, appIdentifier?: string): Promise<void> {
-    this._herokuAI = new APIClient(this.config)
-
     const defaultHeaders = {
       ...this.heroku.defaults.headers,
       accept: 'application/json',
       'user-agent': `heroku-cli-plugin-ai/${process.env.npm_package_version} ${this.config.platform}`,
     }
     delete defaultHeaders.authorization
-
+    const defaults = HTTP.defaults
     if (addonIdentifier) {
       ({addon: this._addon, attachment: this._addonAttachment} = await this.resolveAddonAndAttachment(addonIdentifier, appIdentifier))
 
@@ -83,15 +82,18 @@ export default abstract class extends Command {
       this._apiUrl = configVars[this.apiUrlConfigVarName]
       this._addonServiceSlug = this.addon.addon_service.name
       this._addonResourceId = this.addon.id
-      this._herokuAI.defaults.host = stripHttps(this.apiUrl)
-      this._herokuAI.defaults.headers = {
+      defaults.host = stripHttps(this.apiUrl)
+      defaults.headers = {
         ...defaultHeaders,
         authorization: `Bearer ${this.apiKey}`,
       }
     } else {
-      this._herokuAI.defaults.host = this.defaultInferenceHost
-      this._herokuAI.defaults.headers = defaultHeaders
+      defaults.host = this.defaultInferenceHost
+      defaults.headers = defaultHeaders
     }
+
+    this._herokuAI = new APIClient(this.config)
+    this._herokuAI.http.defaults = defaults
   }
 
   /*
