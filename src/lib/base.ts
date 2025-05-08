@@ -94,6 +94,7 @@ export default abstract class extends Command {
 
     this._herokuAI = new APIClient(this.config)
     this._herokuAI.http.defaults = defaults
+    this._herokuAI.auth = this._apiKey
   }
 
   /*
