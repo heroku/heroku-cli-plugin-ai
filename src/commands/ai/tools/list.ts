@@ -33,8 +33,8 @@ export default class List extends Command {
       ux.info('No AI tools are currently available for this app')
     } else {
       ux.table(tools, {
-        namespaced_name: {header: 'Tool', get: tool => tool.namespaced_name},
-        description: {header: 'Description', get: tool => tool.description},
+        namespaced_name: {header: 'Tool', get: tool => tool?.namespaced_name},
+        description: {header: 'Description', get: tool => tool?.description},
       })
     }
   }
