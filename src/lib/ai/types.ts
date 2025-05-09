@@ -316,3 +316,28 @@ export type EmbeddingResponse = {
     readonly total_tokens: number
   }
 }
+
+// MCP Server API response types
+
+export type MCPServerTool = {
+  name: string;
+  namespaced_name: string;
+  description: string;
+  input_schema: Record<string, unknown>;
+  annotations: Record<string, unknown>;
+};
+
+export type MCPServer = {
+  id: string;
+  app_id: string;
+  process_type: string;
+  process_command: string;
+  created_at: string;
+  updated_at: string;
+  tools: MCPServerTool[];
+  server_status: 'registered' | 'disconnected';
+  primitives_status: 'syncing' | 'synced' | 'error';
+  namespace: string;
+};
+
+export type MCPServerList = MCPServer[];

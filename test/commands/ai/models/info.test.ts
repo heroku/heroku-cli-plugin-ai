@@ -39,7 +39,7 @@ describe('ai:models:info', function () {
           INFERENCE_URL: 'us.inference.heroku.com',
         })
       herokuAI
-        .get('/models/claude-3-haiku')
+        .get(`/models/${addon1.id}`)
         .reply(200, modelResource)
 
       await runCommand(Cmd, [
@@ -91,7 +91,7 @@ describe('ai:models:info', function () {
           INFERENCE_URL: 'us.inference.heroku.com',
         })
       herokuAI
-        .get('/models/claude-3-haiku')
+        .get(`/models/${addon1.id}`)
         .reply(200, modelResource)
       api
         .get(`/apps/${addon1.app?.name}/addons`)
@@ -108,7 +108,7 @@ describe('ai:models:info', function () {
           INFERENCE_URL: 'us.inference.heroku.com',
         })
       herokuAI
-        .get('/models/claude-3-haiku')
+        .get(`/models/${addon1.id}`)
         .reply(200, modelResource)
 
       await runCommand(Cmd, [

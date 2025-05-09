@@ -67,6 +67,7 @@
   "repository": "heroku/heroku-cli-plugin-ai",
   "scripts": {
     "build": "rm -rf dist && tsc -b && oclif manifest && oclif readme && mv oclif.manifest.json ./dist/oclif.manifest.json && cp README.md ./dist/README.md",
+    "build:dev": "rm -rf dist && tsc -b --sourcemap && oclif manifest && oclif readme && mv oclif.manifest.json ./dist/oclif.manifest.json && cp README.md ./dist/README.md",
     "lint": "eslint . --ext .ts --config .eslintrc.json",
     "lint:fix": "eslint . --ext .ts --config .eslintrc.json --fix",
     "prepare": "yarn build",
