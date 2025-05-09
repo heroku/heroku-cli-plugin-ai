@@ -19,7 +19,7 @@ export default class List extends Command {
     addon: Args.string({
       required: false,
       default: 'heroku-inference',
-      description: 'unique identifier or globally unique name of the add-on. If omitted',
+      description: 'unique identifier or globally unique name of the add-on. "heroku-inference" will be used if omitted',
     }),
   };
 

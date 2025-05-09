@@ -27,6 +27,7 @@ USAGE
 <!-- commands -->
 * [`heroku ai:docs`](#heroku-aidocs)
 * [`heroku ai:mcp`](#heroku-aimcp)
+* [`heroku ai:mcp:start [ADDON]`](#heroku-aimcpstart-addon)
 * [`heroku ai:models`](#heroku-aimodels)
 * [`heroku ai:models:attach MODEL_RESOURCE`](#heroku-aimodelsattach-model_resource)
 * [`heroku ai:models:call MODEL_RESOURCE`](#heroku-aimodelscall-model_resource)
@@ -71,6 +72,27 @@ DESCRIPTION
 ```
 
 _See code: [src/commands/ai/mcp/index.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.11/src/commands/ai/mcp/index.ts)_
+
+## `heroku ai:mcp:start [ADDON]`
+
+Start the MCP proxy
+
+```
+USAGE
+  $ heroku ai:mcp:start [ADDON] -a <value> [--json]
+
+ARGUMENTS
+  ADDON  [default: heroku-inference] unique identifier or globally unique name of the add-on. If omitted
+
+FLAGS
+  -a, --app=<value>  (required) app to list tools for
+      --json         output in JSON format
+
+DESCRIPTION
+  Start the MCP proxy
+```
+
+_See code: [src/commands/ai/mcp/start.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.11/src/commands/ai/mcp/start.ts)_
 
 ## `heroku ai:models`
 
@@ -286,7 +308,8 @@ USAGE
   $ heroku ai:tools:list [ADDON] -a <value> [--json]
 
 ARGUMENTS
-  ADDON  [default: heroku-inference] unique identifier or globally unique name of the add-on. If omitted
+  ADDON  [default: heroku-inference] unique identifier or globally unique name of the add-on. "heroku-inference" will be
+         used if omitted
 
 FLAGS
   -a, --app=<value>  (required) app to list tools for
