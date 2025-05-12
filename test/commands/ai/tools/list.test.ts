@@ -141,4 +141,33 @@ describe('ai:tools:list', function () {
       expect(err.message).to.match(/Internal Server Error/)
     }
   })
+
+  it('uses custom addon when specified', async function () {
+    const customAddon = 'custom-inference'
+    mockAddonAndConfig('my-app', customAddon)
+    nock('https://us.inference.heroku.com')
+      .get('/v1/mcp/servers')
+      .reply(200, mockServers)
+
+    await runCommand(ListCmd, ['--app', 'my-app', customAddon])
+
+    expect(stdout.output).to.match(/Tool\s+Description/)
+    expect(stdout.output).to.match(/heroku-inference.summarize\s+Summarize text/)
+    expect(stdout.output).to.match(/heroku-inference.classify\s+Classify text/)
+    expect(stderr.output).to.eq('')
+  })
+
+  it('works without app specified', async function () {
+    mockAddonAndConfig()
+    nock('https://us.inference.heroku.com')
+      .get('/v1/mcp/servers')
+      .reply(200, mockServers)
+
+    await runCommand(ListCmd, [])
+
+    expect(stdout.output).to.match(/Tool\s+Description/)
+    expect(stdout.output).to.match(/heroku-inference.summarize\s+Summarize text/)
+    expect(stdout.output).to.match(/heroku-inference.classify\s+Classify text/)
+    expect(stderr.output).to.eq('')
+  })
 })
