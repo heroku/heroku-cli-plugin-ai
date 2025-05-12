@@ -7,10 +7,10 @@ import appAddons from '../../../lib/ai/models/app_addons'
 import * as Heroku from '@heroku-cli/schema'
 
 export default class Info extends Command {
-  static description = 'get the current status of all the AI model resources attached to your app or a specific resource'
+  static description = 'get the current status of all the AI model resources attached to your app or a specific resource '
   static examples = [
-    'heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app',
-    'heroku ai:models:info --app example-app',
+    'heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app ',
+    'heroku ai:models:info --app example-app ',
   ]
 
   static flags = {
@@ -19,7 +19,7 @@ export default class Info extends Command {
   }
 
   static args = {
-    model_resource: Args.string({description: 'resource ID or alias of the model resource'}),
+    model_resource: Args.string({description: 'resource ID or alias of the model resource '}),
   }
 
   public async run(): Promise<any> {
@@ -35,7 +35,7 @@ export default class Info extends Command {
       })
         .catch(error => {
           if (error.statusCode === 404) {
-            ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
+            ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources. `)
           } else {
             throw error
           }

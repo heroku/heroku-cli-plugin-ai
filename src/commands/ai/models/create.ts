@@ -9,25 +9,25 @@ import Command from '../../../lib/base'
 export default class Create extends Command {
   static args = {
     model_name: Args.string({
-      description: 'name of the AI model to provision access for',
+      description: 'name of the AI model to provision access for ',
       required: true,
     }),
   }
 
-  static description = 'provision access to an AI model'
+  static description = 'provision access to an AI model '
   static example = heredoc`
     # Provision access to an AI model and attach it to your app with a default name:
     heroku ai:models:create claude-3-5-sonnet --app example-app
     # Provision access to an AI model and attach it to your app with a custom name:
-    heroku ai:models:create stable-image-ultra --app example-app --as diffusion
+    heroku ai:models:create stable-image-ultra --app example-app --as diffusion 
   `
   static flags = {
     app: flags.app({
-      description: 'name of the app to attach the model to',
+      description: 'name of the app to attach the model to ',
       required: true,
     }),
-    as: flags.string({description: 'alias of model resource'}),
-    confirm: flags.string({description: 'overwrite existing config vars or existing add-on aliases'}),
+    as: flags.string({description: 'alias of model resource '}),
+    confirm: flags.string({description: 'overwrite existing config vars or existing add-on aliases '}),
     remote: flags.remote(),
   }
 
@@ -46,7 +46,7 @@ export default class Create extends Command {
       )
 
       await this.config.runHook('recache', {type: 'addon', app, addon})
-      ux.log(`Use ${color.cmd('heroku ai:docs to view documentation')}.`)
+      ux.log(`Use ${color.cmd('heroku ai:docs to view documentation ')}.`)
     } catch (error: unknown) {
       handlePlatformApiErrors(error, {as, modelName})
     }

@@ -18,7 +18,7 @@ const displayModels = (models: ModelList) => {
 }
 
 export default class List extends Command {
-  static description = 'list available AI models to provision access to'
+  static description = 'list available AI models to provision access to '
 
   static examples = [
     '$ heroku ai:models:list',
@@ -35,6 +35,6 @@ export default class List extends Command {
     const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
 
     displayModels(availableModels)
-    ux.log('\nSee https://devcenter.heroku.com/articles/heroku-inference-api-model-cards for more info.')
+    ux.log('\nSee https://devcenter.heroku.com/articles/heroku-inference-api-model-cards for more info. ')
   }
 }

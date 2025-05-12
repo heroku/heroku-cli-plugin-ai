@@ -259,14 +259,14 @@ export default abstract class extends Command {
     if (this._addon)
       return this._addon
 
-    ux.error('Heroku AI API Client not configured.', {exit: 1})
+    ux.error('Heroku AI API Client not configured. ', {exit: 1})
   }
 
   get addonAttachment(): Required<Heroku.AddOnAttachment> {
     if (this._addonAttachment)
       return this._addonAttachment
 
-    ux.error('Heroku AI API Client not configured.', {exit: 1})
+    ux.error('Heroku AI API Client not configured. ', {exit: 1})
   }
 
   get addonServiceSlug(): string {
@@ -279,14 +279,14 @@ export default abstract class extends Command {
     if (this.addon && this._addonResourceId)
       return this._addonResourceId
 
-    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}. `, {exit: 1})
   }
 
   get apiKey(): string {
     if (this.addon && this._apiKey)
       return this._apiKey
 
-    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}. `, {exit: 1})
   }
 
   get apiKeyConfigVarName(): string {
@@ -309,7 +309,7 @@ export default abstract class extends Command {
     if (this.addon && this._apiUrl)
       return this._apiUrl
 
-    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}. `, {exit: 1})
   }
 
   get apiUrlConfigVarName(): string {
@@ -320,7 +320,7 @@ export default abstract class extends Command {
     if (this._herokuAI)
       return this._herokuAI
 
-    ux.error('Heroku AI API Client not configured.', {exit: 1})
+    ux.error('Heroku AI API Client not configured. ', {exit: 1})
   }
 
   get defaultInferenceHost(): string {

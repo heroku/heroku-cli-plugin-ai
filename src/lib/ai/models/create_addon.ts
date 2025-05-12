@@ -21,7 +21,7 @@ export default async function (
       attachment: {name: options.as},
     }
 
-    ux.action.start(`Creating ${plan} on ${color.app(app)}`)
+    ux.action.start(`Creating ${plan} on ${color.app(app)} `)
 
     const {body: addon} = await heroku.post<Required<Heroku.AddOn>>(`/apps/${app}/addons`, {
       body,
@@ -52,7 +52,7 @@ export default async function (
   ux.log(`Resource name: ${color.configVar(addon.name)}${options.as ? `\nResource alias: ${color.configVar(options.as)}` : ''}`)
 
   ux.log(
-    `Run ${color.cmd(`'heroku config -a ${addon.app.name}'`)} to view model config vars associated with this app.`
+    `Run ${color.cmd(`'heroku config -a ${addon.app.name}'`)} to view model config vars associated with this app. `
   )
 
   return addon

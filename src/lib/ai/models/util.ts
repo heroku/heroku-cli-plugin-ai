@@ -30,14 +30,14 @@ export function handlePlatformApiErrors(error: unknown, cmdContext: {as?: string
   if (error instanceof HerokuAPIError && error.body.id === 'invalid_params') {
     if (cmdContext.as && error.body.message?.includes('start with a letter')) {
       ux.error(
-        `${cmdContext.as} is an invalid alias name. It must start with a letter and can only contain uppercase letters, numbers, and underscores.`,
+        `${cmdContext.as} is an invalid alias name. It must start with a letter and can only contain uppercase letters, numbers, and underscores. `,
         {exit: 1},
       )
     }
 
     if (cmdContext.modelName && error.body.message?.includes('add-on plan')) {
       ux.error(
-        `${cmdContext.modelName} is an invalid model name. Run ${color.cmd('heroku ai:models:list')} for a list of valid models per region.`,
+        `${cmdContext.modelName} is an invalid model name. Run ${color.cmd('heroku ai:models:list')} for a list of valid models per region. `,
         {exit: 1},
       )
     }
