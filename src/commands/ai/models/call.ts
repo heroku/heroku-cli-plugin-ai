@@ -67,7 +67,7 @@ export default class Call extends Command {
     }),
     prompt: flags.string({
       char: 'p',
-      description: 'the input prompt for the model ',
+      description: 'input prompt for model ',
       required: true,
     }),
     remote: flags.remote(),
