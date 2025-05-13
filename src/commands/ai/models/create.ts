@@ -46,7 +46,7 @@ export default class Create extends Command {
       )
 
       await this.config.runHook('recache', {type: 'addon', app, addon})
-      ux.log(`Use ${color.cmd('heroku ai:docs to view documentation ')}.`)
+      ux.log(`Use ${color.cmd('heroku ai:docs')} to view documentation.`)
     } catch (error: unknown) {
       handlePlatformApiErrors(error, {as, modelName})
     }
