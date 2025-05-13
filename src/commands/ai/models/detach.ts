@@ -40,7 +40,7 @@ export default class Detach extends Command {
 
     ux.action.stop()
 
-    ux.action.start(`Unsetting ${color.cyan(aiAddon.name || '')} config vars and restarting ${color.magenta(app)} `)
+    ux.action.start(`Unsetting ${color.cyan(aiAddon.name || '')} config vars and restarting ${color.magenta(app)}.`)
 
     const {body: releases} = await this.heroku.get<Heroku.Release[]>(`/apps/${app}/releases`, {
       partial: true, headers: {Range: 'version ..; max=1, order=desc'},
