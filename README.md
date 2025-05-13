@@ -64,7 +64,6 @@ USAGE
 
 ARGUMENTS
   ADDON  [default: heroku-inference] unique identifier or globally unique name of add-on
-         if omitted
 
 FLAGS
   -a, --app=<value>  app to list MCP server URL for
