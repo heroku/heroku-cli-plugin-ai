@@ -10,7 +10,7 @@ export async function openUrl(url: string, browser?: string, action?: string) {
   const showBrowserError = (browser?: string) => {
     if (browserErrorShown) return
 
-    ux.warn(`Unable to open ${browser ? browser : 'your default'} browser. Please visit ${color.cyan(url)}${action ? ` to ${action}` : ''}. `)
+    ux.warn(`Unable to open ${browser ? browser : 'your default'} browser. Visit ${color.cyan(url)}${action ? ` to ${action}` : ''}.`)
     browserErrorShown = true
   }
 
