@@ -39,7 +39,7 @@ USAGE
 
 ## `heroku ai:docs`
 
-opens docs for Heroku AI in your web browser
+open Heroku Managed Inference and Agent's Dev Center documentation in your browser
 
 ```
 USAGE
@@ -49,7 +49,7 @@ FLAGS
   --browser=<value>  browser to open docs with (example: "firefox", "safari")
 
 DESCRIPTION
-  opens docs for Heroku AI in your web browser
+  open Heroku Managed Inference and Agent's Dev Center documentation in your browser
 ```
 
 _See code: [src/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.11/src/commands/ai/docs.ts)_
@@ -132,7 +132,7 @@ ARGUMENTS
   MODEL_RESOURCE  resource ID or alias of model (--app flag required if alias is used)
 
 FLAGS
-  -a, --app=<value>      name or ID of app (required if alias is used for MODEL_RESOURCE)
+  -a, --app=<value>      name or ID of app (required if alias is used)
   -j, --json             output response as JSON
   -o, --output=<value>   file path where command writes the model response
   -p, --prompt=<value>   input prompt for model

@@ -15,7 +15,7 @@ export default async function (config: Config, addon: Heroku.AddOn, force = fals
     body: {force},
   }).catch(error => {
     ux.action.stop('')
-    const error_ = error.body && error.body.message ? new Error(`We can't destroy ${color.addon(addonName)}: ${error.body.message}.`) : new Error(We can't destroy `${color.addon(addonName)}: ${error}.`)
+    const error_ = error.body && error.body.message ? new Error(`We can't destroy ${color.addon(addonName)}: ${error.body.message}.`) : new Error(`We can't destroy ${color.addon(addonName)}: ${error}.`)
     throw error_
   })
 

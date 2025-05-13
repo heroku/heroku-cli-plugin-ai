@@ -82,7 +82,7 @@ describe('ai:models:destroy', function () {
       await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`, '--confirm', `${appName}`])
     } catch (error) {
       const {message} = error as CLIError
-      expect(stripAnsi(message)).to.equal(`${addonName} was unable to be destroyed: ${mockAPIErrors.modelsDestroyErrorResponse.message}.`)
+      expect(stripAnsi(message)).to.equal(`We can't destroy ${addonName}: ${mockAPIErrors.modelsDestroyErrorResponse.message}.`)
     }
   })
 })
