@@ -290,7 +290,6 @@ USAGE
 
 ARGUMENTS
   ADDON  [default: heroku-inference] unique identifier or globally unique name of the add-on, "heroku-inference" is used
-         if omitted
 
 FLAGS
   -a, --app=<value>  app to list tools for
