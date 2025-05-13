@@ -35,7 +35,7 @@ export default class Info extends Command {
       })
         .catch(error => {
           if (error.statusCode === 404) {
-            ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources. `)
+            ux.warn(`We can’t find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
           } else {
             throw error
           }

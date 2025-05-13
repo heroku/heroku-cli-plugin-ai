@@ -13,18 +13,18 @@ export default class Attach extends Command {
     }),
   }
 
-  static description = 'attach an existing model resource to an app '
+  static description = 'attach an existing model resource to an app'
   static examples = [
     'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app',
     'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app --as MY_CS35',
   ]
 
   static flags = {
-    as: flags.string({description: 'alias name for model resource '}),
-    confirm: flags.string({description: 'overwrite existing attached resource with same name '}),
-    'source-app': flags.string({char: 's', description: 'source app for model resource ', required: true}),
-    'target-app': flags.app({char: 't', description: 'target app for model resource ', required: true}),
-    remote: flags.remote({description: 'git remote of target app '}),
+    as: flags.string({description: 'alias name for model resource'}),
+    confirm: flags.string({description: 'overwrite existing attached resource with same name'}),
+    'source-app': flags.string({char: 's', description: 'source app for model resource', required: true}),
+    'target-app': flags.app({char: 't', description: 'target app for model resource', required: true}),
+    remote: flags.remote({description: 'git remote of target app'}),
   }
 
   public async run(): Promise<void> {
@@ -39,7 +39,7 @@ export default class Attach extends Command {
       targetApp, confirm, (confirmed?: string) => this.createAttachment(targetApp, as, confirmed)
     )
 
-    ux.action.start(`Setting ${color.attachment(attachment.name || '')} config vars and restarting ${color.app(targetApp)} `)
+    ux.action.start(`Setting ${color.attachment(attachment.name || '')} config vars and restarting ${color.app(targetApp)}`)
     const {body: releases} = await this.heroku.get<Array<Required<Heroku.Release>>>(`/apps/${targetApp}/releases`, {
       partial: true, headers: {Range: 'version ..; max=1, order=desc'},
     })

@@ -1,4 +1,3 @@
-import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import fs from 'node:fs'
@@ -68,7 +67,7 @@ export default class Call extends Command {
     prompt: flags.string({
       char: 'p',
       description: 'input prompt for model ',
-      required: true,
+      required: false,
     }),
     remote: flags.remote(),
   }
@@ -81,13 +80,14 @@ export default class Call extends Command {
     } catch (error) {
       const {parse: {output}} = error as CLIParseError
       ({args, flags} = output)
-      if (!flags.prompt && !flags.optfile && !flags.opts) {
-        throw new Error('You must provide either --prompt, --optfile, or --opts. ')
-      }
     }
 
     const {model_resource: modelResource} = args
     const {app, json, optfile, opts, output, prompt} = flags
+
+    if (!prompt && !optfile && !opts) {
+      throw new Error('You must provide either --prompt, --optfile, or --opts.')
+    }
 
     // Initially, configure the default client to fetch the available model classes
     await this.configureHerokuAIClient()
@@ -120,7 +120,7 @@ export default class Call extends Command {
     }
 
     default:
-      throw new Error(`Unsupported model type: ${modelType} `)
+      throw new Error(`Unsupported model type: ${modelType}`)
     }
   }
 
@@ -142,10 +142,7 @@ export default class Call extends Command {
       } catch (error: unknown) {
         if (error instanceof SyntaxError) {
           const {message} = error as SyntaxError
-          return ux.error(
-            `Invalid JSON in ${color.yellow(optfile)}. Check the formatting in your file.\n${message} `,
-            {exit: 1},
-          )
+          throw new Error(`Invalid JSON in ${optfile}. Check the formatting in your file.\n${message}`)
         }
 
         throw error
@@ -158,10 +155,7 @@ export default class Call extends Command {
       } catch (error: unknown) {
         if (error instanceof SyntaxError) {
           const {message} = error as SyntaxError
-          return ux.error(
-            `Invalid JSON. Check the formatting in your ${color.yellow('--opts')} value.\n${message} `,
-            {exit: 1},
-          )
+          throw new Error(`Invalid JSON. Check the formatting in your --opts value.\n${message}`)
         }
 
         throw error

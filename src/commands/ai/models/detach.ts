@@ -34,7 +34,7 @@ export default class Detach extends Command {
 
     await this.heroku.delete(`/addon-attachments/${aiAddon.id}`).catch(error => {
       ux.action.stop('')
-      const error_ = error instanceof HerokuAPIError ? new Error(`We can’t find the model alias ${modelResource}. Check your spelling. `) : error.message
+      const error_ = error instanceof HerokuAPIError ? new Error(`We can’t find the model alias ${modelResource}. Check your spelling.`) : error.message
       ux.error(error_, {exit: 1})
     })
 

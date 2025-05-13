@@ -1,4 +1,5 @@
 import {stdout, stderr} from 'stdout-stderr'
+import heredoc from 'tsheredoc'
 import Cmd  from '../../../../src/commands/ai/models/detach'
 import {runCommand} from '../../../run-command'
 import nock from 'nock'
@@ -43,6 +44,11 @@ describe('addons:detach', function () {
 
     expect(stdout.output).to.equal('')
     expect(stderr.output).to.contain(`Detaching ${addonName} from ${appName}... done`)
-    expect(stderr.output).to.contain(`Unsetting ${addonName} config vars and restarting ${appName}... done, v10`)
+    expect(stderr.output).to.equal(heredoc(`
+    Detaching INFERENCE from app1...
+    Detaching INFERENCE from app1... done
+    Unsetting INFERENCE config vars and restarting app1....
+    Unsetting INFERENCE config vars and restarting app1.... done, v10
+    `))
   })
 })

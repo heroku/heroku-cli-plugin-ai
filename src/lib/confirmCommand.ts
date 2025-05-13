@@ -5,7 +5,7 @@ import heredoc from 'tsheredoc'
 export default async function confirmCommand(app: string, confirm?: string | undefined, message?: string) {
   if (confirm) {
     if (confirm === app) return
-    throw new Error(`Confirmation ${color.bold.red(confirm)} did not match ${color.bold.red(app)}. Aborted. `)
+    throw new Error(`Confirmation ${color.bold.red(confirm)} did not match ${color.bold.red(app)}. Aborted.`)
   }
 
   if (!message) {
@@ -25,5 +25,5 @@ export default async function confirmCommand(app: string, confirm?: string | und
     return
   }
 
-  throw new Error(`Confirmation did not match ${color.bold.red(app)}. Aborted. `)
+  throw new Error(`Confirmation did not match ${color.bold.red(app)}. Aborted.`)
 }

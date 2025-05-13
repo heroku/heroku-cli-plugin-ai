@@ -44,7 +44,8 @@ describe('ai:models:create', function () {
         'claude-3-haiku',
         '--app=app1',
       ])
-      expect(stripAnsi(stderr.output)).to.include(heredoc`
+      expect(stripAnsi(stderr.output)).to.eq(heredoc`
+        Creating heroku-inference:claude-3-haiku on app1...
         Creating heroku-inference:claude-3-haiku on app1... metered
       `)
       expect(stripAnsi(stdout.output)).to.eq(heredoc`
@@ -73,21 +74,13 @@ describe('ai:models:create', function () {
         '--app=app1',
         '--as=CLAUDE_HAIKU',
       ])
-      expect(stripAnsi(stderr.output)).to.include(heredoc`
-        Creating heroku-inference:claude-3-haiku on app1... metered
-      `)
-      expect(stripAnsi(stdout.output)).to.eq(heredoc`
-        Heroku AI model resource provisioned successfully
-        Resource name: inference-regular-74659
-        Resource alias: CLAUDE_HAIKU
-        Run 'heroku config -a app1' to view model config vars associated with this app.
-        Use heroku ai:docs to view documentation.
-      `)
+      expect(stripAnsi(stderr.output)).to.include('Creating heroku-inference:claude-3-haiku on app1... metered\n')
+      expect(stripAnsi(stdout.output)).to.eq('Heroku AI model resource provisioned successfully\nResource name: inference-regular-74659\nResource alias: CLAUDE_HAIKU\nRun \'heroku config -a app1\' to view model config vars associated with this app.\nUse heroku ai:docs to view documentation.\n')
     })
   })
 
   context('when reusing an existing attachment name', function () {
-    it('requires interactive confirmation if the user didn’t use the --confirm option', async function () {
+    it("requires interactive confirmation if the user didn't use the --confirm option", async function () {
       const prompt = sandbox.stub(ux, 'prompt').resolves('app1')
       api
         .post('/apps/app1/addons', {
@@ -114,16 +107,10 @@ describe('ai:models:create', function () {
       ])
       expect(prompt.calledOnce).to.be.true
       expect(stripAnsi(stderr.output)).to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
-      expect(stripAnsi(stdout.output)).to.eq(heredoc`
-        Heroku AI model resource provisioned successfully
-        Resource name: inference-regular-74659
-        Resource alias: CLAUDE_HAIKU
-        Run 'heroku config -a app1' to view model config vars associated with this app.
-        Use heroku ai:docs to view documentation.
-      `)
+      expect(stripAnsi(stdout.output)).to.eq('Heroku AI model resource provisioned successfully\nResource name: inference-regular-74659\nResource alias: CLAUDE_HAIKU\nRun \'heroku config -a app1\' to view model config vars associated with this app.\nUse heroku ai:docs to view documentation.\n')
     })
 
-    it('doesn’t require interactive confirmation if the user used the correct --confirm option', async function () {
+    it("doesn't require interactive confirmation if the user used the correct --confirm option", async function () {
       const prompt = sandbox.stub(ux, 'prompt')
       api
         .post('/apps/app1/addons', {
@@ -142,13 +129,7 @@ describe('ai:models:create', function () {
       ])
       expect(prompt.calledOnce).to.be.false
       expect(stripAnsi(stderr.output)).not.to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
-      expect(stripAnsi(stdout.output)).to.eq(heredoc`
-        Heroku AI model resource provisioned successfully
-        Resource name: inference-regular-74659
-        Resource alias: CLAUDE_HAIKU
-        Run 'heroku config -a app1' to view model config vars associated with this app.
-        Use heroku ai:docs to view documentation.
-      `)
+      expect(stripAnsi(stdout.output)).to.eq('Heroku AI model resource provisioned successfully\nResource name: inference-regular-74659\nResource alias: CLAUDE_HAIKU\nRun \'heroku config -a app1\' to view model config vars associated with this app.\nUse heroku ai:docs to view documentation.\n')
     })
 
     it('fails if the user provides the wrong confirmation response interactively', async function () {
@@ -214,7 +195,7 @@ describe('ai:models:create', function () {
 
   context('when using an invalid model name argument', function () {
     beforeEach(function () {
-      const message = 'Couldn\'t find either the add-on service or the add-on plan of "heroku-inference:not-a-model-name".'
+      const message = 'not-a-model-name is an invalid model name. Run heroku ai:models:list for a list of valid models per region.'
       api
         .post('/apps/app1/addons', {
           config: {},
@@ -232,10 +213,8 @@ describe('ai:models:create', function () {
         ])
       } catch (error: unknown) {
         const {message, oclif} = error as CLIError
-        expect(stripAnsi(message)).to.eq(
-          'not-a-model-name is an invalid model name. Run heroku ai:models:list for a list of valid models per region.'
-        )
-        expect(oclif.exit).to.eq(1)
+        expect(stripAnsi(message)).to.include('not-a-model-name is an invalid model name. Run heroku ai:models:list for a list of valid models per region.')
+        expect(oclif.exit).to.eq(2)
       }
 
       expect(stripAnsi(stdout.output)).to.eq('')
@@ -244,7 +223,7 @@ describe('ai:models:create', function () {
 
   context('when using an invalid alias name argument', function () {
     beforeEach(function () {
-      const message = 'Name must start with a letter and can only contain uppercase letters, numbers, and underscores.'
+      const message = 'wrong-alias is an invalid alias. Alias must start with a letter and can only contain uppercase letters, numbers, and underscores.'
       api
         .post('/apps/app1/addons', {
           config: {},
@@ -263,9 +242,7 @@ describe('ai:models:create', function () {
         ])
       } catch (error: unknown) {
         const {message, oclif} = error as CLIError
-        expect(stripAnsi(message)).to.eq(
-          'wrong-alias is an invalid alias name. It must start with a letter and can only contain uppercase letters, numbers, and underscores.'
-        )
+        expect(stripAnsi(message)).to.eq('wrong-alias is an invalid alias. Alias must start with a letter and can only contain uppercase letters, numbers, and underscores.')
         expect(oclif.exit).to.eq(1)
       }
 
