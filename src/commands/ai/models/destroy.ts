@@ -9,7 +9,7 @@ export default class Destroy extends Command {
 
   static flags = {
     app: flags.app({required: true, description: 'app to run command against '}),
-    confirm: flags.string({char: 'c', description: 'set to app name to bypass confirm prompt '}),
+    confirm: flags.string({char: 'c', description: 'set to app name to bypass confirmation prompt'}),
     force: flags.boolean({char: 'f', description: 'allow destruction even if connected to other apps '}),
     remote: flags.remote({description: 'git remote of app to use '}),
   }
