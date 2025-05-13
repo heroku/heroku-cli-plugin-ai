@@ -67,7 +67,7 @@ ARGUMENTS
          if omitted
 
 FLAGS
-  -a, --app=<value>  app to list the MCP server URL for
+  -a, --app=<value>  app to list MCP server URL for
       --json         output in JSON format
 
 DESCRIPTION
