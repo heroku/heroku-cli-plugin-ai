@@ -15,7 +15,7 @@ export default class Destroy extends Command {
   }
 
   static args = {
-    model_resource: Args.string({required: true, description: 'resource ID or alias of the model resource to destroy '}),
+    model_resource: Args.string({required: true, description: 'resource ID or alias of model resource to destroy '}),
   }
 
   static examples = [
