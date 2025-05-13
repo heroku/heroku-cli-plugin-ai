@@ -11,7 +11,7 @@ export default class List extends Command {
     }),
     app: flags.app({
       description: 'app to list tools for',
-      required: true,
+      required: false,
     }),
   }
 
@@ -19,13 +19,13 @@ export default class List extends Command {
     addon: Args.string({
       required: false,
       default: 'heroku-inference',
-      description: 'unique identifier or globally unique name of the add-on. If omitted',
+      description: 'unique identifier or globally unique name of add-on',
     }),
   };
 
   public async run() {
     const {flags, args} = await this.parse(List)
-    const tools = await this.getTools(flags.app, args.addon)
+    const tools = (await this.getTools(flags.app, args.addon)).filter(Boolean)
 
     if (flags.json) {
       ux.styledJSON(tools)
@@ -33,13 +33,13 @@ export default class List extends Command {
       ux.info('No AI tools are currently available for this app')
     } else {
       ux.table(tools, {
-        namespaced_name: {header: 'Tool', get: tool => tool?.namespaced_name},
-        description: {header: 'Description', get: tool => tool?.description},
+        namespaced_name: {header: 'Tool', get: tool => tool.namespaced_name},
+        description: {header: 'Description', get: tool => tool.description},
       })
     }
   }
 
-  private async getTools(app: string, addon: string): Promise<MCPServerTool[]> {
+  private async getTools(app?: string, addon?: string): Promise<MCPServerTool[]> {
     await this.configureHerokuAIClient(addon, app)
 
     const {body: servers} = await this.herokuAI.get<MCPServerList>('/v1/mcp/servers')

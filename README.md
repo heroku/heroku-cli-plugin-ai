@@ -26,7 +26,7 @@ USAGE
 # Commands
 <!-- commands -->
 * [`heroku ai:docs`](#heroku-aidocs)
-* [`heroku ai:mcp`](#heroku-aimcp)
+* [`heroku ai:mcp [ADDON]`](#heroku-aimcp-addon)
 * [`heroku ai:models`](#heroku-aimodels)
 * [`heroku ai:models:attach MODEL_RESOURCE`](#heroku-aimodelsattach-model_resource)
 * [`heroku ai:models:call MODEL_RESOURCE`](#heroku-aimodelscall-model_resource)
@@ -54,20 +54,23 @@ DESCRIPTION
 
 _See code: [src/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.11/src/commands/ai/docs.ts)_
 
-## `heroku ai:mcp`
+## `heroku ai:mcp [ADDON]`
 
-list all available AI tools
+list the MCP server URL
 
 ```
 USAGE
-  $ heroku ai:mcp -a <value> [--json]
+  $ heroku ai:mcp [ADDON] [--json] [-a <value>]
+
+ARGUMENTS
+  ADDON  [default: heroku-inference] unique identifier or globally unique name of add-on
 
 FLAGS
-  -a, --app=<value>  (required) app to list tools for
+  -a, --app=<value>  app to list the MCP server URL for
       --json         output in JSON format
 
 DESCRIPTION
-  list all available AI tools
+  list the MCP server URL
 ```
 
 _See code: [src/commands/ai/mcp/index.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.11/src/commands/ai/mcp/index.ts)_
@@ -282,13 +285,13 @@ list all available AI tools
 
 ```
 USAGE
-  $ heroku ai:tools:list [ADDON] -a <value> [--json]
+  $ heroku ai:tools:list [ADDON] [--json] [-a <value>]
 
 ARGUMENTS
-  ADDON  [default: heroku-inference] unique identifier or globally unique name of the add-on. If omitted
+  ADDON  [default: heroku-inference] unique identifier or globally unique name of add-on
 
 FLAGS
-  -a, --app=<value>  (required) app to list tools for
+  -a, --app=<value>  app to list tools for
       --json         output in JSON format
 
 DESCRIPTION
