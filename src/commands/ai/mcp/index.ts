@@ -34,7 +34,7 @@ export default class MCP extends Command {
     if (inferenceUrlKeyName) {
       this.log(config[inferenceUrlKeyName] + '/mcp')
     } else {
-      this.log(`No MCP server URL found for ${flags.app}`)
+      this.log(`No MCP server URL found for ${flags.app}. Check the Heroku Platform MCP Server documentation for setup instructions: https://devcenter.heroku.com/articles/heroku-mcp-server`)
     }
   }
 }
