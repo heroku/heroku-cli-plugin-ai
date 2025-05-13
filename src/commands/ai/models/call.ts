@@ -42,7 +42,7 @@ export default class Call extends Command {
   static flags = {
     app: flags.app({
       required: false,
-      description: 'name or ID of app (this flag is required if an alias is used for the MODEL_RESOURCE argument) ',
+      description: 'name or ID of app (required if alias is used)',
     }),
     // interactive: flags.boolean({
     //   char: 'i',
