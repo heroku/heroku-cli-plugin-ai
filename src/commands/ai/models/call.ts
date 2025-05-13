@@ -62,7 +62,7 @@ export default class Call extends Command {
     output: flags.string({
       char: 'o',
       // description: 'The file path where the command writes the model response. If used with --interactive, this flag writes the entire exchange when the session closes.',
-      description: 'the file path where the command writes the model response ',
+      description: 'file path where command writes the model response',
       required: false,
     }),
     prompt: flags.string({
