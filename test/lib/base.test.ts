@@ -66,7 +66,7 @@ describe('attempt a request using the Heroku AI client', function () {
     nock.cleanAll()
   })
 
-  context('when the client wasn’t configured', function () {
+  context('when the client wasn\'t configured', function () {
     it('returns an error message and exits with a status of 1', async function () {
       try {
         await runCommand(CommandWithoutConfiguration, [
@@ -82,7 +82,7 @@ describe('attempt a request using the Heroku AI client', function () {
     })
   })
 
-  context('when the command doesn’t require a resource name', function () {
+  context('when the command doesn\'t require a resource name', function () {
     it('makes a request to the default host', async function () {
       const defaultApiHost = nock('https://us.inference.heroku.com')
         .get('/models')
@@ -108,7 +108,7 @@ describe('attempt a request using the Heroku AI client', function () {
     })
   })
 
-  context('when the model resource isn’t fully provisioned', function () {
+  context('when the model resource isn\'t fully provisioned', function () {
     beforeEach(async function () {
       api
         .post('/actions/addons/resolve', {addon: addon1.name, app: null})

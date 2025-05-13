@@ -30,7 +30,7 @@ export function handlePlatformApiErrors(error: unknown, cmdContext: {as?: string
   if (error instanceof HerokuAPIError && error.body.id === 'invalid_params') {
     if (cmdContext.as && error.body.message?.includes('start with a letter')) {
       ux.error(
-        `${cmdContext.as} is an invalid alias name. It must start with a letter and can only contain uppercase letters, numbers, and underscores.`,
+        `${cmdContext.as} is an invalid alias. Alias must start with a letter and can only contain uppercase letters, numbers, and underscores.`,
         {exit: 1},
       )
     }

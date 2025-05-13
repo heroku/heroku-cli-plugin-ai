@@ -1,5 +1,6 @@
 import {expect} from 'chai'
-import {stderr, stdout} from 'stdout-stderr'
+import {stderr} from 'stdout-stderr'
+import heredoc from 'tsheredoc'
 import Cmd from '../../../../src/commands/ai/models/destroy'
 import stripAnsi from '../../../helpers/strip-ansi'
 import {runCommand} from '../../../run-command'
@@ -28,8 +29,10 @@ describe('ai:models:destroy', function () {
         await runCommand(Cmd)
       } catch (error) {
         const {message} = error as CLIError
-        expect(stripAnsi(message)).contains('Missing 1 required arg:')
-        expect(stripAnsi(message)).contains('model_resource  resource ID or alias of the model resource to destroy')
+        expect(stripAnsi(message)).to.eq(heredoc(`
+        Missing 1 required arg:
+        model_resource  resource ID or alias of model resource to destroy
+        See more help with --help`))
       }
     })
   })
@@ -51,9 +54,12 @@ describe('ai:models:destroy', function () {
       .reply(200, {...addon1, state: 'deprovisioned'})
 
     await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`, '--confirm', `${appName}`])
-    expect(stderr.output).contains(`Destroying ${addonName} in the background.`)
-    expect(stderr.output).contains('The app will restart when complete...')
-    expect(stdout.output).to.eq('')
+    expect(stderr.output).to.equal(heredoc(`
+    Destroying ${addonName} in background.
+    The app will restart when complete......
+    Destroying ${addonName} in background.
+    The app will restart when complete...... done
+    `))
   })
 
   it('displays API error message if destroy request fails', async function () {
@@ -76,8 +82,7 @@ describe('ai:models:destroy', function () {
       await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`, '--confirm', `${appName}`])
     } catch (error) {
       const {message} = error as CLIError
-      expect(stripAnsi(message)).to.contains('The add-on was unable to be destroyed:')
-      expect(stripAnsi(message)).to.contains(mockAPIErrors.modelsDestroyErrorResponse.message)
+      expect(stripAnsi(message)).to.equal(`We can't destroy ${addonName}: ${mockAPIErrors.modelsDestroyErrorResponse.message}.`)
     }
   })
 })

@@ -1,4 +1,3 @@
-import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import fs from 'node:fs'
@@ -29,46 +28,46 @@ export type ChatCompletionRequest = {
 export default class Call extends Command {
   static args = {
     model_resource: Args.string({
-      description: 'resource ID or alias of the model (the --app flag must be included if an alias is used)',
+      description: 'resource ID or alias of model (--app flag required if alias is used)',
       required: true,
     }),
   }
 
-  static description = 'make an inference request to a specific AI model resource'
+  static description = 'make an inference request to a specific AI model resource '
   static examples = [
-    'heroku ai:models:call my_llm --app my-app --prompt "What is the meaning of life?"',
-    'heroku ai:models:call diffusion --app my-app --prompt "Generate an image of a sunset" --opts \'{"quality":"hd"}\' -o sunset.png',
+    'heroku ai:models:call my_llm --app my-app --prompt "What is the meaning of life?" ',
+    'heroku ai:models:call diffusion --app my-app --prompt "Generate an image of a sunset" --opts \'{"quality":"hd"}\' -o sunset.png ',
   ]
 
   static flags = {
     app: flags.app({
       required: false,
-      description: 'name or ID of the app (this flag is required if an alias is used for the MODEL_RESOURCE argument)',
+      description: 'name or ID of app (required if alias is used)',
     }),
     // interactive: flags.boolean({
     //   char: 'i',
     //   description: 'Use interactive mode for conversation beyond the initial prompt (not available on all models)',
     //   default: false,
     // }),
-    json: flags.boolean({char: 'j', description: 'output response as JSON'}),
+    json: flags.boolean({char: 'j', description: 'output response as JSON '}),
     optfile: flags.string({
-      description: 'additional options for model inference, provided as a JSON config file',
+      description: 'additional options for model inference, provided as a JSON config file ',
       required: false,
     }),
     opts: flags.string({
-      description: 'additional options for model inference, provided as a JSON string',
+      description: 'additional options for model inference, provided as a JSON string ',
       required: false,
     }),
     output: flags.string({
       char: 'o',
       // description: 'The file path where the command writes the model response. If used with --interactive, this flag writes the entire exchange when the session closes.',
-      description: 'the file path where the command writes the model response',
+      description: 'file path where command writes the model response',
       required: false,
     }),
     prompt: flags.string({
       char: 'p',
-      description: 'the input prompt for the model',
-      required: true,
+      description: 'input prompt for model ',
+      required: false,
     }),
     remote: flags.remote(),
   }
@@ -81,13 +80,14 @@ export default class Call extends Command {
     } catch (error) {
       const {parse: {output}} = error as CLIParseError
       ({args, flags} = output)
-      if (!flags.prompt && !flags.optfile && !flags.opts) {
-        throw new Error('You must provide either --prompt, --optfile, or --opts.')
-      }
     }
 
     const {model_resource: modelResource} = args
     const {app, json, optfile, opts, output, prompt} = flags
+
+    if (!prompt && !optfile && !opts) {
+      throw new Error('You must provide either --prompt, --optfile, or --opts.')
+    }
 
     // Initially, configure the default client to fetch the available model classes
     await this.configureHerokuAIClient()
@@ -142,10 +142,7 @@ export default class Call extends Command {
       } catch (error: unknown) {
         if (error instanceof SyntaxError) {
           const {message} = error as SyntaxError
-          return ux.error(
-            `Invalid JSON in ${color.yellow(optfile)}. Check the formatting in your file.\n${message}`,
-            {exit: 1},
-          )
+          throw new Error(`Invalid JSON in ${optfile}. Check the formatting in your file.\n${message}`)
         }
 
         throw error
@@ -158,10 +155,7 @@ export default class Call extends Command {
       } catch (error: unknown) {
         if (error instanceof SyntaxError) {
           const {message} = error as SyntaxError
-          return ux.error(
-            `Invalid JSON. Check the formatting in your ${color.yellow('--opts')} value.\n${message}`,
-            {exit: 1},
-          )
+          throw new Error(`Invalid JSON. Check the formatting in your --opts value.\n${message}`)
         }
 
         throw error
@@ -232,7 +226,7 @@ export default class Call extends Command {
     }
 
     // This should never happen, but we'll handle it anyway
-    ux.error('Unexpected response format', {exit: 1})
+    ux.error('Unexpected response format.', {exit: 1})
   }
 
   private async createEmbedding<T extends Record<string, unknown>>(input: string, options = {} as T) {

@@ -4,9 +4,9 @@ import Command from '../../lib/base'
 
 export default class Docs extends Command {
   static defaultUrl = 'https://devcenter.heroku.com/articles/heroku-inference-cli-commands'
-  static description = 'opens docs for Heroku AI in your web browser'
+  static description = 'open Heroku Managed Inference and Agent\'s Dev Center documentation in your browser'
   static flags = {
-    browser: flags.string({description: 'browser to open docs with (example: "firefox", "safari")'}),
+    browser: flags.string({description: 'browser to open docs with (example: "firefox", "safari") '}),
   }
 
   public async run(): Promise<void> {

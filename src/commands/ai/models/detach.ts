@@ -6,20 +6,20 @@ import Command from '../../../lib/base'
 import {HerokuAPIError} from '@heroku-cli/command/lib/api-client'
 
 export default class Detach extends Command {
-  static description = 'detach a model resource from an app'
+  static description = 'detach a model resource from an app '
   static flags = {
-    app: flags.app({description: 'name of the app to detach the model resource from', required: true}),
+    app: flags.app({description: 'name of app to detach model resource from', required: true}),
     remote: flags.remote(),
   }
 
   static args = {
     model_resource: Args.string({
-      description: 'alias of the model resource to detach',
+      description: 'alias of model resource to detach',
       required: true,
     }),
   }
 
-  static example = 'heroku ai:models:detach EXAMPLE_MODEL_ALIAS --app example-app'
+  static example = 'heroku ai:models:detach EXAMPLE_MODEL_ALIAS --app example-app '
 
   public async run(): Promise<void> {
     const {flags, args} = await this.parse(Detach)
@@ -40,7 +40,7 @@ export default class Detach extends Command {
 
     ux.action.stop()
 
-    ux.action.start(`Unsetting ${color.cyan(aiAddon.name || '')} config vars and restarting ${color.magenta(app)}`)
+    ux.action.start(`Unsetting ${color.cyan(aiAddon.name || '')} config vars and restarting ${color.magenta(app)}.`)
 
     const {body: releases} = await this.heroku.get<Heroku.Release[]>(`/apps/${app}/releases`, {
       partial: true, headers: {Range: 'version ..; max=1, order=desc'},

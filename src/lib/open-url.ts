@@ -10,15 +10,15 @@ export async function openUrl(url: string, browser?: string, action?: string) {
   const showBrowserError = (browser?: string) => {
     if (browserErrorShown) return
 
-    ux.warn(`Unable to open ${browser ? browser : 'your default'} browser. Please visit ${color.cyan(url)}${action ? ` to ${action}` : ''}.`)
+    ux.warn(`Unable to open ${browser ? browser : 'your default'} browser. Visit ${color.cyan(url)}${action ? ` to ${action}` : ''}.`)
     browserErrorShown = true
   }
 
-  ux.log(`Opening ${color.cyan(url)} in ${browser ? browser : 'your default'} browser…`)
+  ux.log(`Opening ${color.cyan(url)} in ${browser ? browser : 'your default'} browser… `)
 
   try {
     await ux.anykey(
-      `Press any key to open up the browser${action ? ` to ${action}` : ''}, or ${color.yellow('q')} to exit`
+      `Press any key to open up the browser${action ? ` to ${action}` : ''}, or ${color.yellow('q')} to exit.`
     )
   } catch (error) {
     const {message, oclif} = error as CLIError

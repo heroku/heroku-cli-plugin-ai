@@ -95,7 +95,7 @@ describe('ai:models:attach', function () {
   })
 
   context('when attaching a model resource with an existing alias name', function () {
-    it('requires interactive confirmation if the user didn’t use the --confirm option', async function () {
+    it("requires interactive confirmation if the user didn't use the --confirm option", async function () {
       const prompt = sandbox.stub(ux, 'prompt').resolves('app2')
       api
         .post('/addon-attachments', {
@@ -140,7 +140,7 @@ describe('ai:models:attach', function () {
       `)
     })
 
-    it('doesn’t require interactive confirmation if the user used the correct --confirm option', async function () {
+    it("doesn't require interactive confirmation if the user used the correct --confirm option", async function () {
       const prompt = sandbox.stub(ux, 'prompt')
       api
         .post('/addon-attachments', {
@@ -261,9 +261,7 @@ describe('ai:models:attach', function () {
         ])
       } catch (error: unknown) {
         const {message, oclif} = error as CLIError
-        expect(stripAnsi(message)).to.eq(
-          'wrong-alias is an invalid alias name. It must start with a letter and can only contain uppercase letters, numbers, and underscores.'
-        )
+        expect(stripAnsi(message)).to.eq('wrong-alias is an invalid alias. Alias must start with a letter and can only contain uppercase letters, numbers, and underscores.')
         expect(oclif.exit).to.eq(1)
       }
 
