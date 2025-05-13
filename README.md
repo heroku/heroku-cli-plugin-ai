@@ -56,7 +56,7 @@ _See code: [src/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin
 
 ## `heroku ai:mcp [ADDON]`
 
-list all available AI tools
+list the MCP server URL
 
 ```
 USAGE
@@ -66,11 +66,11 @@ ARGUMENTS
   ADDON  [default: heroku-inference] unique identifier or globally unique name of add-on
 
 FLAGS
-  -a, --app=<value>  app to list MCP server URL for
+  -a, --app=<value>  app to list the MCP server URL for
       --json         output in JSON format
 
 DESCRIPTION
-  list all available AI tools
+  list the MCP server URL
 ```
 
 _See code: [src/commands/ai/mcp/index.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.11/src/commands/ai/mcp/index.ts)_

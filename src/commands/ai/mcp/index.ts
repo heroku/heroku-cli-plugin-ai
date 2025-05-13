@@ -3,7 +3,7 @@ import Command from '../../../lib/base'
 import {Args} from '@oclif/core'
 
 export default class MCP extends Command {
-  public static description = 'list all available AI tools'
+  public static description = 'list the MCP server URL'
   public static flags = {
     json: flags.boolean({
       description: 'output in JSON format',
