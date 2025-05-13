@@ -14,7 +14,7 @@ export default class Detach extends Command {
 
   static args = {
     model_resource: Args.string({
-      description: 'alias of the model resource to detach ',
+      description: 'alias of model resource to detach',
       required: true,
     }),
   }
