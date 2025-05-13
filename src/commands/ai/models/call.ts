@@ -232,7 +232,7 @@ export default class Call extends Command {
     }
 
     // This should never happen, but we'll handle it anyway
-    ux.error('Unexpected response format ', {exit: 1})
+    ux.error('Unexpected response format.', {exit: 1})
   }
 
   private async createEmbedding<T extends Record<string, unknown>>(input: string, options = {} as T) {
