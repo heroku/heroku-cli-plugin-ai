@@ -18,7 +18,7 @@ export default class MCP extends Command {
     addon: Args.string({
       required: false,
       default: 'heroku-inference',
-      description: 'unique identifier or globally unique name of the add-on, "heroku-inference" is used if omitted',
+      description: 'unique identifier or globally unique name of add-on',
     }),
   }
 
