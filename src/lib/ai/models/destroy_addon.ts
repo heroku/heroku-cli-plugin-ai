@@ -8,7 +8,7 @@ export default async function (config: Config, addon: Heroku.AddOn, force = fals
   const addonName = addon.name || ''
   const herokuClient = new APIClient(config)
 
-  ux.action.start(`Destroying ${color.addon(addonName)} in the background.\nThe app will restart when complete... `)
+  ux.action.start(`Destroying ${color.addon(addonName)} in background.\nThe app will restart when complete...`)
 
   await herokuClient.delete<Heroku.AddOn>(`/apps/${addon.app?.id}/addons/${addon.id}`, {
     headers: {'Accept-Expansion': 'plan'},
