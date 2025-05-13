@@ -28,7 +28,7 @@ export type ChatCompletionRequest = {
 export default class Call extends Command {
   static args = {
     model_resource: Args.string({
-      description: 'resource ID or alias of model (--app flag must be included if an alias is used)',
+      description: 'resource ID or alias of model (--app flag required if alias is used)',
       required: true,
     }),
   }
