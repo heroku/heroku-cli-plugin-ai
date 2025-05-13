@@ -8,7 +8,7 @@ import {HerokuAPIError} from '@heroku-cli/command/lib/api-client'
 export default class Detach extends Command {
   static description = 'detach a model resource from an app '
   static flags = {
-    app: flags.app({description: 'name of the app to detach the model resource from ', required: true}),
+    app: flags.app({description: 'name of app to detach model resource from', required: true}),
     remote: flags.remote(),
   }
 
