@@ -132,7 +132,7 @@ ARGUMENTS
   MODEL_RESOURCE  resource ID or alias of model (--app flag required if alias is used)
 
 FLAGS
-  -a, --app=<value>      name or ID of app (this flag is required if an alias is used for the MODEL_RESOURCE argument)
+  -a, --app=<value>      name or ID of app (required if alias is used for MODEL_RESOURCE)
   -j, --json             output response as JSON
   -o, --output=<value>   file path where command writes the model response
   -p, --prompt=<value>   input prompt for model
