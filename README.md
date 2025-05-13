@@ -63,7 +63,7 @@ USAGE
   $ heroku ai:mcp [ADDON] [--json] [-a <value>]
 
 ARGUMENTS
-  ADDON  [default: heroku-inference] unique identifier or globally unique name of the add-on, "heroku-inference" is used
+  ADDON  [default: heroku-inference] unique identifier or globally unique name of add-on
          if omitted
 
 FLAGS
