@@ -18,7 +18,7 @@ export async function openUrl(url: string, browser?: string, action?: string) {
 
   try {
     await ux.anykey(
-      `Press any key to open up the browser${action ? ` to ${action}` : ''}, or ${color.yellow('q')} to exit `
+      `Press any key to open up the browser${action ? ` to ${action}` : ''}, or ${color.yellow('q')} to exit.`
     )
   } catch (error) {
     const {message, oclif} = error as CLIError
