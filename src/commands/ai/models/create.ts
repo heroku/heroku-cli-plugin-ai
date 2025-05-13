@@ -23,7 +23,7 @@ export default class Create extends Command {
   `
   static flags = {
     app: flags.app({
-      description: 'name of the app to attach the model to ',
+      description: 'name of app to attach model to',
       required: true,
     }),
     as: flags.string({description: 'alias of model resource '}),
