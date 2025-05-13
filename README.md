@@ -289,7 +289,7 @@ USAGE
   $ heroku ai:tools:list [ADDON] [--json] [-a <value>]
 
 ARGUMENTS
-  ADDON  [default: heroku-inference] unique identifier or globally unique name of the add-on. "heroku-inference" is used
+  ADDON  [default: heroku-inference] unique identifier or globally unique name of the add-on, "heroku-inference" is used
          if omitted
 
 FLAGS
