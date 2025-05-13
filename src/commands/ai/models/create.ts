@@ -9,7 +9,7 @@ import Command from '../../../lib/base'
 export default class Create extends Command {
   static args = {
     model_name: Args.string({
-      description: 'name of the AI model to provision access for ',
+      description: 'name of AI model to provision access for',
       required: true,
     }),
   }
