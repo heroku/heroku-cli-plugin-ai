@@ -129,7 +129,7 @@ USAGE
     <value>] [-r <value>]
 
 ARGUMENTS
-  MODEL_RESOURCE  resource ID or alias of model (--app flag must be included if an alias is used)
+  MODEL_RESOURCE  resource ID or alias of model (--app flag required if alias is used)
 
 FLAGS
   -a, --app=<value>      name or ID of app (this flag is required if an alias is used for the MODEL_RESOURCE argument)
