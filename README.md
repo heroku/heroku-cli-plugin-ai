@@ -52,7 +52,7 @@ DESCRIPTION
   open Heroku Managed Inference and Agent's Dev Center documentation in your browser
 ```
 
-_See code: [src/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.12-alpha.0/src/commands/ai/docs.ts)_
+_See code: [src/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/docs.ts)_
 
 ## `heroku ai:mcp [ADDON]`
 
@@ -73,7 +73,7 @@ DESCRIPTION
   list the MCP server URL
 ```
 
-_See code: [src/commands/ai/mcp/index.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.12-alpha.0/src/commands/ai/mcp/index.ts)_
+_See code: [src/commands/ai/mcp/index.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/mcp/index.ts)_
 
 ## `heroku ai:models`
 
@@ -120,7 +120,7 @@ EXAMPLES
   $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app --as MY_CS35
 ```
 
-_See code: [src/commands/ai/models/attach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.12-alpha.0/src/commands/ai/models/attach.ts)_
+_See code: [src/commands/ai/models/attach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/models/attach.ts)_
 
 ## `heroku ai:models:call MODEL_RESOURCE`
 
@@ -152,7 +152,7 @@ EXAMPLES
   $ heroku ai:models:call diffusion --app my-app --prompt "Generate an image of a sunset" --opts '{"quality":"hd"}' -o sunset.png
 ```
 
-_See code: [src/commands/ai/models/call.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.12-alpha.0/src/commands/ai/models/call.ts)_
+_See code: [src/commands/ai/models/call.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/models/call.ts)_
 
 ## `heroku ai:models:create MODEL_NAME`
 
@@ -181,7 +181,7 @@ EXAMPLES
   $ heroku ai:models:create stable-image-ultra --app example-app --as diffusion
 ```
 
-_See code: [src/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.12-alpha.0/src/commands/ai/models/create.ts)_
+_See code: [src/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/models/create.ts)_
 
 ## `heroku ai:models:destroy MODEL_RESOURCE`
 
@@ -207,7 +207,7 @@ EXAMPLES
   $ heroku ai:models:destroy claude-3-5-sonnet-acute-43973
 ```
 
-_See code: [src/commands/ai/models/destroy.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.12-alpha.0/src/commands/ai/models/destroy.ts)_
+_See code: [src/commands/ai/models/destroy.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/models/destroy.ts)_
 
 ## `heroku ai:models:detach MODEL_RESOURCE`
 
@@ -231,7 +231,7 @@ EXAMPLES
   $ heroku ai:models:detach EXAMPLE_MODEL_ALIAS --app example-app
 ```
 
-_See code: [src/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.12-alpha.0/src/commands/ai/models/detach.ts)_
+_See code: [src/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/models/detach.ts)_
 
 ## `heroku ai:models:info [MODEL_RESOURCE]`
 
@@ -257,7 +257,7 @@ EXAMPLES
   $ heroku ai:models:info --app example-app
 ```
 
-_See code: [src/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.12-alpha.0/src/commands/ai/models/info.ts)_
+_See code: [src/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/models/info.ts)_
 
 ## `heroku ai:models:list`
 
@@ -277,7 +277,7 @@ EXAMPLES
   $ heroku ai:models:list
 ```
 
-_See code: [src/commands/ai/models/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.12-alpha.0/src/commands/ai/models/list.ts)_
+_See code: [src/commands/ai/models/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/models/list.ts)_
 
 ## `heroku ai:tools:list [ADDON]`
 
@@ -298,5 +298,5 @@ DESCRIPTION
   list all available AI tools
 ```
 
-_See code: [src/commands/ai/tools/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v0.0.12-alpha.0/src/commands/ai/tools/list.ts)_
+_See code: [src/commands/ai/tools/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/tools/list.ts)_
 <!-- commandsstop -->
