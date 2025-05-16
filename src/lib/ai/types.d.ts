@@ -2,6 +2,9 @@
  * API reference doc: https://salesforce.quip.com/xi1fAHQczNbO
  */
 
+import Command from '@heroku-cli/command'
+import {CLIParseErrorOptions, ParserOutput} from '@oclif/core/lib/interfaces/parser'
+
 /**
  * Model names and types
  */
@@ -341,3 +344,49 @@ export type MCPServer = {
 };
 
 export type MCPServerList = MCPServer[];
+
+export type CLIParseError<T extends Command> = CLIParseErrorOptions & {
+  parse: {
+    input: string,
+    output: ParserOutput<T>
+  }
+}
+
+export interface AgentMessage {
+  role: string;
+  content: string;
+}
+
+export interface AgentToolParameters {
+  type: string;
+  properties: Record<string, unknown>;
+  required: string[];
+}
+
+export interface AgentToolParams {
+  cmd?: string;
+  description?: string;
+  parameters?: AgentToolParameters;
+}
+
+export interface AgentRuntimeParams {
+  target_app_name?: string;
+  tool_params?: AgentToolParams;
+}
+
+export interface AgentTool {
+  type: string;
+  name: string;
+  description?: string;
+  runtime_params?: AgentRuntimeParams;
+}
+
+export type AgentRequest = {
+  model: string;
+  messages: Array<AgentMessage>;
+  max_tokens_per_inference_request?: number;
+  stop?: string[];
+  temperature?: number;
+  tools?: Array<AgentTool>;
+  top_p?: number;
+}

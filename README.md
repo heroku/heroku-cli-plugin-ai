@@ -44,8 +44,8 @@ make an inference request to the Heroku Inference Agents API
 
 ```
 USAGE
-  $ heroku ai:agents:call [MODEL_RESOURCE] [-a <value>] [-j] [--optfile <value>] [--opts <value>] [-o <value>] [-p
-    <value>] [--messages <value>] [-r <value>]
+  $ heroku ai:agents:call [MODEL_RESOURCE] [-a <value>] [-j | -o <value>] [--optfile <value> | --opts <value>] [-p
+    <value> | --messages <value>] [-r <value>]
 
 ARGUMENTS
   MODEL_RESOURCE  [default: heroku-inference] resource ID or alias of model (--app flag required if alias is used)

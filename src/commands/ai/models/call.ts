@@ -1,21 +1,15 @@
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import fs from 'node:fs'
-import {
+import type {
   ChatCompletionResponse,
   EmbeddingResponse,
   ImageResponse,
   ModelList,
-} from '../../../lib/ai/types'
+  CLIParseError,
+} from '@heroku/ai'
 import Command from '../../../lib/base'
-import {CLIParseErrorOptions, ParserOutput} from '@oclif/core/lib/interfaces/parser'
-
-type CLIParseError = CLIParseErrorOptions & {
-  parse: {
-    input: string,
-    output: ParserOutput<Call>
-  }
-}
+import {ParserOutput} from '@oclif/core/lib/interfaces/parser'
 
 export type ChatCompletionRequest = {
   model: string;
@@ -78,7 +72,7 @@ export default class Call extends Command {
     try {
       ({args, flags} = await this.parse(Call))
     } catch (error) {
-      const {parse: {output}} = error as CLIParseError
+      const {parse: {output}} = error as CLIParseError<Call>
       ({args, flags} = output)
     }
 

@@ -1,6 +1,6 @@
 import {flags} from '@heroku-cli/command'
 import Command from '../../../lib/base'
-import {MCPServerList, MCPServerTool} from '../../../lib/ai/types'
+import type {MCPServerList, MCPServerTool} from '@heroku/ai'
 import {Args, ux} from '@oclif/core'
 
 export default class List extends Command {

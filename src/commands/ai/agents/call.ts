@@ -1,47 +1,11 @@
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import fs from 'node:fs/promises'
-import {ChatCompletionResponse} from '../../../lib/ai/types'
+import type {AgentRequest, ChatCompletionResponse, CLIParseError} from '@heroku/ai'
 import Command from '../../../lib/base'
-import {CLIParseErrorOptions, ParserOutput} from '@oclif/core/lib/interfaces/parser'
+import {ParserOutput} from '@oclif/core/lib/interfaces/parser'
 import {handleAgentStream, formatCompletionMessage} from '../../../lib/ai/agents/stream'
 import {ReadableStream} from 'node:stream/web'
-
-type CLIParseError = CLIParseErrorOptions & {
-  parse: {
-    input: string,
-    output: ParserOutput<Call>
-  }
-}
-
-export type AgentRequest = {
-  model: string;
-  messages: Array<{
-    role: string;
-    content: string;
-  }>;
-  max_tokens_per_inference_request?: number;
-  stop?: string[];
-  temperature?: number;
-  tools?: Array<{
-    type: string;
-    name: string;
-    description?: string;
-    runtime_params?: {
-      target_app_name?: string;
-      tool_params?: {
-        cmd?: string;
-        description?: string;
-        parameters?: {
-          type: string;
-          properties: Record<string, unknown>;
-          required: string[];
-        };
-      };
-    };
-  }>;
-  top_p?: number;
-}
 
 export default class Call extends Command {
   static args = {
@@ -63,28 +27,41 @@ export default class Call extends Command {
       required: false,
       description: 'name or ID of app (required if alias is used)',
     }),
-    json: flags.boolean({char: 'j', description: 'output response as JSON'}),
+    json: flags.boolean({
+      char: 'j',
+      description: 'output response as JSON',
+      exclusive: ['output'],
+    }),
     optfile: flags.string({
       description: 'additional options for model inference, provided as a JSON config file',
       required: false,
+      exclusive: ['opts'],
+      exactlyOne: ['prompt', 'messages', 'opts'],
     }),
     opts: flags.string({
       description: 'additional options for model inference, provided as a JSON string',
       required: false,
+      exclusive: ['optfile'],
+      exactlyOne: ['prompt', 'messages', 'optfile'],
     }),
     output: flags.string({
       char: 'o',
       description: 'file path where command writes the model response',
       required: false,
+      exclusive: ['json'],
     }),
     prompt: flags.string({
       char: 'p',
       description: 'input prompt for model (will be converted to a user message)',
       required: false,
+      exclusive: ['messages'],
+      exactlyOne: ['messages', 'optfile', 'opts'],
     }),
     messages: flags.string({
       description: 'JSON array of messages to send to the model',
       required: false,
+      exclusive: ['prompt'],
+      exactlyOne: ['prompt', 'optfile', 'opts'],
     }),
     remote: flags.remote(),
   }
@@ -95,16 +72,12 @@ export default class Call extends Command {
     try {
       ({args, flags} = await this.parse(Call))
     } catch (error) {
-      const {parse: {output}} = error as CLIParseError
+      const {parse: {output}} = error as CLIParseError<Call>
       ({args, flags} = output)
     }
 
     const {model_resource: modelResource} = args
     const {app, json, optfile, opts, output, prompt, messages} = flags
-
-    if (!prompt && !messages && !optfile && !opts) {
-      throw new Error('You must provide either --prompt, --messages, --optfile, or --opts.')
-    }
 
     // Configure the client to send a request for the target model resource
     await this.configureHerokuAIClient(modelResource, app)

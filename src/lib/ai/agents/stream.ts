@@ -1,5 +1,5 @@
 import {ReadableStream} from 'node:stream/web'
-import {ChatCompletionResponse} from '../types'
+import type {ChatCompletionResponse} from '@heroku/ai'
 
 export interface StreamOptions {
   onMessage?: (completion: ChatCompletionResponse) => void

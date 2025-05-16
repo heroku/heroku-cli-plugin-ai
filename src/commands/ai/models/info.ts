@@ -2,7 +2,7 @@ import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import Command from '../../../lib/base'
-import {ModelResource} from '../../../lib/ai/types'
+import type {ModelResource} from '@heroku/ai'
 import appAddons from '../../../lib/ai/models/app_addons'
 import * as Heroku from '@heroku-cli/schema'
 
