@@ -42,7 +42,7 @@ export default class Call extends Command {
       description: 'additional options for model inference, provided as a JSON string',
       required: false,
       exclusive: ['optfile'],
-      exactlyOne: ['prompt', 'messages', 'optfile'],
+      exactlyOne: ['prompt', 'messages'],
     }),
     output: flags.string({
       char: 'o',
