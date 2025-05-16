@@ -169,6 +169,7 @@ export default class Call extends Command {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.apiKey}`,
         Accept: 'text/event-stream',
+        'User-Agent': `heroku-cli-plugin-ai/${process.env.npm_package_version} ${this.config.platform}`,
       },
     })
 
