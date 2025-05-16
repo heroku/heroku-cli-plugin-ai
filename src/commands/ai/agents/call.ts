@@ -55,7 +55,7 @@ export default class Call extends Command {
       description: 'input prompt for model (will be converted to a user message)',
       required: false,
       exclusive: ['messages'],
-      exactlyOne: ['messages', 'optfile', 'opts'],
+      exactlyOne: ['optfile', 'opts'],
     }),
     messages: flags.string({
       description: 'JSON array of messages to send to the model',
