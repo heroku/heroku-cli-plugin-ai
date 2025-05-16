@@ -6,7 +6,7 @@ import heredoc from 'tsheredoc'
 import {stderr, stdout} from 'stdout-stderr'
 import {runCommand} from '../run-command'
 import BaseCommand from '../../src/lib/base'
-import * as AI from '../../src/lib/ai/types'
+import type {ModelResource, ModelList} from '@heroku/ai'
 import stripAnsi from '../helpers/strip-ansi'
 import {
   addon1, addon1Attachment1,
@@ -18,14 +18,14 @@ import {flags} from '@heroku-cli/command'
 
 class CommandWithoutConfiguration extends BaseCommand {
   async run() {
-    this.herokuAI.get<AI.ModelResource>('/models/01234567-89ab-cdef-0123-456789abcdef')
+    this.herokuAI.get<ModelResource>('/models/01234567-89ab-cdef-0123-456789abcdef')
   }
 }
 
 class CommandConfiguredWithoutResourceName extends BaseCommand {
   async run() {
     await this.configureHerokuAIClient()
-    await this.herokuAI.get<AI.ModelList>('/models')
+    await this.herokuAI.get<ModelList>('/models')
   }
 }
 
@@ -44,7 +44,7 @@ class CommandConfiguredWithResourceName extends BaseCommand {
     const {app} = flags
 
     await this.configureHerokuAIClient(resourceName, app)
-    await this.herokuAI.get<AI.ModelResource>(`/models/${this.addon.id}`)
+    await this.herokuAI.get<ModelResource>(`/models/${this.addon.id}`)
   }
 }
 

@@ -4,7 +4,10 @@
       "./",
       "../src"
     ],
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "@heroku/ai": ["../src/lib/ai/types.ts"]
+    }
   },
   "declaration": false,
   "extends": "../tsconfig.json",

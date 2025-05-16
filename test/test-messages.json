@@ -1,0 +1,20 @@
+
+{
+  "model": "claude-3-7-sonnet",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Use the python snippet from https://en.wikipedia.org/wiki/Chudnovsky_algorithm to tell me the 51st digit of PI"
+    }
+  ],
+  "tools": [
+    {
+      "type": "heroku_tool",
+      "name": "code_exec_python"
+    },
+    {
+      "type": "heroku_tool",
+      "name": "html_to_markdown"
+    }
+  ]
+}

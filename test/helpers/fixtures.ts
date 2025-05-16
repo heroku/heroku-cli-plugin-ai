@@ -1,5 +1,5 @@
 import * as Heroku from '@heroku-cli/schema'
-import {ChatCompletionResponse, EmbeddingResponse, ImageResponse, ModelResource} from '../../src/lib/ai/types'
+import type {ChatCompletionResponse, EmbeddingResponse, ImageResponse, ModelResource} from '@heroku/ai'
 
 export const availableModels = [
   {

@@ -1,5 +1,5 @@
 import {ux} from '@oclif/core'
-import {ModelList} from '../../../lib/ai/types'
+import type {ModelList} from '@heroku/ai'
 import Command from '../../../lib/base'
 
 const displayModels = (models: ModelList) => {
