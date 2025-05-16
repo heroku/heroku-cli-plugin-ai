@@ -36,7 +36,7 @@ export default class Call extends Command {
       description: 'additional options for model inference, provided as a JSON config file',
       required: false,
       exclusive: ['opts'],
-      exactlyOne: ['prompt', 'messages', 'opts'],
+      exactlyOne: ['prompt', 'messages'],
     }),
     opts: flags.string({
       description: 'additional options for model inference, provided as a JSON string',
