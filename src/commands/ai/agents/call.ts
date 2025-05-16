@@ -61,7 +61,7 @@ export default class Call extends Command {
       description: 'JSON array of messages to send to the model',
       required: false,
       exclusive: ['prompt'],
-      exactlyOne: ['prompt', 'optfile', 'opts'],
+      exactlyOne: ['optfile', 'opts'],
     }),
     remote: flags.remote(),
   }
