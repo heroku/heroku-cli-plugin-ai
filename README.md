@@ -25,6 +25,7 @@ USAGE
 ```
 # Commands
 <!-- commands -->
+* [`heroku ai:agents:call [MODEL_RESOURCE]`](#heroku-aiagentscall-model_resource)
 * [`heroku ai:docs`](#heroku-aidocs)
 * [`heroku ai:mcp [ADDON]`](#heroku-aimcp-addon)
 * [`heroku ai:models`](#heroku-aimodels)
@@ -36,6 +37,39 @@ USAGE
 * [`heroku ai:models:info [MODEL_RESOURCE]`](#heroku-aimodelsinfo-model_resource)
 * [`heroku ai:models:list`](#heroku-aimodelslist)
 * [`heroku ai:tools:list [ADDON]`](#heroku-aitoolslist-addon)
+
+## `heroku ai:agents:call [MODEL_RESOURCE]`
+
+make an inference request to the Heroku Inference Agents API
+
+```
+USAGE
+  $ heroku ai:agents:call [MODEL_RESOURCE] [-a <value>] [-j] [--optfile <value>] [--opts <value>] [-o <value>] [-p
+    <value>] [--messages <value>] [-r <value>]
+
+ARGUMENTS
+  MODEL_RESOURCE  [default: heroku-inference] resource ID or alias of model (--app flag required if alias is used)
+
+FLAGS
+  -a, --app=<value>       name or ID of app (required if alias is used)
+  -j, --json              output response as JSON
+  -o, --output=<value>    file path where command writes the model response
+  -p, --prompt=<value>    input prompt for model (will be converted to a user message)
+  -r, --remote=<value>    git remote of app to use
+      --messages=<value>  JSON array of messages to send to the model
+      --optfile=<value>   additional options for model inference, provided as a JSON config file
+      --opts=<value>      additional options for model inference, provided as a JSON string
+
+DESCRIPTION
+  make an inference request to the Heroku Inference Agents API
+
+EXAMPLES
+  $ heroku ai:agents:call my_llm --app my-app --prompt "What is the current time?"
+
+  $ heroku ai:agents:call my_llm --app my-app --messages '[{"role":"user","content":"What is the current time?"}]'
+```
+
+_See code: [src/commands/ai/agents/call.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.0.0/src/commands/ai/agents/call.ts)_
 
 ## `heroku ai:docs`
 
