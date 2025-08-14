@@ -168,4 +168,35 @@ describe('ai:models:info', function () {
       }
     })
   })
+
+  context('when app does not exist', function () {
+    beforeEach(function () {
+      process.env = {}
+      api = nock('https://api.heroku.com:443')
+    })
+
+    afterEach(function () {
+      process.env = env
+      nock.cleanAll()
+    })
+
+    it('shows clean error message without addon context', async function () {
+      api
+        .get('/apps/nonexistent-app/addons')
+        .reply(404, {
+          id: 'not_found',
+          message: 'Couldn\'t find that app.',
+        })
+
+      try {
+        await runCommand(Cmd, [
+          '--app',
+          'nonexistent-app',
+        ])
+      } catch (error) {
+        const {message} = error as CLIError
+        expect(stripAnsi(message)).to.equal('Couldn\'t find that app.\n\nError ID: not_found')
+      }
+    })
+  })
 })
