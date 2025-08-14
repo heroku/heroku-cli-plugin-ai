@@ -3,7 +3,7 @@ import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import Command from '../../../lib/base'
 import type {ModelResource} from '@heroku/ai'
-import {APIClient} from '@heroku-cli/command'
+
 import * as Heroku from '@heroku-cli/schema'
 
 export default class Info extends Command {
@@ -74,8 +74,7 @@ export default class Info extends Command {
     } else {
       const provisionedModelsInfo: Record<string, string | undefined>[] = []
       const inferenceRegex = /inference/
-      const herokuClient = new APIClient(this.config)
-      const {body: addonsResponse} = await herokuClient.get<Heroku.AddOn>(`/apps/${app}/addons`, {
+      const {body: addonsResponse} = await this.heroku.get<Heroku.AddOn>(`/apps/${app}/addons`, {
         headers: {'Accept-Expansion': 'plan'},
       })
 
