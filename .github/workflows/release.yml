@@ -1,0 +1,27 @@
+name: Release
+
+# Calls the reusable release workflow from npm-release-workflows
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Test release without publishing (creates PR but skips npm publish)'
+        type: boolean
+        default: false
+        required: false
+
+jobs:
+  release:
+    uses: heroku/npm-release-workflows/.github/workflows/release.yml@main
+    with:
+      dry_run: ${{ inputs.dry_run }}
+      runs_on: sfdc-hk-ubuntu-latest  # Options: ubuntu-latest | sfdc-hk-ubuntu-latest | pub-hk-ubuntu-24.04-ip
+      package_manager: yarn  # Options: npm | yarn | pnpm
+      test_command: run test
+      lint_command: run lint
+      build_command: run build
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
