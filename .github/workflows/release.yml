@@ -17,7 +17,7 @@ jobs:
     with:
       dry_run: ${{ inputs.dry_run }}
       runs_on: sfdc-hk-ubuntu-latest  # Options: ubuntu-latest | sfdc-hk-ubuntu-latest | pub-hk-ubuntu-24.04-ip
-      package_manager: pnpm  # Options: npm | yarn | pnpm
+      package_manager: yarn  # Options: npm | yarn | pnpm
       test_command: run test
       lint_command: run lint
       build_command: run build
