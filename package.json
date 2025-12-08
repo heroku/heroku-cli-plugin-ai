@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@heroku/http-call": "^5.4.0",
-    "@oclif/test": "^2.3.28",
+    "@oclif/test": "^3.2.15",
     "@types/mocha": "^10",
     "@types/node": "^22",
     "@types/sinon": "^17",
