@@ -46,7 +46,7 @@ export default class Call extends Command {
     json: flags.boolean({char: 'j', description: 'output response as JSON '}),
     model: flags.string({
       char: 'm',
-      description: 'name of the model being invoked',
+      description: 'name of the model being invoked (required for standard plan; cannot be used with legacy model plans)',
       required: false,
     }),
     optfile: flags.string({
@@ -95,33 +95,41 @@ export default class Call extends Command {
     // Now, configure the client to send a request for the target model resource
     await this.configureHerokuAIClient(modelResource, app)
     const options = this.parseOptions(optfile, opts)
-    // Use the --model flag value if provided, otherwise use the resource's default model ID
-    const effectiveModelId = model ?? this.apiModelId
-    // Not sure why `type` is an array in ModelListItem, we use the type from the first entry.
-    const modelType = availableModels.find(m => m.model_id === effectiveModelId)?.type[0]
 
-    // Note: modelType will always be lower case.  MarcusBlankenship 11/13/24.
+    const configModelId = this.apiModelId
+
+    if (configModelId && model) {
+      throw new Error('Cannot use --model with legacy model plans. Omit the --model flag to use the configured model or use the standard plan.')
+    }
+
+    const modelId = configModelId ?? model
+    if (!modelId) {
+      throw new Error('You must provide the --model flag to specify which model to invoke. View available models at https://devcenter.heroku.com/categories/ai-models')
+    }
+
+    const modelType = availableModels.find(m => m.model_id === modelId)?.type[0]
+
     switch (modelType) {
     case 'text-to-embedding': {
-      const embedding = await this.createEmbedding(prompt, effectiveModelId, options)
+      const embedding = await this.createEmbedding(prompt, modelId, options)
       await this.displayEmbedding(embedding, output, json)
       break
     }
 
     case 'text-to-image': {
-      const image = await this.generateImage(prompt, effectiveModelId, options)
+      const image = await this.generateImage(prompt, modelId, options)
       await this.displayImageResult(image, output, json)
       break
     }
 
     case 'text-to-text': {
-      const completion = await this.createChatCompletion(prompt, effectiveModelId, options)
+      const completion = await this.createChatCompletion(prompt, modelId, options)
       await this.displayChatCompletion(completion, output, json)
       break
     }
 
     default:
-      throw new Error(`Unsupported model type: ${modelType}. Model '${effectiveModelId}' not found in available models list. View available models at https://devcenter.heroku.com/categories/ai-models`)
+      throw new Error(`Unsupported model type: ${modelType}. Model '${modelId}' not found in available models list. View available models at https://devcenter.heroku.com/categories/ai-models`)
     }
   }
 
