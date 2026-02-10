@@ -583,4 +583,81 @@ describe('ai:models:call', function () {
       })
     })
   })
+
+  context('when using --model flag to override the default model', function () {
+    beforeEach(async function () {
+      api.post('/actions/addons/resolve', {addon: addon3.name, app: addon3Attachment1.app?.name})
+        .reply(200, [addon3])
+        .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: addon3Attachment1.app?.name})
+        .reply(200, [addon3Attachment1])
+        .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
+        .reply(200, {
+          INFERENCE_MAROON_KEY: 's3cr3t_k3y',
+          INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
+          INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
+        })
+    })
+
+    it('uses the --model flag value to override the resource default model', async function () {
+      const prompt = 'Hello, who are you?'
+      inferenceApi = nock('https://inference-eu.heroku.com', {
+        reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+      }).post('/v1/chat/completions', {
+        model: 'claude-3-haiku',
+        messages: [{role: 'user', content: prompt}],
+      }).reply(200, chatCompletionResponse)
+
+      await runCommand(Cmd, [
+        'inference-animate-91825',
+        '--app=app1',
+        `--prompt=${prompt}`,
+        '--model=claude-3-haiku',
+      ])
+
+      expect(stdout.output).to.eq(heredoc`
+        Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.
+      `)
+      expect(stripAnsi(stderr.output)).to.eq('')
+    })
+
+    it('uses --model to invoke a different model type than the resource default', async function () {
+      const prompt = 'Generate an image of a sunset'
+      inferenceApi = nock('https://inference-eu.heroku.com', {
+        reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+      }).post('/v1/images/generations', {
+        model: 'stable-image-ultra',
+        prompt,
+      }).reply(200, imageResponseUrl)
+
+      await runCommand(Cmd, [
+        'inference-animate-91825',
+        '--app=app1',
+        `--prompt=${prompt}`,
+        '--model=stable-image-ultra',
+        '--json',
+      ])
+
+      expect(JSON.parse(stdout.output)).to.deep.equal(imageResponseUrl)
+      expect(stripAnsi(stderr.output)).to.eq('')
+    })
+
+    it('throws an error when --model specifies an unknown model', async function () {
+      const prompt = 'Hello, who are you?'
+
+      try {
+        await runCommand(Cmd, [
+          'inference-animate-91825',
+          '--app=app1',
+          `--prompt=${prompt}`,
+          '--model=unknown-model',
+        ])
+        expect.fail('Expected an error to be thrown')
+      } catch (error: unknown) {
+        const {message} = error as Error
+        expect(stripAnsi(message)).to.contain('Unsupported model type: undefined')
+        expect(stripAnsi(message)).to.contain("Model 'unknown-model' not found in available models list")
+        expect(stripAnsi(message)).to.contain('https://devcenter.heroku.com/categories/ai-models')
+      }
+    })
+  })
 })

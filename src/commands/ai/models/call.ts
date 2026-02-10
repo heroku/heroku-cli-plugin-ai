@@ -29,8 +29,8 @@ export default class Call extends Command {
 
   static description = 'make an inference request to a specific AI model resource '
   static examples = [
-    'heroku ai:models:call my_llm --app my-app --prompt "What is the meaning of life?" ',
-    'heroku ai:models:call diffusion --app my-app --prompt "Generate an image of a sunset" --opts \'{"quality":"hd"}\' -o sunset.png ',
+    'heroku ai:models:call my_llm --app my-app --prompt "What is the meaning of life?" --model claude-3-5-sonnet',
+    'heroku ai:models:call diffusion --app my-app --prompt "Generate an image of a sunset" --model stable-image-ultra --opts \'{"quality":"hd"}\' -o sunset.png',
   ]
 
   static flags = {
@@ -44,6 +44,11 @@ export default class Call extends Command {
     //   default: false,
     // }),
     json: flags.boolean({char: 'j', description: 'output response as JSON '}),
+    model: flags.string({
+      char: 'm',
+      description: 'name of the model being invoked',
+      required: false,
+    }),
     optfile: flags.string({
       description: 'additional options for model inference, provided as a JSON config file ',
       required: false,
@@ -77,7 +82,7 @@ export default class Call extends Command {
     }
 
     const {model_resource: modelResource} = args
-    const {app, json, optfile, opts, output, prompt} = flags
+    const {app, json, model, optfile, opts, output, prompt} = flags
 
     if (!prompt && !optfile && !opts) {
       throw new Error('You must provide either --prompt, --optfile, or --opts.')
@@ -90,31 +95,33 @@ export default class Call extends Command {
     // Now, configure the client to send a request for the target model resource
     await this.configureHerokuAIClient(modelResource, app)
     const options = this.parseOptions(optfile, opts)
+    // Use the --model flag value if provided, otherwise use the resource's default model ID
+    const effectiveModelId = model ?? this.apiModelId
     // Not sure why `type` is an array in ModelListItem, we use the type from the first entry.
-    const modelType = availableModels.find(m => m.model_id === this.apiModelId)?.type[0]
+    const modelType = availableModels.find(m => m.model_id === effectiveModelId)?.type[0]
 
     // Note: modelType will always be lower case.  MarcusBlankenship 11/13/24.
     switch (modelType) {
     case 'text-to-embedding': {
-      const embedding = await this.createEmbedding(prompt, options)
+      const embedding = await this.createEmbedding(prompt, effectiveModelId, options)
       await this.displayEmbedding(embedding, output, json)
       break
     }
 
     case 'text-to-image': {
-      const image = await this.generateImage(prompt, options)
+      const image = await this.generateImage(prompt, effectiveModelId, options)
       await this.displayImageResult(image, output, json)
       break
     }
 
     case 'text-to-text': {
-      const completion = await this.createChatCompletion(prompt, options)
+      const completion = await this.createChatCompletion(prompt, effectiveModelId, options)
       await this.displayChatCompletion(completion, output, json)
       break
     }
 
     default:
-      throw new Error(`Unsupported model type: ${modelType}`)
+      throw new Error(`Unsupported model type: ${modelType}. Model '${effectiveModelId}' not found in available models list. View available models at https://devcenter.heroku.com/categories/ai-models`)
     }
   }
 
@@ -159,7 +166,7 @@ export default class Call extends Command {
     return options
   }
 
-  private async createChatCompletion<T extends Record<string, unknown>>(prompt: string, options = {} as T) {
+  private async createChatCompletion<T extends Record<string, unknown>>(prompt: string, modelId: string, options = {} as T) {
     const {prompt: optsPrompt, messages = [], ...rest} = options
     if (prompt) {
       (messages as ChatCompletionRequest['messages']).push({role: 'user', content: prompt ?? optsPrompt})
@@ -169,7 +176,7 @@ export default class Call extends Command {
       body: {
         ...rest,
         messages,
-        model: this.apiModelId,
+        model: modelId,
       },
       headers: {authorization: `Bearer ${this.apiKey}`},
     })
@@ -187,12 +194,12 @@ export default class Call extends Command {
     }
   }
 
-  private async generateImage<T extends Record<string, unknown>>(prompt: string, options = {} as T) {
+  private async generateImage<T extends Record<string, unknown>>(prompt: string, modelId: string, options = {} as T) {
     const {prompt: optsPrompt, ...rest} = options
     const {body: imageResponse} = await this.herokuAI.post<ImageResponse>('/v1/images/generations', {
       body: {
         ...rest,
-        model: this.apiModelId,
+        model: modelId,
         prompt: prompt ?? optsPrompt,
       },
       headers: {authorization: `Bearer ${this.apiKey}`},
@@ -223,12 +230,12 @@ export default class Call extends Command {
     ux.error('Unexpected response format.', {exit: 1})
   }
 
-  private async createEmbedding<T extends Record<string, unknown>>(input: string, options = {} as T) {
+  private async createEmbedding<T extends Record<string, unknown>>(input: string, modelId: string, options = {} as T) {
     const {input: optsInput, ...rest} = options
     const {body: EmbeddingResponse} = await this.herokuAI.post<EmbeddingResponse>('/v1/embeddings', {
       body: {
         ...rest,
-        model: this.apiModelId,
+        model: modelId,
         input: input ?? optsInput,
       },
       headers: {authorization: `Bearer ${this.apiKey}`},
