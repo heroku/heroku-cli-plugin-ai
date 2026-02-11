@@ -13,6 +13,8 @@ import {
   addon5Attachment1,
   addon6,
   addon6Attachment1,
+  addonStandardPlan,
+  addonStandardPlanAttachment,
   availableModels,
   chatCompletionResponse,
   embeddingsResponse,
@@ -581,6 +583,92 @@ describe('ai:models:call', function () {
         expect(stdout.output).to.eq('')
         expect(stripAnsi(stderr.output)).to.eq('')
       })
+    })
+  })
+
+  context('with legacy plan (MODEL_ID set in config)', function () {
+    beforeEach(function () {
+      api.post('/actions/addons/resolve', {addon: addon3.name, app: addon3Attachment1.app?.name})
+        .reply(200, [addon3])
+        .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: addon3Attachment1.app?.name})
+        .reply(200, [addon3Attachment1])
+        .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
+        .reply(200, {
+          INFERENCE_MAROON_KEY: 's3cr3t_k3y',
+          INFERENCE_MAROON_MODEL_ID: 'claude-3-5-sonnet-latest',
+          INFERENCE_MAROON_URL: 'inference-eu.heroku.com',
+        })
+    })
+
+    it('errors when --model is used with legacy plan', async function () {
+      try {
+        await runCommand(Cmd, [
+          'inference-animate-91825',
+          '--app=app1',
+          '--prompt=Hi',
+          '--model=claude-3-haiku',
+        ])
+        expect.fail('Expected an error')
+      } catch (error: unknown) {
+        const msg = stripAnsi((error as Error).message)
+        expect(msg).to.contain('Cannot use --model with legacy model plans')
+        expect(msg).to.contain('Omit the --model flag')
+      }
+    })
+  })
+
+  context('with standard plan (no MODEL_ID in config)', function () {
+    const resourceName = 'inference-nomodel-12345'
+    const appName = 'app1'
+
+    beforeEach(function () {
+      api.post('/actions/addons/resolve', {addon: addonStandardPlan.name, app: appName})
+        .reply(200, [addonStandardPlan])
+        .post('/actions/addon-attachments/resolve', {addon_attachment: addonStandardPlan.name, app: appName})
+        .reply(200, [addonStandardPlanAttachment])
+        .get(`/apps/${addonStandardPlanAttachment.app?.id}/config-vars`)
+        .reply(200, {
+          INFERENCE_NOMODEL_KEY: 's3cr3t_k3y',
+          INFERENCE_NOMODEL_URL: 'inference-eu.heroku.com',
+        })
+    })
+
+    it('requires --model', async function () {
+      try {
+        await runCommand(Cmd, [resourceName, `--app=${appName}`, '--prompt=Hi'])
+        expect.fail('Expected an error')
+      } catch (error: unknown) {
+        const msg = stripAnsi((error as Error).message)
+        expect(msg).to.contain('You must provide the --model flag')
+        expect(msg).to.contain('devcenter.heroku.com/categories/ai-models')
+      }
+    })
+
+    it('invokes the model specified by --model', async function () {
+      const prompt = 'Hello, who are you?'
+      inferenceApi = nock('https://inference-eu.heroku.com', {
+        reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+      }).post('/v1/chat/completions', {
+        model: 'claude-3-haiku',
+        messages: [{role: 'user', content: prompt}],
+      }).reply(200, chatCompletionResponse)
+
+      await runCommand(Cmd, [resourceName, `--app=${appName}`, `--prompt=${prompt}`, '--model=claude-3-haiku'])
+
+      expect(stdout.output).to.contain("Hello! I'm an AI assistant")
+      expect(stripAnsi(stderr.output)).to.eq('')
+    })
+
+    it('errors when --model is not in available models list', async function () {
+      try {
+        await runCommand(Cmd, [resourceName, `--app=${appName}`, '--prompt=Hi', '--model=unknown-model'])
+        expect.fail('Expected an error')
+      } catch (error: unknown) {
+        const msg = stripAnsi((error as Error).message)
+        expect(msg).to.contain('Unsupported model type')
+        expect(msg).to.contain("Model 'unknown-model' not found")
+        expect(msg).to.contain('devcenter.heroku.com/categories/ai-models')
+      }
     })
   })
 })

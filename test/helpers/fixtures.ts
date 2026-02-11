@@ -217,6 +217,26 @@ export const addon3Attachment2: Heroku.AddOnAttachment = {
   name: 'INFERENCE_JADE',
 }
 
+/** Addon with no MODEL_ID in config or plan (standard plan); --model flag is required. */
+export const addonStandardPlan: Heroku.AddOn = {
+  addon_service: {id: '4b46be3f-d0e6-4b3f-b616-0a857115d71d', name: 'heroku-inference'},
+  app: {id: 'aa7ce11f-4e9d-4175-a85f-2440ce66a428', name: 'app1'},
+  id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'inference-nomodel-12345',
+  plan: {id: 'plan-without-model', name: 'heroku-inference'},
+}
+
+export const addonStandardPlanAttachment: Heroku.AddOnAttachment = {
+  addon: {
+    id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+    name: 'inference-nomodel-12345',
+    app: {id: 'aa7ce11f-4e9d-4175-a85f-2440ce66a428', name: 'app1'},
+  },
+  app: {id: 'aa7ce11f-4e9d-4175-a85f-2440ce66a428', name: 'app1'},
+  id: 'attach-nomodel-123',
+  name: 'INFERENCE_NOMODEL',
+}
+
 export const addon4Attachment1: Heroku.AddOnAttachment = {
   addon: {
     id: 'd061509d-3f05-4424-9a95-7d169b26022c',
