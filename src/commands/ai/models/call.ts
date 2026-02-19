@@ -97,12 +97,13 @@ export default class Call extends Command {
     const options = this.parseOptions(optfile, opts)
 
     const configModelId = this.apiModelId
+    const isLegacyModel = configModelId && availableModels.some(m => m.model_id === configModelId)
 
-    if (configModelId && model) {
+    if (isLegacyModel && model) {
       throw new Error('Cannot use --model with legacy model plans. Omit the --model flag to use the configured model or use the standard plan.')
     }
 
-    const modelId = configModelId ?? model
+    const modelId = isLegacyModel ? configModelId : model
     if (!modelId) {
       throw new Error('You must provide the --model flag to specify which model to invoke. View available models at https://devcenter.heroku.com/categories/ai-models')
     }
