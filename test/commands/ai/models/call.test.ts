@@ -586,7 +586,7 @@ describe('ai:models:call', function () {
     })
   })
 
-  context('with legacy plan (MODEL_ID set in config)', function () {
+  context('with single-model plan (MODEL_ID set in config)', function () {
     beforeEach(function () {
       api.post('/actions/addons/resolve', {addon: addon3.name, app: addon3Attachment1.app?.name})
         .reply(200, [addon3])
@@ -600,7 +600,7 @@ describe('ai:models:call', function () {
         })
     })
 
-    it('errors when --model is used with legacy plan', async function () {
+    it('errors when --model is used with single-model plan', async function () {
       try {
         await runCommand(Cmd, [
           'inference-animate-91825',
@@ -633,7 +633,7 @@ describe('ai:models:call', function () {
         })
     })
 
-    it('requires --model', async function () {
+    it('requires --model flag on standard plan', async function () {
       try {
         await runCommand(Cmd, [resourceName, `--app=${appName}`, '--prompt=Hi'])
         expect.fail('Expected an error')
@@ -644,7 +644,7 @@ describe('ai:models:call', function () {
       }
     })
 
-    it('invokes the model specified by --model', async function () {
+    it('accepts --model on standard plan', async function () {
       const prompt = 'Hello, who are you?'
       inferenceApi = nock('https://inference-eu.heroku.com', {
         reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
@@ -669,6 +669,35 @@ describe('ai:models:call', function () {
         expect(msg).to.contain("Model 'unknown-model' not found")
         expect(msg).to.contain('devcenter.heroku.com/categories/ai-models')
       }
+    })
+
+    it('uses --model for image generation on standard plan', async function () {
+      const prompt = 'Generate a mocked image'
+      inferenceApi = nock('https://inference-eu.heroku.com', {
+        reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+      }).post('/v1/images/generations', {
+        model: 'stable-image-ultra',
+        prompt,
+      }).reply(200, imageResponseUrl)
+
+      await runCommand(Cmd, [resourceName, `--app=${appName}`, `--prompt=${prompt}`, '--model=stable-image-ultra'])
+
+      expect(stripAnsi(stderr.output)).to.eq('')
+    })
+
+    it('uses --model for embeddings on standard plan', async function () {
+      const prompt = 'Heroku Managed Inference Add-on'
+      inferenceApi = nock('https://inference-eu.heroku.com', {
+        reqheaders: {authorization: 'Bearer s3cr3t_k3y'},
+      }).post('/v1/embeddings', {
+        input: prompt,
+        model: 'cohere-embed-multilingual',
+      }).reply(200, embeddingsResponse)
+
+      await runCommand(Cmd, [resourceName, `--app=${appName}`, `--prompt=${prompt}`, '--model=cohere-embed-multilingual'])
+
+      expect(stdout.output).to.contain(stringifiedEmbeddingsVector.slice(0, 64))
+      expect(stripAnsi(stderr.output)).to.eq('')
     })
   })
 })
