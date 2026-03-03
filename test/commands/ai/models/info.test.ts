@@ -64,7 +64,6 @@ describe('ai:models:info', function () {
   })
 
   context('when provisioned model name is not provided', function () {
-    // eslint-disable-next-line mocha/no-setup-in-describe
     const multipleAddons = Array.from({length: 2}).fill(addon1)
 
     beforeEach(function () {
