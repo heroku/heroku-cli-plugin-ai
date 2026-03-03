@@ -1,4 +1,3 @@
-/* eslint-disable mocha/no-setup-in-describe */
 import {ux} from '@oclif/core'
 import {expect, test} from '@oclif/test'
 import stripAnsi from 'strip-ansi'
