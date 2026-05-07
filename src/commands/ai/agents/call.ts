@@ -1,3 +1,4 @@
+/*
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import fs from 'node:fs/promises'
@@ -206,3 +207,4 @@ export default class Call extends Command {
     }
   }
 }
+*/

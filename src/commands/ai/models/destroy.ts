@@ -1,3 +1,4 @@
+/*
 import {Args} from '@oclif/core'
 import {flags} from '@heroku-cli/command'
 import destroyAddon from '../../../lib/ai/models/destroy_addon'
@@ -36,3 +37,4 @@ export default class Destroy extends Command {
     await destroyAddon(this.config, aiAddon, force)
   }
 }
+*/

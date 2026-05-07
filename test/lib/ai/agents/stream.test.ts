@@ -1,6 +1,6 @@
 import {expect} from 'chai'
 import {ReadableStream} from 'node:stream/web'
-import {formatCompletionMessage, handleAgentStream} from '../../../../src/lib/ai/agents/stream'
+import {formatCompletionMessage, handleAgentStream} from '../../../../src/lib/ai/agents/stream.js'
 import type {ChatCompletionResponse} from '@heroku/ai'
 
 describe('ai/agents/stream', function () {

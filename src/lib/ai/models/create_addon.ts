@@ -1,8 +1,8 @@
-import {ux} from '@oclif/core'
-import color from '@heroku-cli/color'
-import * as Heroku from '@heroku-cli/schema'
 import {APIClient} from '@heroku-cli/command'
-import * as util from './util'
+import * as Heroku from '@heroku-cli/schema'
+import {color} from '@heroku/heroku-cli-util'
+import {ux} from '@oclif/core/ux'
+import * as util from './util.js'
 
 // eslint-disable-next-line max-params
 export default async function (
@@ -46,13 +46,13 @@ export default async function (
   const addon = await util.trapConfirmationRequired<Required<Heroku.AddOn>>(app, confirm, confirm => (createAddonRequest(confirm)))
 
   if (addon.provision_message) {
-    ux.log(addon.provision_message)
+    ux.stdout(addon.provision_message)
   }
 
-  ux.log(`Resource name: ${color.configVar(addon.name)}${options.as ? `\nResource alias: ${color.configVar(options.as)}` : ''}`)
+  ux.stdout(`Resource name: ${color.green(addon.name)}${options.as ? `\nResource alias: ${color.green(options.as)}` : ''}`)
 
-  ux.log(
-    `Run ${color.cmd(`'heroku config -a ${addon.app.name}'`)} to view model config vars associated with this app.`
+  ux.stdout(
+    `Run ${color.command(`'heroku config -a ${addon.app.name}'`)} to view model config vars associated with this app.`
   )
 
   return addon

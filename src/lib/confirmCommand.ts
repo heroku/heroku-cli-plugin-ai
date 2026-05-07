@@ -1,29 +1,32 @@
-import {color} from '@heroku-cli/color'
-import {ux} from '@oclif/core'
-import heredoc from 'tsheredoc'
+import {color, hux} from '@heroku/heroku-cli-util'
+import {ux} from '@oclif/core/ux'
+import tsheredoc from 'tsheredoc'
+
+const heredoc = tsheredoc.default ?? tsheredoc
+
+const boldRed = (text: string) => color.ansis.bold.red(text)
 
 export default async function confirmCommand(app: string, confirm?: string | undefined, message?: string) {
   if (confirm) {
     if (confirm === app) return
-    throw new Error(`Confirmation ${color.bold.red(confirm)} did not match ${color.bold.red(app)}. Aborted.`)
+    throw new Error(`Confirmation ${boldRed(confirm)} did not match ${boldRed(app)}. Aborted.`)
   }
 
   if (!message) {
     message = heredoc`
-      Destructive Action. 
-      This command will affect the app ${color.bold.red(app)} .
+      Destructive Action.
+      This command will affect the app ${boldRed(app)} .
     `
   }
 
   ux.warn(message)
   console.error()
-  const entered = await ux.prompt(
-    `To proceed, type ${color.bold.red(app)} or re-run this command with ${color.bold.red('--confirm', app)}.`,
-    {required: true},
+  const entered = await hux.prompt(
+    `To proceed, type ${boldRed(app)} or re-run this command with ${boldRed('--confirm ' + app)}.`,
   )
   if (entered === app) {
     return
   }
 
-  throw new Error(`Confirmation did not match ${color.bold.red(app)}. Aborted.`)
+  throw new Error(`Confirmation did not match ${boldRed(app)}. Aborted.`)
 }

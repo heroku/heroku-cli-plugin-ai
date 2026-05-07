@@ -1,3 +1,4 @@
+/*
 import {flags} from '@heroku-cli/command'
 import {openUrl} from '../../lib/open-url'
 import Command from '../../lib/base'
@@ -17,3 +18,4 @@ export default class Docs extends Command {
     await openUrl(url, browser, 'view the documentation')
   }
 }
+*/

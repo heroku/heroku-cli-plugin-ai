@@ -1,10 +1,10 @@
 /* eslint-disable no-return-await */
-import color from '@heroku-cli/color'
-import {HerokuAPIError} from '@heroku-cli/command/lib/api-client'
+import {HerokuAPIError} from '@heroku-cli/command/lib/api-client.js'
 import * as Heroku from '@heroku-cli/schema'
-import {ux} from '@oclif/core'
+import {color} from '@heroku/heroku-cli-util'
+import {ux} from '@oclif/core/ux'
 import printf from 'printf'
-import confirmCommand from '../../confirmCommand'
+import confirmCommand from '../../confirmCommand.js'
 
 export const trapConfirmationRequired = async function<T> (app: string, confirm: string | undefined, fn: (confirmed?: string) => Promise<T>) {
   return await fn(confirm)
@@ -37,7 +37,7 @@ export function handlePlatformApiErrors(error: unknown, cmdContext: {as?: string
 
     if (cmdContext.modelName && error.body.message?.includes('add-on plan')) {
       ux.error(
-        `${cmdContext.modelName} is an invalid model name. Run ${color.cmd('heroku ai:models:list')} for a list of valid models per region.`,
+        `${cmdContext.modelName} is an invalid model name. Run ${color.command('heroku ai:models:list')} for a list of valid models per region.`,
         {exit: 1},
       )
     }

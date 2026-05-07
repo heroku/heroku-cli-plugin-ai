@@ -1,3 +1,4 @@
+/*
 import {flags} from '@heroku-cli/command'
 import Command from '../../../lib/base'
 import type {MCPServerList, MCPServerTool} from '@heroku/ai'
@@ -47,3 +48,4 @@ export default class List extends Command {
     return servers.flatMap(server => server.tools)
   }
 }
+*/

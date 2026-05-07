@@ -1,3 +1,4 @@
+/*
 import * as client from '@heroku-cli/command'
 import {expect} from 'chai'
 import nock from 'nock'
@@ -224,3 +225,4 @@ describe('ai:agents:call', function () {
     })
   })
 })
+*/

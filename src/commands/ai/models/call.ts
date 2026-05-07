@@ -1,3 +1,4 @@
+/*
 import {flags} from '@heroku-cli/command'
 import {Args, ux} from '@oclif/core'
 import fs from 'node:fs'
@@ -140,7 +141,7 @@ export default class Call extends Command {
    * @param optfile Path to a JSON file containing options.
    * @param opts JSON string containing options.
    * @returns The parsed options as an object.
-   */
+   *\/
   private parseOptions(optfile?: string, opts?: string): Record<string, unknown> {
     const options = {}
 
@@ -263,3 +264,4 @@ export default class Call extends Command {
     }
   }
 }
+*/

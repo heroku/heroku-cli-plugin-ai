@@ -1,3 +1,4 @@
+/*
 import {flags} from '@heroku-cli/command'
 import Command from '../../../lib/base'
 import {Args} from '@oclif/core'
@@ -38,3 +39,4 @@ export default class MCP extends Command {
     }
   }
 }
+*/

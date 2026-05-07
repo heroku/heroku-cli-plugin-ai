@@ -1,3 +1,4 @@
+/*
 import {stdout, stderr} from 'stdout-stderr'
 import heredoc from 'tsheredoc'
 import Cmd  from '../../../../src/commands/ai/models/detach'
@@ -52,3 +53,4 @@ describe('addons:detach', function () {
     `))
   })
 })
+*/

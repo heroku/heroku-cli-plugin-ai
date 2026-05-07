@@ -7,7 +7,6 @@
 /node_modules
 oclif.manifest.json
 
-package-lock.json
 pnpm-lock.yaml
 .pnp.*
 .yarn/*
@@ -20,3 +19,4 @@ pnpm-lock.yaml
 .jshint*
 coverage
 .nyc_output
+yarn.lock
