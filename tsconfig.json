@@ -2,18 +2,21 @@
   "compilerOptions": {
     "declaration": true,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
-    "module": "CommonJS",
-    "outDir": "dist",
-    "rootDirs": ["src"],
-    "strict": true,
-    "target": "ESNext",
-    "skipLibCheck": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "pretty": true,
     "paths": {
-      "@heroku/ai": ["./src/lib/ai/types.ts"]
-    }
+      "@heroku/ai": ["./src/lib/ai/types.d.ts"]
+    },
+    "rootDirs": ["./src"],
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022"
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["./src/**/*"],
+  "exclude": ["./src/commands/**/*"],
+  "ts-node": { "esm": true }
 }

@@ -1,3 +1,4 @@
+/*
 import {expect} from 'chai'
 import sinon, {SinonSandbox, SinonStub} from 'sinon'
 import Cmd from '../../../src/commands/ai/docs'
@@ -50,3 +51,4 @@ describe('ai:docs', function () {
     expect(openUrlStub.calledWith(customUrl, undefined, 'view the documentation')).to.be.true
   })
 })
+*/

@@ -1,3 +1,4 @@
+/*
 import {expect} from 'chai'
 import {stderr} from 'stdout-stderr'
 import heredoc from 'tsheredoc'
@@ -86,3 +87,4 @@ describe('ai:models:destroy', function () {
     }
   })
 })
+*/

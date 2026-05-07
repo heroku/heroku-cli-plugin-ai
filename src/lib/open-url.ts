@@ -1,6 +1,6 @@
-import color from '@heroku-cli/color'
-import {ux} from '@oclif/core'
-import {CLIError} from '@oclif/core/lib/errors'
+import {color, hux} from '@heroku/heroku-cli-util'
+import {CLIError} from '@oclif/core/errors'
+import {ux} from '@oclif/core/ux'
 import open from 'open'
 
 export const urlOpener: (...args: Parameters<typeof open>) => ReturnType<typeof open> = open
@@ -14,10 +14,10 @@ export async function openUrl(url: string, browser?: string, action?: string) {
     browserErrorShown = true
   }
 
-  ux.log(`Opening ${color.cyan(url)} in ${browser ? browser : 'your default'} browser… `)
+  ux.stdout(`Opening ${color.cyan(url)} in ${browser ? browser : 'your default'} browser… `)
 
   try {
-    await ux.anykey(
+    await hux.anykey(
       `Press any key to open up the browser${action ? ` to ${action}` : ''}, or ${color.yellow('q')} to exit.`
     )
   } catch (error) {

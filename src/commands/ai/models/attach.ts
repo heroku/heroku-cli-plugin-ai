@@ -1,3 +1,4 @@
+/*
 import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
 import * as Heroku from '@heroku-cli/schema'
@@ -61,3 +62,4 @@ export default class Attach extends Command {
     return attachment
   }
 }
+*/

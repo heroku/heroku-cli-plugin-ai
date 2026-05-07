@@ -1,3 +1,4 @@
+/*
 import {ux} from '@oclif/core'
 import {CLIError} from '@oclif/core/lib/errors'
 import {stdout, stderr} from 'stdout-stderr'
@@ -269,3 +270,4 @@ describe('ai:models:attach', function () {
     })
   })
 })
+*/

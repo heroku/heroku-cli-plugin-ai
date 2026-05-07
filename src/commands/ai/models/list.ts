@@ -1,3 +1,4 @@
+/*
 import {ux} from '@oclif/core'
 import type {ModelList} from '@heroku/ai'
 import Command from '../../../lib/base'
@@ -38,3 +39,4 @@ export default class List extends Command {
     ux.log('\nSee https://devcenter.heroku.com/articles/heroku-inference-api-model-cards for more info. ')
   }
 }
+*/
