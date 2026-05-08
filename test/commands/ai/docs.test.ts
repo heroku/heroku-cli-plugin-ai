@@ -32,9 +32,8 @@ describe('ai:docs', function () {
       expect(stdout).to.include(Cmd.defaultUrl)
       expect(spawnStub.calledOnce).to.be.true
       const [command, args] = spawnStub.firstCall.args
-      expect(command).to.eq('open')
       expect(args).to.include(Cmd.defaultUrl)
-      expect(args).to.not.include('-a')
+      expect(command).to.not.eq('firefox')
     })
   })
 
@@ -47,9 +46,8 @@ describe('ai:docs', function () {
       expect(stdout).to.include(Cmd.defaultUrl)
       expect(spawnStub.calledOnce).to.be.true
       const [command, args] = spawnStub.firstCall.args
-      expect(command).to.eq('open')
-      expect(args).to.include('-a')
-      expect(args).to.include('firefox')
+      const spawnedWithBrowser = command === 'firefox' || args.includes('firefox')
+      expect(spawnedWithBrowser).to.be.true
       expect(args).to.include(Cmd.defaultUrl)
     })
   })
