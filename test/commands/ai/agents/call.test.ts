@@ -306,7 +306,6 @@ describe('ai:agents:call', function () {
         expect(error?.message).to.include('Invalid JSON in --messages')
       })
     })
-
   })
 
   context('when no MODEL_ID config var is found', function () {
