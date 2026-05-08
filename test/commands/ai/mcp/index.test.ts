@@ -56,6 +56,13 @@ describe('ai:mcp', function () {
     expect(stdout).to.contain('https://example.com/mcp')
   })
 
+  it('prints the MCP server URL as JSON when --json is passed', async function () {
+    mockAddonAndConfig()
+    const {stdout} = await runCommand(MCP, ['--app', app, '--json'])
+    const output = JSON.parse(stdout)
+    expect(output).to.deep.equal({mcp_url: 'https://example.com/mcp'})
+  })
+
   it('handles API errors gracefully', async function () {
     this.timeout(10_000)
     heroku

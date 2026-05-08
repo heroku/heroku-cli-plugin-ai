@@ -32,7 +32,12 @@ export default class MCP extends Command {
     const configVarNames = Object.keys(config)
     const inferenceUrlKeyName = configVarNames.find(key => key.startsWith('INFERENCE_') && key.endsWith('_URL'))
     if (inferenceUrlKeyName) {
-      ux.stdout(config[inferenceUrlKeyName] + '/mcp')
+      const mcpUrl = config[inferenceUrlKeyName] + '/mcp'
+      if (flags.json) {
+        ux.stdout(ux.colorizeJson({mcp_url: mcpUrl}))
+      } else {
+        ux.stdout(mcpUrl)
+      }
     } else {
       ux.stdout(`No MCP server URL found for ${flags.app}. Check the Working With MCP On Heroku documentation for setup instructions: https://devcenter.heroku.com/articles/heroku-inference-working-with-mcp`)
     }
