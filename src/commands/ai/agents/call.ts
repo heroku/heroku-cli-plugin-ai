@@ -1,5 +1,5 @@
 import {flags} from '@heroku-cli/command'
-import {Args} from '@oclif/core'
+import {Args, Interfaces} from '@oclif/core'
 import {ux} from '@oclif/core/ux'
 import fs from 'node:fs/promises'
 import {ReadableStream} from 'node:stream/web'
@@ -67,17 +67,24 @@ export default class Call extends Command {
     remote: flags.remote(),
   }
 
+  private static get allFlags() {
+    return {...Call.baseFlags, ...Call.flags}
+  }
+
   public async run(): Promise<void> {
-    let parsedFlags = {} as Record<string, any>
-    let parsedArgs = {} as Record<string, any>
+    type CallFlags = Interfaces.InferredFlags<typeof Call.allFlags & typeof Call.flags>
+    type CallArgs = Interfaces.InferredArgs<typeof Call.args>
+
+    let parsedFlags = {} as CallFlags
+    let parsedArgs = {} as CallArgs
     try {
       const parsed = await this.parse(Call)
-      parsedFlags = parsed.flags
-      parsedArgs = parsed.args
+      parsedFlags = parsed.flags as CallFlags
+      parsedArgs = parsed.args as CallArgs
     } catch (error) {
       const {parse: {output}} = error as CLIParseError<any>
-      parsedFlags = output.flags
-      parsedArgs = output.args
+      parsedFlags = output.flags as CallFlags
+      parsedArgs = output.args as CallArgs
     }
 
     const {model_resource: modelResource} = parsedArgs
