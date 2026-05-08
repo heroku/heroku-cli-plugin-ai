@@ -2,18 +2,19 @@ import {runCommand} from '@heroku-cli/test-utils'
 import {hux} from '@heroku/heroku-cli-util'
 import {expect} from 'chai'
 import childProcess from 'node:child_process'
-import sinon, {SinonSandbox} from 'sinon'
+import sinon, {SinonSandbox, SinonStub} from 'sinon'
 import Cmd from '../../../src/commands/ai/docs.js'
 
 describe('ai:docs', function () {
   const {env} = process
   let sandbox: SinonSandbox
+  let spawnStub: SinonStub
 
   beforeEach(function () {
     process.env = {}
     sandbox = sinon.createSandbox()
     sandbox.stub(hux, 'anykey').resolves()
-    sandbox.stub(childProcess, 'spawn').returns({
+    spawnStub = sandbox.stub(childProcess, 'spawn').returns({
       on: (_: string, _cb: (...args: any[]) => void) => {},
       unref: () => {},
     } as unknown as childProcess.ChildProcess)
@@ -29,6 +30,11 @@ describe('ai:docs', function () {
       const {stdout} = await runCommand(Cmd)
 
       expect(stdout).to.include(Cmd.defaultUrl)
+      expect(spawnStub.calledOnce).to.be.true
+      const [command, args] = spawnStub.firstCall.args
+      expect(command).to.eq('open')
+      expect(args).to.include(Cmd.defaultUrl)
+      expect(args).to.not.include('-a')
     })
   })
 
@@ -39,6 +45,12 @@ describe('ai:docs', function () {
       ])
 
       expect(stdout).to.include(Cmd.defaultUrl)
+      expect(spawnStub.calledOnce).to.be.true
+      const [command, args] = spawnStub.firstCall.args
+      expect(command).to.eq('open')
+      expect(args).to.include('-a')
+      expect(args).to.include('firefox')
+      expect(args).to.include(Cmd.defaultUrl)
     })
   })
 
@@ -52,5 +64,8 @@ describe('ai:docs', function () {
     const {stdout} = await runCommand(Cmd)
 
     expect(stdout).to.include(customUrl)
+    expect(spawnStub.calledOnce).to.be.true
+    const [, args] = spawnStub.firstCall.args
+    expect(args).to.include(customUrl)
   })
 })
