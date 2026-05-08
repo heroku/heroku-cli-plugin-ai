@@ -244,6 +244,7 @@ describe('ai:agents:call', function () {
         const {stdout} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
+          '--prompt=Hello',
           '--opts={"temperature":0.5}',
         ])
 
