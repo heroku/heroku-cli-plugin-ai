@@ -3,8 +3,6 @@ import {CLIError} from '@oclif/core/errors'
 import {ux} from '@oclif/core/ux'
 import open from 'open'
 
-export const urlOpener: (...args: Parameters<typeof open>) => ReturnType<typeof open> = open
-
 export async function openUrl(url: string, browser?: string, action?: string) {
   let browserErrorShown = false
   const showBrowserError = (browser?: string) => {
@@ -25,7 +23,7 @@ export async function openUrl(url: string, browser?: string, action?: string) {
     ux.error(message, {exit: oclif?.exit || 1})
   }
 
-  const cp = await urlOpener(url, {wait: false, ...(browser ? {app: {name: browser}} : {})})
+  const cp = await open(url, {wait: false, ...(browser ? {app: {name: browser}} : {})})
   cp.on('error', (err: Error) => {
     ux.warn(err)
     showBrowserError(browser)
