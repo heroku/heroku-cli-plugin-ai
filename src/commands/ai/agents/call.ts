@@ -8,6 +8,7 @@ import Command from '../../../lib/base.js'
 import {formatCompletionMessage, handleAgentStream} from '../../../lib/ai/agents/stream.js'
 
 export default class Call extends Command {
+  static baseFlags = Command.baseFlagsWithoutPrompt()
   static args = {
     model_resource: Args.string({
       description: 'resource ID or alias of model (--app flag required if alias is used)',
