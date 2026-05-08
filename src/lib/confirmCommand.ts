@@ -20,7 +20,7 @@ export default async function confirmCommand(app: string, confirm?: string | und
   }
 
   ux.warn(message)
-  console.error()
+  process.stderr.write('\n')
   const entered = await hux.prompt(
     `To proceed, type ${boldRed(app)} or re-run this command with ${boldRed('--confirm ' + app)}.`,
     {required: true},

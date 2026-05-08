@@ -15,7 +15,7 @@ Heroku AI CLI plugin
 <!-- tocstop -->
 # Usage
 ```sh-session
-$ heroku plugins:install @heroku-cli/plugin-ai
+$ heroku plugins:install @heroku/plugin-ai
 $ heroku ai:COMMAND
 running command...
 $ heroku ai --help [COMMAND]

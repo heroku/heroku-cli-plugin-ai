@@ -1,18 +1,17 @@
-/*
 import * as client from '@heroku-cli/command'
+import {runCommand} from '@heroku-cli/test-utils'
 import {expect} from 'chai'
 import nock from 'nock'
 import fs from 'node:fs/promises'
 import sinon from 'sinon'
-import {stderr, stdout} from 'stdout-stderr'
-import heredoc from 'tsheredoc'
-import Cmd from '../../../../src/commands/ai/agents/call'
+import tsheredoc from 'tsheredoc'
+const heredoc = tsheredoc.default ?? tsheredoc
+import Cmd from '../../../../src/commands/ai/agents/call.js'
 import {
   addon3,
   addon3Attachment1,
-} from '../../../helpers/fixtures'
-import stripAnsi from '../../../helpers/strip-ansi'
-import {runCommand} from '../../../run-command'
+} from '../../../helpers/fixtures.js'
+import stripAnsi from '../../../helpers/strip-ansi.js'
 
 describe('ai:agents:call', function () {
   const {env} = process
@@ -72,16 +71,16 @@ describe('ai:agents:call', function () {
           })
           .resolves(new Response(readable))
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--prompt=${prompt}`,
         ])
 
-        expect(stdout.output).to.eq(heredoc`
+        expect(stdout).to.eq(heredoc`
           Hello! I'm an AI assistant.
         `)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -104,14 +103,14 @@ describe('ai:agents:call', function () {
           })
           .resolves(new Response(readable))
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--prompt=${prompt}`,
           '--json',
         ])
 
-        expect(JSON.parse(stdout.output)).to.deep.equal([{
+        expect(JSON.parse(stdout)).to.deep.equal([{
           object: 'chat.completion',
           choices: [{
             message: {
@@ -119,7 +118,7 @@ describe('ai:agents:call', function () {
             },
           }],
         }])
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -141,16 +140,16 @@ describe('ai:agents:call', function () {
             headers: sinon.match.any,
           })
           .resolves(new Response(readable))
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--messages=${messages}`,
         ])
 
-        expect(stdout.output).to.eq(heredoc`
+        expect(stdout).to.eq(heredoc`
           I'm doing well, thank you!
         `)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -174,7 +173,7 @@ describe('ai:agents:call', function () {
           })
           .resolves(new Response(readable))
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--prompt=${prompt}`,
@@ -185,8 +184,8 @@ describe('ai:agents:call', function () {
           'agent-output.txt',
           'Hello! I\'m an AI assistant.',
         )).to.be.true
-        expect(stdout.output).to.eq('')
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -209,20 +208,128 @@ describe('ai:agents:call', function () {
           })
           .resolves(new Response(readable))
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--prompt=${prompt}`,
         ])
 
-        expect(stdout.output).to.eq(heredoc`
+        expect(stdout).to.eq(heredoc`
           # Hello
 
           This is markdown
         `)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
+      })
+    })
+
+    context('with --opts option', function () {
+      it('sends additional options to the service', async function () {
+        const readable = new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode('data: {"object":"chat.completion","choices":[{"message":{"content":"Response with opts"}}]}\n'))
+            controller.enqueue(new TextEncoder().encode('data: [DONE]\n'))
+            controller.close()
+          },
+        })
+
+        fetchStub
+          .withArgs('inference-eu.heroku.com/v1/agents/heroku', {
+            method: 'POST',
+            body: sinon.match.any,
+            headers: sinon.match.any,
+          })
+          .resolves(new Response(readable))
+
+        const {stdout} = await runCommand(Cmd, [
+          'inference-animate-91825',
+          '--app=app1',
+          '--prompt=Hello',
+          '--opts={"temperature":0.5}',
+        ])
+
+        expect(stdout).to.include('Response with opts')
+      })
+
+      it('throws an error for invalid JSON in --opts', async function () {
+        const {error} = await runCommand(Cmd, [
+          'inference-animate-91825',
+          '--app=app1',
+          '--opts=not-valid-json',
+        ])
+
+        expect(error?.message).to.include('Invalid JSON. Check the formatting in your --opts value.')
+      })
+    })
+
+    context('with --optfile option', function () {
+      it('throws an error for invalid JSON in the file', async function () {
+        sandbox.stub(fs, 'readFile').resolves(Buffer.from('not-valid-json'))
+
+        const {error} = await runCommand(Cmd, [
+          'inference-animate-91825',
+          '--app=app1',
+          '--optfile=bad-options.json',
+        ])
+
+        expect(error?.message).to.include('Invalid JSON in bad-options.json')
+      })
+    })
+
+    context('when API returns no response body', function () {
+      it('throws an error', async function () {
+        fetchStub
+          .withArgs('inference-eu.heroku.com/v1/agents/heroku', {
+            method: 'POST',
+            body: sinon.match.any,
+            headers: sinon.match.any,
+          })
+          .resolves({body: null} as any)
+
+        const {error} = await runCommand(Cmd, [
+          'inference-animate-91825',
+          '--app=app1',
+          '--prompt=Hello',
+        ])
+
+        expect(error?.message).to.eq('No response body received from the API')
+      })
+    })
+
+    context('with invalid --messages JSON', function () {
+      it('throws an error for malformed messages', async function () {
+        const {error} = await runCommand(Cmd, [
+          'inference-animate-91825',
+          '--app=app1',
+          '--messages=not-valid-json',
+        ])
+
+        expect(error?.message).to.include('Invalid JSON in --messages')
       })
     })
   })
+
+  context('when no MODEL_ID config var is found', function () {
+    beforeEach(async function () {
+      api.post('/actions/addons/resolve', {addon: addon3.name, app: addon3Attachment1.app?.name})
+        .reply(200, [addon3])
+        .post('/actions/addon-attachments/resolve', {addon_attachment: addon3.name, app: addon3Attachment1.app?.name})
+        .reply(200, [addon3Attachment1])
+        .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
+        .reply(200, {INFERENCE_MAROON_KEY: 'key', INFERENCE_MAROON_URL: 'url'})
+      api
+        .get(`/apps/${addon3Attachment1.app?.id}/config-vars`)
+        .reply(200, {INFERENCE_MAROON_KEY: 'key', INFERENCE_MAROON_URL: 'url'})
+    })
+
+    it('throws an error about missing model resource', async function () {
+      const {error} = await runCommand(Cmd, [
+        'inference-animate-91825',
+        '--app=app1',
+        '--prompt=Hello',
+      ])
+
+      expect(error?.message).to.include('No model resource found')
+    })
+  })
 })
-*/
