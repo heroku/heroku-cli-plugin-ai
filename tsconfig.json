@@ -17,6 +17,6 @@
     "target": "ES2022"
   },
   "include": ["./src/**/*"],
-  "exclude": ["./src/commands/**/*"],
+  "exclude": ["./src/commands/ai/models/**/*"],
   "ts-node": { "esm": true }
 }

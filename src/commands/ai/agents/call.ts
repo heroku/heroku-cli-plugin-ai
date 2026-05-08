@@ -74,7 +74,7 @@ export default class Call extends Command {
       parsedFlags = parsed.flags
       parsedArgs = parsed.args
     } catch (error) {
-      const {parse: {output}} = error as CLIParseError<typeof Call>
+      const {parse: {output}} = error as CLIParseError<any>
       parsedFlags = output.flags
       parsedArgs = output.args
     }
