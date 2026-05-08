@@ -5,6 +5,19 @@ import childProcess from 'node:child_process'
 import sinon, {SinonSandbox, SinonStub} from 'sinon'
 import Cmd from '../../../src/commands/ai/docs.js'
 
+function spawnArgsContain(args: string[], value: string): boolean {
+  return args.some(arg => {
+    if (arg.includes(value)) return true
+    // On Windows, the `open` package base64-encodes a UTF-16LE PowerShell command containing the URL
+    try {
+      const decoded = Buffer.from(arg, 'base64').toString('utf16le')
+      return decoded.includes(value)
+    } catch {
+      return false
+    }
+  })
+}
+
 describe('ai:docs', function () {
   const {env} = process
   let sandbox: SinonSandbox
@@ -32,7 +45,7 @@ describe('ai:docs', function () {
       expect(stdout).to.include(Cmd.defaultUrl)
       expect(spawnStub.calledOnce).to.be.true
       const [command, args] = spawnStub.firstCall.args
-      expect(args).to.include(Cmd.defaultUrl)
+      expect(spawnArgsContain(args, Cmd.defaultUrl)).to.be.true
       expect(command).to.not.eq('firefox')
     })
   })
@@ -46,9 +59,9 @@ describe('ai:docs', function () {
       expect(stdout).to.include(Cmd.defaultUrl)
       expect(spawnStub.calledOnce).to.be.true
       const [command, args] = spawnStub.firstCall.args
-      const spawnedWithBrowser = command === 'firefox' || args.includes('firefox')
+      const spawnedWithBrowser = command === 'firefox' || spawnArgsContain(args, 'firefox')
       expect(spawnedWithBrowser).to.be.true
-      expect(args).to.include(Cmd.defaultUrl)
+      expect(spawnArgsContain(args, Cmd.defaultUrl)).to.be.true
     })
   })
 
@@ -64,6 +77,6 @@ describe('ai:docs', function () {
     expect(stdout).to.include(customUrl)
     expect(spawnStub.calledOnce).to.be.true
     const [, args] = spawnStub.firstCall.args
-    expect(args).to.include(customUrl)
+    expect(spawnArgsContain(args, customUrl)).to.be.true
   })
 })
