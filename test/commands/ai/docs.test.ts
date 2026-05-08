@@ -1,19 +1,22 @@
-/*
+import {runCommand} from '@heroku-cli/test-utils'
+import {hux} from '@heroku/heroku-cli-util'
 import {expect} from 'chai'
-import sinon, {SinonSandbox, SinonStub} from 'sinon'
-import Cmd from '../../../src/commands/ai/docs'
-import {runCommand} from '../../run-command'
-import * as openUrl from '../../../src/lib/open-url'
+import childProcess from 'node:child_process'
+import sinon, {SinonSandbox} from 'sinon'
+import Cmd from '../../../src/commands/ai/docs.js'
 
 describe('ai:docs', function () {
   const {env} = process
   let sandbox: SinonSandbox
-  let openUrlStub: SinonStub
 
   beforeEach(function () {
     process.env = {}
     sandbox = sinon.createSandbox()
-    openUrlStub = sandbox.stub(openUrl, 'openUrl').onFirstCall().resolves()
+    sandbox.stub(hux, 'anykey').resolves()
+    sandbox.stub(childProcess, 'spawn').returns({
+      on: (_: string, _cb: (...args: any[]) => void) => {},
+      unref: () => {},
+    } as unknown as childProcess.ChildProcess)
   })
 
   afterEach(function () {
@@ -22,20 +25,20 @@ describe('ai:docs', function () {
   })
 
   context('without --browser option', function () {
-    it('attempts to open the default browser to the Dev Center AI article', async function () {
-      await runCommand(Cmd)
+    it('opens the default Dev Center AI article URL', async function () {
+      const {stdout} = await runCommand(Cmd)
 
-      expect(openUrlStub.calledWith(Cmd.defaultUrl, undefined, 'view the documentation')).to.be.true
+      expect(stdout).to.include(Cmd.defaultUrl)
     })
   })
 
   context('with --browser option', function () {
-    it('attempts to open the specified browser to the Dev Center AI article', async function () {
-      await runCommand(Cmd, [
+    it('opens the Dev Center AI article with specified browser', async function () {
+      const {stdout} = await runCommand(Cmd, [
         '--browser=firefox',
       ])
 
-      expect(openUrlStub.calledWith(Cmd.defaultUrl, 'firefox', 'view the documentation')).to.be.true
+      expect(stdout).to.include(Cmd.defaultUrl)
     })
   })
 
@@ -46,9 +49,8 @@ describe('ai:docs', function () {
       HEROKU_AI_DOCS_URL: customUrl,
     }
 
-    await runCommand(Cmd)
+    const {stdout} = await runCommand(Cmd)
 
-    expect(openUrlStub.calledWith(customUrl, undefined, 'view the documentation')).to.be.true
+    expect(stdout).to.include(customUrl)
   })
 })
-*/

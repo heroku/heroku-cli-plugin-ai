@@ -1,20 +1,9 @@
-/*
 import {flags} from '@heroku-cli/command'
-import Command from '../../../lib/base'
 import {Args} from '@oclif/core'
+import {ux} from '@oclif/core/ux'
+import Command from '../../../lib/base.js'
 
 export default class MCP extends Command {
-  public static description = 'list the MCP server URL'
-  public static flags = {
-    json: flags.boolean({
-      description: 'output in JSON format',
-    }),
-    app: flags.app({
-      description: 'app to list the MCP server URL for',
-      required: false,
-    }),
-  }
-
   public static args = {
     addon: Args.string({
       required: false,
@@ -23,20 +12,29 @@ export default class MCP extends Command {
     }),
   }
 
-  public async run() {
-    const {flags, args} = await this.parse(MCP)
+  public static description = 'list the MCP server URL'
+  public static flags = {
+    app: flags.app({
+      description: 'app to list the MCP server URL for',
+      required: false,
+    }),
+    json: flags.boolean({
+      description: 'output in JSON format',
+    }),
+  }
 
-    // Find the MCP server URL from the billing app's config vars
+  public async run() {
+    const {args, flags} = await this.parse(MCP)
+
     await this.configureHerokuAIClient(args.addon, flags.app)
     const {body: config} = await this.heroku.get<Record<string, string>>(`/apps/${this.addon.app?.id}/config-vars`)
 
     const configVarNames = Object.keys(config)
     const inferenceUrlKeyName = configVarNames.find(key => key.startsWith('INFERENCE_') && key.endsWith('_URL'))
     if (inferenceUrlKeyName) {
-      this.log(config[inferenceUrlKeyName] + '/mcp')
+      ux.stdout(config[inferenceUrlKeyName] + '/mcp')
     } else {
-      this.log(`No MCP server URL found for ${flags.app}. Check the Working With MCP On Heroku documentation for setup instructions: https://devcenter.heroku.com/articles/heroku-inference-working-with-mcp`)
+      ux.stdout(`No MCP server URL found for ${flags.app}. Check the Working With MCP On Heroku documentation for setup instructions: https://devcenter.heroku.com/articles/heroku-inference-working-with-mcp`)
     }
   }
 }
-*/

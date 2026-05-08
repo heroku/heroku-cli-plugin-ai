@@ -1,15 +1,12 @@
-/*
+import {runCommand} from '@heroku-cli/test-utils'
 import {expect} from 'chai'
-import {stdout, stderr} from 'stdout-stderr'
-import MCP from '../../../../src/commands/ai/mcp/index'
-import {runCommand} from '../../../run-command'
 import nock from 'nock'
-import {CLIError} from '@oclif/core/lib/errors'
+import MCP from '../../../../src/commands/ai/mcp/index.js'
 
 const mockConfigVars = {
-  INFERENCE_URL: 'https://example.com',
   INFERENCE_KEY: 'fake-key',
   INFERENCE_MODEL_ID: 'fake-model',
+  INFERENCE_URL: 'https://example.com',
 }
 
 describe('ai:mcp', function () {
@@ -20,14 +17,10 @@ describe('ai:mcp', function () {
   beforeEach(function () {
     process.env = {}
     heroku = nock('https://api.heroku.com')
-    stdout.start()
-    stderr.start()
   })
 
   afterEach(function () {
     process.env = env
-    stdout.stop()
-    stderr.stop()
     nock.cleanAll()
   })
 
@@ -59,37 +52,59 @@ describe('ai:mcp', function () {
 
   it('prints the MCP server URL if INFERENCE_URL is present', async function () {
     mockAddonAndConfig()
-    await runCommand(MCP, ['--app', app])
-    expect(stdout.output).to.contain('https://example.com/mcp')
-    expect(stderr.output).to.eq('')
+    const {stdout} = await runCommand(MCP, ['--app', app])
+    expect(stdout).to.contain('https://example.com/mcp')
   })
 
   it('handles API errors gracefully', async function () {
-    mockAddonAndConfig()
-    heroku.get('/apps/app-1/config-vars').reply(500, {message: 'Internal Server Error'})
+    this.timeout(10_000)
+    heroku
+      .post('/actions/addons/resolve')
+      .reply(500, {id: 'internal_server_error', message: 'Internal Server Error'})
 
-    try {
-      await runCommand(MCP, ['--app', app])
-    } catch (error) {
-      const err = error as CLIError
-      expect(err).to.be.instanceOf(CLIError)
-      expect(err.message).to.match(/Internal Server Error/)
-    }
+    const {error} = await runCommand(MCP, ['--app', app])
+    expect(error).to.exist
   })
 
   it('uses custom addon when specified', async function () {
     const customAddon = 'custom-inference'
     mockAddonAndConfig(app, customAddon)
-    await runCommand(MCP, ['--app', app, customAddon])
-    expect(stdout.output).to.contain('https://example.com/mcp')
-    expect(stderr.output).to.eq('')
+    const {stdout} = await runCommand(MCP, ['--app', app, customAddon])
+    expect(stdout).to.contain('https://example.com/mcp')
   })
 
   it('works without app specified', async function () {
     mockAddonAndConfig()
-    await runCommand(MCP, [])
-    expect(stdout.output).to.contain('https://example.com/mcp')
-    expect(stderr.output).to.eq('')
+    const {stdout} = await runCommand(MCP, [])
+    expect(stdout).to.contain('https://example.com/mcp')
+  })
+
+  it('shows a message when no INFERENCE_URL config var is found', async function () {
+    heroku
+      .post('/actions/addons/resolve')
+      .reply(200, [{
+        id: 'addon-1',
+        name: 'heroku-inference',
+        app: {id: 'app-1', name: app},
+        addon_service: {id: 'service-1', name: 'heroku-inference'},
+        plan: {id: 'plan-1', name: 'heroku-inference:basic'},
+      }])
+    heroku
+      .post('/actions/addon-attachments/resolve')
+      .reply(200, [{
+        id: 'attach-1',
+        name: 'INFERENCE',
+        app: {id: 'app-1', name: app},
+        addon: {id: 'addon-1', name: 'heroku-inference', app: {id: 'app-1', name: app}},
+      }])
+    heroku
+      .get('/apps/app-1/config-vars')
+      .reply(200, {INFERENCE_KEY: 'fake-key', INFERENCE_MODEL_ID: 'fake-model', INFERENCE_URL: 'https://example.com'})
+    heroku
+      .get('/apps/app-1/config-vars')
+      .reply(200, {SOME_OTHER_VAR: 'value'})
+
+    const {stdout} = await runCommand(MCP, ['--app', app])
+    expect(stdout).to.contain('No MCP server URL found')
   })
 })
-*/

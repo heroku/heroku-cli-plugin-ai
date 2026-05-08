@@ -1,7 +1,6 @@
-/*
 import {flags} from '@heroku-cli/command'
-import {openUrl} from '../../lib/open-url'
-import Command from '../../lib/base'
+import {openUrl} from '../../lib/open-url.js'
+import Command from '../../lib/base.js'
 
 export default class Docs extends Command {
   static defaultUrl = 'https://devcenter.heroku.com/articles/heroku-inference-cli-commands'
@@ -18,4 +17,3 @@ export default class Docs extends Command {
     await openUrl(url, browser, 'view the documentation')
   }
 }
-*/
