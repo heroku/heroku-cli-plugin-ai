@@ -8,8 +8,6 @@ export default [
       '**/*.js',
       'coverage/**/*',
       'workflows-repo/**/*',
-      'src/commands/ai/models/**/*',
-      'test/commands/ai/models/**/*',
       'src/lib/ai/types.d.ts',
     ],
   },

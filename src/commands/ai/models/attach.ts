@@ -1,10 +1,10 @@
-/*
-import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
 import * as Heroku from '@heroku-cli/schema'
-import {Args, ux} from '@oclif/core'
-import {handlePlatformApiErrors, trapConfirmationRequired} from '../../../lib/ai/models/util'
-import Command from '../../../lib/base'
+import {color} from '@heroku/heroku-cli-util'
+import {Args} from '@oclif/core'
+import {ux} from '@oclif/core/ux'
+import {handlePlatformApiErrors, trapConfirmationRequired} from '../../../lib/ai/models/util.js'
+import Command from '../../../lib/base.js'
 
 export default class Attach extends Command {
   static args = {
@@ -15,6 +15,7 @@ export default class Attach extends Command {
   }
 
   static description = 'attach an existing model resource to an app'
+
   static examples = [
     'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app',
     'heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app --as MY_CS35',
@@ -23,13 +24,13 @@ export default class Attach extends Command {
   static flags = {
     as: flags.string({description: 'alias name for model resource'}),
     confirm: flags.string({description: 'overwrite existing attached resource with same name'}),
+    remote: flags.remote({description: 'git remote of target app'}),
     'source-app': flags.string({char: 's', description: 'source app for model resource', required: true}),
     'target-app': flags.app({char: 't', description: 'target app for model resource', required: true}),
-    remote: flags.remote({description: 'git remote of target app'}),
   }
 
   public async run(): Promise<void> {
-    const {flags,  args} = await this.parse(Attach)
+    const {flags, args} = await this.parse(Attach)
     const {model_resource: modelResource} = args
     const {as, confirm} = flags
     const sourceApp = flags['source-app'] as string
@@ -44,6 +45,7 @@ export default class Attach extends Command {
     const {body: releases} = await this.heroku.get<Array<Required<Heroku.Release>>>(`/apps/${targetApp}/releases`, {
       partial: true, headers: {Range: 'version ..; max=1, order=desc'},
     })
+
     ux.action.stop(`done, v${releases[0].version}`)
   }
 
@@ -57,9 +59,9 @@ export default class Attach extends Command {
       ux.action.stop('')
       handlePlatformApiErrors(error, {as})
     })
+
     ux.action.stop()
 
     return attachment
   }
 }
-*/

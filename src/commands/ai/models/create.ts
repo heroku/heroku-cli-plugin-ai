@@ -1,11 +1,13 @@
-/*
-import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
-import {Args, ux} from '@oclif/core'
-import heredoc from 'tsheredoc'
-import createAddon from '../../../lib/ai/models/create_addon'
-import {handlePlatformApiErrors} from '../../../lib/ai/models/util'
-import Command from '../../../lib/base'
+import {color} from '@heroku/heroku-cli-util'
+import {Args} from '@oclif/core'
+import {ux} from '@oclif/core/ux'
+import tsheredoc from 'tsheredoc'
+import createAddon from '../../../lib/ai/models/create_addon.js'
+import {handlePlatformApiErrors} from '../../../lib/ai/models/util.js'
+import Command from '../../../lib/base.js'
+
+const heredoc = tsheredoc.default ?? tsheredoc
 
 export default class Create extends Command {
   static args = {
@@ -16,12 +18,14 @@ export default class Create extends Command {
   }
 
   static description = 'provision access to an AI model '
+
   static example = heredoc`
     # Provision access to an AI model and attach it to your app with a default name:
     heroku ai:models:create claude-3-5-sonnet --app example-app
     # Provision access to an AI model and attach it to your app with a custom name:
     heroku ai:models:create stable-image-ultra --app example-app --as diffusion
   `
+
   static flags = {
     app: flags.app({
       description: 'name of app to attach model to',
@@ -47,10 +51,9 @@ export default class Create extends Command {
       )
 
       await this.config.runHook('recache', {type: 'addon', app, addon})
-      ux.log(`Use ${color.cmd('heroku ai:docs')} to view documentation.`)
+      ux.stdout(`Use ${color.command('heroku ai:docs')} to view documentation.`)
     } catch (error: unknown) {
       handlePlatformApiErrors(error, {as, modelName})
     }
   }
 }
-*/

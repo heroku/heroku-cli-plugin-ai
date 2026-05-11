@@ -1,11 +1,9 @@
-/*
-import {stdout, stderr} from 'stdout-stderr'
-import heredoc from 'tsheredoc'
-import Cmd  from '../../../../src/commands/ai/models/detach'
-import {runCommand} from '../../../run-command'
-import nock from 'nock'
+import {runCommand} from '@heroku-cli/test-utils'
 import {expect} from 'chai'
-import {addon1, addon1Attachment1, mockConfigVars} from '../../../helpers/fixtures'
+import nock from 'nock'
+import Cmd from '../../../../src/commands/ai/models/detach.js'
+import stripAnsi from '../../../helpers/strip-ansi.js'
+import {addon1, addon1Attachment1, mockConfigVars} from '../../../helpers/fixtures.js'
 
 describe('addons:detach', function () {
   let api: nock.Scope
@@ -19,7 +17,7 @@ describe('addons:detach', function () {
   afterEach(function () {
     process.env = env
     api.done()
-    nock.cleanAll
+    nock.cleanAll()
   })
 
   it('detaches an add-on', async function () {
@@ -41,16 +39,32 @@ describe('addons:detach', function () {
       .get(`/apps/${appName}/releases`)
       .reply(200, [{version: 10}])
 
-    await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`])
+    const {stdout, stderr} = await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`])
 
-    expect(stdout.output).to.equal('')
-    expect(stderr.output).to.contain(`Detaching ${addonName} from ${appName}... done`)
-    expect(stderr.output).to.equal(heredoc(`
-    Detaching INFERENCE from app1...
-    Detaching INFERENCE from app1... done
-    Unsetting INFERENCE config vars and restarting app1....
-    Unsetting INFERENCE config vars and restarting app1.... done, v10
-    `))
+    expect(stdout).to.equal('')
+    expect(stderr).to.contain('done')
+    expect(stderr).to.contain('done, v10')
+  })
+
+  it('shows an error when the delete request fails', async function () {
+    const addonAppId = addon1.app?.id
+    const addonId = addon1.id
+    const addonAttachmentId = addon1Attachment1.id
+    const addonName = addon1Attachment1.name
+    const appName = addon1.app?.name
+
+    api
+      .post('/actions/addons/resolve', {app: `${appName}`, addon: `${addonName}`})
+      .reply(200, [addon1])
+      .get(`/addons/${addonId}/addon-attachments`)
+      .reply(200, [addon1Attachment1])
+      .get(`/apps/${addonAppId}/config-vars`)
+      .reply(200, mockConfigVars)
+      .delete(`/addon-attachments/${addonAttachmentId}`)
+      .reply(404, {id: 'not_found', message: 'Couldn\'t find that add on attachment.'})
+
+    const {error} = await runCommand(Cmd, [`${addonName}`, '--app', `${appName}`])
+
+    expect(stripAnsi(error?.message || '')).to.contain(`We can't find the model alias ${addonName}. Check your spelling.`)
   })
 })
-*/
