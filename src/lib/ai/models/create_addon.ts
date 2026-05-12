@@ -52,7 +52,7 @@ export default async function (
   ux.stdout(`Resource name: ${color.green(addon.name)}${options.as ? `\nResource alias: ${color.green(options.as)}` : ''}`)
 
   ux.stdout(
-    `Run ${color.command(`'heroku config -a ${addon.app.name}'`)} to view model config vars associated with this app.`
+    `Use ${color.command(`heroku config -a ${addon.app.name}`)} to view model config vars associated with this app.`
   )
 
   return addon
