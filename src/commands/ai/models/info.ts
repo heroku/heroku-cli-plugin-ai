@@ -1,6 +1,7 @@
 import {flags} from '@heroku-cli/command'
 import * as Heroku from '@heroku-cli/schema'
-import {color, hux} from '@heroku/heroku-cli-util'
+import * as color from '@heroku/heroku-cli-util/color'
+import {hux} from '@heroku/heroku-cli-util'
 import {Args} from '@oclif/core'
 import {ux} from '@oclif/core/ux'
 import type {ModelResource} from '@heroku/ai'
@@ -36,7 +37,7 @@ export default class Info extends Command {
       })
         .catch(error => {
           if (error.statusCode === 404) {
-            ux.warn(`We can't find a model resource called ${color.yellow(modelResource)}.\nRun ${color.command('heroku ai:models:info -a <app>')} to see a list of model resources.`)
+            ux.warn(`We can't find a model resource called ${color.addon(modelResource)}.\nUse ${color.command('heroku ai:models:info -a <app>')} to see a list of model resources.`)
           } else {
             throw error
           }

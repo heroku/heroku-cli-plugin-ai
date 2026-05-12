@@ -1,7 +1,7 @@
 import {APIClient, Command} from '@heroku-cli/command'
 import {HerokuAPIError} from '@heroku-cli/command/lib/api-client.js'
 import * as Heroku from '@heroku-cli/schema'
-import {color} from '@heroku/heroku-cli-util'
+import * as color from '@heroku/heroku-cli-util/color'
 import httpCall from '@heroku/http-call'
 const HTTP = httpCall.default ?? httpCall
 import {ux} from '@oclif/core/ux'
@@ -11,7 +11,7 @@ const heredoc = tsheredoc.default ?? tsheredoc
 export class NotFound extends Error {
   constructor(addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
-      We can't find a model resource called ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}.
+      We can't find a model resource called ${color.addon(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}.
       Use ${color.command(`heroku ai:models:info --app ${appIdentifier ? appIdentifier : '<value>'}`)} to see a list of model resources.
     `
     super(message)
@@ -36,7 +36,7 @@ export class AppNotFound extends Error {
 export class AmbiguousError extends Error {
   constructor(public readonly matches: string[], addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
-      Multiple model resources match ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}: ${matches.map(match => color.addon(match)).join(', ')}.
+      Multiple model resources match ${color.addon(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}: ${matches.map(match => color.addon(match)).join(', ')}.
       Specify the model resource by its alias instead.
     `
     super(message)

@@ -1,5 +1,5 @@
 import {flags} from '@heroku-cli/command'
-import {openUrl} from '../../lib/open-url.js'
+import {hux} from '@heroku/heroku-cli-util'
 import Command from '../../lib/base.js'
 
 export default class Docs extends Command {
@@ -14,6 +14,6 @@ export default class Docs extends Command {
     const browser = flags.browser
     const url = process.env.HEROKU_AI_DOCS_URL || Docs.defaultUrl
 
-    await openUrl(url, browser, 'view the documentation')
+    await hux.openUrl(url, browser, 'view the documentation')
   }
 }
