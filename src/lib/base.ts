@@ -12,7 +12,7 @@ export class NotFound extends Error {
   constructor(addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
       We can't find a model resource called ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}.
-      Run ${color.command(`heroku ai:models:info --app ${appIdentifier ? appIdentifier : '<value>'}`)} to see a list of model resources.
+      Use ${color.command(`heroku ai:models:info --app ${appIdentifier ? appIdentifier : '<value>'}`)} to see a list of model resources.
     `
     super(message)
   }
