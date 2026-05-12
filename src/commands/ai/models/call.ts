@@ -1,6 +1,7 @@
 import {flags} from '@heroku-cli/command'
 import {Args} from '@oclif/core'
 import {ux} from '@oclif/core/ux'
+import {styledJSON} from '@heroku/heroku-cli-util/hux'
 import type {ParserOutput} from '@oclif/core/interfaces'
 import fs from 'node:fs'
 import type {
@@ -190,7 +191,7 @@ export default class Call extends Command {
     if (output) {
       fs.writeFileSync(output, json ? JSON.stringify(completion, null, 2) : content)
     } else {
-      json ? ux.stdout(ux.colorizeJson(completion)) : ux.stdout(content)
+      json ? styledJSON(completion) : ux.stdout(content)
     }
   }
 
@@ -214,7 +215,7 @@ export default class Call extends Command {
         const content = json ? JSON.stringify(image, null, 2) : Buffer.from(image.data[0].b64_json, 'base64')
         fs.writeFileSync(output, content)
       } else
-        json ? ux.stdout(ux.colorizeJson(image)) : process.stdout.write(image.data[0].b64_json)
+        json ? styledJSON(image) : process.stdout.write(image.data[0].b64_json)
 
       return
     }
@@ -223,7 +224,7 @@ export default class Call extends Command {
       if (output)
         fs.writeFileSync(output, json ? JSON.stringify(image, null, 2) : image.data[0].url)
       else if (json)
-        ux.stdout(ux.colorizeJson(image))
+        styledJSON(image)
 
       return
     }
@@ -251,7 +252,7 @@ export default class Call extends Command {
     if (output) {
       fs.writeFileSync(output, json ? JSON.stringify(embedding, null, 2) : content)
     } else {
-      json ? ux.stdout(ux.colorizeJson(embedding)) : ux.stdout(content)
+      json ? styledJSON(embedding) : ux.stdout(content)
     }
   }
 }

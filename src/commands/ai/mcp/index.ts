@@ -1,6 +1,7 @@
 import {flags} from '@heroku-cli/command'
 import {Args} from '@oclif/core'
 import {ux} from '@oclif/core/ux'
+import {styledJSON} from '@heroku/heroku-cli-util/hux'
 import Command from '../../../lib/base.js'
 
 export default class MCP extends Command {
@@ -34,7 +35,7 @@ export default class MCP extends Command {
     if (inferenceUrlKeyName) {
       const mcpUrl = config[inferenceUrlKeyName] + '/mcp'
       if (flags.json) {
-        ux.stdout(ux.colorizeJson({mcp_url: mcpUrl}))
+        styledJSON({mcp_url: mcpUrl})
       } else {
         ux.stdout(mcpUrl)
       }

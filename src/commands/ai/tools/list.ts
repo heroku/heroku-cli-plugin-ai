@@ -2,6 +2,7 @@ import {flags} from '@heroku-cli/command'
 import {Args} from '@oclif/core'
 import {ux} from '@oclif/core/ux'
 import {hux} from '@heroku/heroku-cli-util'
+import {styledJSON} from '@heroku/heroku-cli-util/hux'
 import type {MCPServerList, MCPServerTool} from '@heroku/ai'
 import Command from '../../../lib/base.js'
 
@@ -30,7 +31,7 @@ export default class List extends Command {
     const tools = (await this.getTools(flags.app, args.addon)).filter(Boolean)
 
     if (flags.json) {
-      ux.stdout(ux.colorizeJson(tools))
+      styledJSON(tools)
     } else if (tools.length === 0) {
       ux.stdout('No AI tools are currently available for this app')
     } else {
