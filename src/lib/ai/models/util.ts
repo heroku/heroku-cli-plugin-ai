@@ -1,17 +1,17 @@
 /* eslint-disable no-return-await */
 import {HerokuAPIError} from '@heroku-cli/command/lib/api-client.js'
 import * as Heroku from '@heroku-cli/schema'
+import {hux} from '@heroku/heroku-cli-util'
 import * as color from '@heroku/heroku-cli-util/color'
 import {ux} from '@oclif/core/ux'
 import printf from 'printf'
-import {confirmCommand} from '@heroku/heroku-cli-util/hux'
 
 export const trapConfirmationRequired = async function<T> (app: string, confirm: string | undefined, fn: (confirmed?: string) => Promise<T>) {
   return await fn(confirm)
     .catch(async (error: any) => {
       if (!error.body || error.body.id !== 'confirmation_required')
         throw error
-      await confirmCommand({comparison: app, confirmation: confirm, warningMessage: error.body.message})
+      await hux.confirmCommand({comparison: app, confirmation: confirm, warningMessage: error.body.message})
       return await fn(app)
     })
 }

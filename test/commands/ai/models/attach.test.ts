@@ -85,7 +85,7 @@ describe('ai:models:attach', function () {
 
   context('when attaching a model resource with an existing alias name', function () {
     it("requires interactive confirmation if the user didn't use the --confirm option", async function () {
-      const prompt = sandbox.stub(hux, 'prompt').resolves('app2')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand').resolves()
       api
         .post('/addon-attachments', {
           app: {name: 'app2'},
@@ -116,14 +116,13 @@ describe('ai:models:attach', function () {
         '--as=CLAUDE_SONNET',
       ])
 
-      expect(prompt.calledOnce).to.be.true
+      expect(confirmCommand.calledOnce).to.be.true
       expect(stripAnsi(stdout)).to.eq('')
-      expect(stripAnsi(stderr)).to.contain('Adding CLAUDE_SONNET to app app2 would overwrite existing vars')
       expect(stripAnsi(stderr)).to.contain('done, v10')
     })
 
     it("doesn't require interactive confirmation if the user used the correct --confirm option", async function () {
-      const prompt = sandbox.stub(hux, 'prompt')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand').resolves()
       api
         .post('/addon-attachments', {
           app: {name: 'app2'},
@@ -145,14 +144,14 @@ describe('ai:models:attach', function () {
         '--as=CLAUDE_SONNET',
         '--confirm=app2',
       ])
-      expect(prompt.calledOnce).to.be.false
+      expect(confirmCommand.calledOnce).to.be.false
       expect(stripAnsi(stdout)).to.eq('')
       expect(stripAnsi(stderr)).not.to.contain('Adding CLAUDE_SONNET to app app2 would overwrite existing vars')
       expect(stripAnsi(stderr)).to.contain('done, v10')
     })
 
     it('fails if the user provides the wrong confirmation response interactively', async function () {
-      const prompt = sandbox.stub(hux, 'prompt').resolves('wrong-app-name')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand').rejects(new Error('Confirmation did not match app2. Aborted.'))
       api
         .post('/addon-attachments', {
           app: {name: 'app2'},
@@ -171,13 +170,14 @@ describe('ai:models:attach', function () {
         '--as=CLAUDE_SONNET',
       ])
 
-      expect(prompt.calledOnce).to.be.true
+      expect(confirmCommand.calledOnce).to.be.true
       expect(stripAnsi(error?.message || '')).to.contain('Confirmation did not match app2. Aborted.')
       expect(stripAnsi(stdout)).to.eq('')
     })
 
     it('fails if the user provides the wrong --confirmation option value', async function () {
-      const prompt = sandbox.stub(hux, 'prompt')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand')
+        .rejects(new Error('Confirmation wrong-app-name did not match app2. Aborted.'))
       api
         .post('/addon-attachments', {
           app: {name: 'app2'},
@@ -198,7 +198,7 @@ describe('ai:models:attach', function () {
         '--confirm=wrong-app-name',
       ])
 
-      expect(prompt.calledOnce).to.be.false
+      expect(confirmCommand.calledOnce).to.be.true
       expect(stripAnsi(error?.message || '')).to.contain('Confirmation wrong-app-name did not match app2. Aborted.')
       expect(stripAnsi(stdout)).to.eq('')
     })

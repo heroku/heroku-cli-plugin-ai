@@ -73,7 +73,7 @@ describe('ai:models:create', function () {
 
   context('when reusing an existing attachment name', function () {
     it("requires interactive confirmation if the user didn't use the --confirm option", async function () {
-      const prompt = sandbox.stub(hux, 'prompt').resolves('app1')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand').resolves()
       api
         .post('/apps/app1/addons', {
           config: {},
@@ -92,19 +92,18 @@ describe('ai:models:create', function () {
         })
         .reply(200, addon1ProvisionedWithAttachmentName)
 
-      const {stdout, stderr} = await runCommand(Cmd, [
+      const {stdout} = await runCommand(Cmd, [
         'claude-3-haiku',
         '--app=app1',
         '--as=CLAUDE_HAIKU',
       ])
-      expect(prompt.calledOnce).to.be.true
-      expect(stripAnsi(stderr)).to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
+      expect(confirmCommand.calledOnce).to.be.true
       expect(stripAnsi(stdout)).to.contain('Resource name: inference-regular-74659')
       expect(stripAnsi(stdout)).to.contain('Resource alias: CLAUDE_HAIKU')
     })
 
     it("doesn't require interactive confirmation if the user used the correct --confirm option", async function () {
-      const prompt = sandbox.stub(hux, 'prompt')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand').resolves()
       api
         .post('/apps/app1/addons', {
           config: {},
@@ -120,14 +119,15 @@ describe('ai:models:create', function () {
         '--as=CLAUDE_HAIKU',
         '--confirm=app1',
       ])
-      expect(prompt.calledOnce).to.be.false
+      expect(confirmCommand.calledOnce).to.be.false
       expect(stripAnsi(stderr)).not.to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
       expect(stripAnsi(stdout)).to.contain('Resource name: inference-regular-74659')
       expect(stripAnsi(stdout)).to.contain('Resource alias: CLAUDE_HAIKU')
     })
 
     it('fails if the user provides the wrong confirmation response interactively', async function () {
-      const prompt = sandbox.stub(hux, 'prompt').resolves('wrong-app-name')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand')
+        .rejects(new Error('Confirmation did not match app1. Aborted.'))
       api
         .post('/apps/app1/addons', {
           config: {},
@@ -145,13 +145,14 @@ describe('ai:models:create', function () {
         '--as=CLAUDE_HAIKU',
       ])
 
-      expect(prompt.calledOnce).to.be.true
+      expect(confirmCommand.calledOnce).to.be.true
       expect(stripAnsi(error?.message || '')).to.contain('Confirmation did not match app1. Aborted.')
       expect(stripAnsi(stdout)).to.eq('')
     })
 
     it('fails if the user provides the wrong --confirmation option value', async function () {
-      const prompt = sandbox.stub(hux, 'prompt')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand')
+        .rejects(new Error('Confirmation wrong-app-name did not match app1. Aborted.'))
       api
         .post('/apps/app1/addons', {
           config: {},
@@ -171,7 +172,7 @@ describe('ai:models:create', function () {
         '--confirm=wrong-app-name',
       ])
 
-      expect(prompt.calledOnce).to.be.false
+      expect(confirmCommand.calledOnce).to.be.true
       expect(stripAnsi(error?.message || '')).to.contain('Confirmation wrong-app-name did not match app1. Aborted.')
       expect(stripAnsi(stdout)).to.eq('')
     })
