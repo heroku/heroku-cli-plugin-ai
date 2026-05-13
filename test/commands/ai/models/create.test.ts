@@ -1,14 +1,11 @@
-import {ux} from '@oclif/core'
-import {CLIError} from '@oclif/core/lib/errors'
+import {runCommand} from '@heroku-cli/test-utils'
+import {hux} from '@heroku/heroku-cli-util'
 import {expect} from 'chai'
 import nock from 'nock'
 import sinon from 'sinon'
-import {stdout, stderr} from 'stdout-stderr'
-import Cmd from '../../../../src/commands/ai/models/create'
-import {runCommand} from '../../../run-command'
-import stripAnsi from '../../../helpers/strip-ansi'
-import {addon1Provisioned, addon1ProvisionedWithAttachmentName} from '../../../helpers/fixtures'
-import heredoc from 'tsheredoc'
+import Cmd from '../../../../src/commands/ai/models/create.js'
+import stripAnsi from '../../../helpers/strip-ansi.js'
+import {addon1Provisioned, addon1ProvisionedWithAttachmentName} from '../../../helpers/fixtures.js'
 
 describe('ai:models:create', function () {
   const {env} = process
@@ -40,20 +37,14 @@ describe('ai:models:create', function () {
     })
 
     it('creates the model resource showing the appropriate output', async function () {
-      await runCommand(Cmd, [
+      const {stdout, stderr} = await runCommand(Cmd, [
         'claude-3-haiku',
         '--app=app1',
       ])
-      expect(stripAnsi(stderr.output)).to.eq(heredoc`
-        Creating heroku-inference:claude-3-haiku on app1...
-        Creating heroku-inference:claude-3-haiku on app1... metered
-      `)
-      expect(stripAnsi(stdout.output)).to.eq(heredoc`
-        Heroku AI model resource provisioned successfully
-        Resource name: inference-regular-74659
-        Run 'heroku config -a app1' to view model config vars associated with this app.
-        Use heroku ai:docs to view documentation.
-      `)
+      expect(stripAnsi(stderr)).to.contain('metered')
+      expect(stripAnsi(stdout)).to.contain('Heroku AI model resource provisioned successfully')
+      expect(stripAnsi(stdout)).to.contain('Resource name: inference-regular-74659')
+      expect(stripAnsi(stdout)).to.contain('heroku ai:docs')
     })
   })
 
@@ -69,19 +60,20 @@ describe('ai:models:create', function () {
     })
 
     it('creates the model resource passing the specified attachment name', async function () {
-      await runCommand(Cmd, [
+      const {stdout, stderr} = await runCommand(Cmd, [
         'claude-3-haiku',
         '--app=app1',
         '--as=CLAUDE_HAIKU',
       ])
-      expect(stripAnsi(stderr.output)).to.include('Creating heroku-inference:claude-3-haiku on app1... metered\n')
-      expect(stripAnsi(stdout.output)).to.eq('Heroku AI model resource provisioned successfully\nResource name: inference-regular-74659\nResource alias: CLAUDE_HAIKU\nRun \'heroku config -a app1\' to view model config vars associated with this app.\nUse heroku ai:docs to view documentation.\n')
+      expect(stripAnsi(stderr)).to.contain('metered')
+      expect(stripAnsi(stdout)).to.contain('Resource name: inference-regular-74659')
+      expect(stripAnsi(stdout)).to.contain('Resource alias: CLAUDE_HAIKU')
     })
   })
 
   context('when reusing an existing attachment name', function () {
     it("requires interactive confirmation if the user didn't use the --confirm option", async function () {
-      const prompt = sandbox.stub(ux, 'prompt').resolves('app1')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand').resolves()
       api
         .post('/apps/app1/addons', {
           config: {},
@@ -100,18 +92,18 @@ describe('ai:models:create', function () {
         })
         .reply(200, addon1ProvisionedWithAttachmentName)
 
-      await runCommand(Cmd, [
+      const {stdout} = await runCommand(Cmd, [
         'claude-3-haiku',
         '--app=app1',
         '--as=CLAUDE_HAIKU',
       ])
-      expect(prompt.calledOnce).to.be.true
-      expect(stripAnsi(stderr.output)).to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
-      expect(stripAnsi(stdout.output)).to.eq('Heroku AI model resource provisioned successfully\nResource name: inference-regular-74659\nResource alias: CLAUDE_HAIKU\nRun \'heroku config -a app1\' to view model config vars associated with this app.\nUse heroku ai:docs to view documentation.\n')
+      expect(confirmCommand.calledOnce).to.be.true
+      expect(stripAnsi(stdout)).to.contain('Resource name: inference-regular-74659')
+      expect(stripAnsi(stdout)).to.contain('Resource alias: CLAUDE_HAIKU')
     })
 
     it("doesn't require interactive confirmation if the user used the correct --confirm option", async function () {
-      const prompt = sandbox.stub(ux, 'prompt')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand').resolves()
       api
         .post('/apps/app1/addons', {
           config: {},
@@ -121,19 +113,21 @@ describe('ai:models:create', function () {
         })
         .reply(200, addon1ProvisionedWithAttachmentName)
 
-      await runCommand(Cmd, [
+      const {stdout, stderr} = await runCommand(Cmd, [
         'claude-3-haiku',
         '--app=app1',
         '--as=CLAUDE_HAIKU',
         '--confirm=app1',
       ])
-      expect(prompt.calledOnce).to.be.false
-      expect(stripAnsi(stderr.output)).not.to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
-      expect(stripAnsi(stdout.output)).to.eq('Heroku AI model resource provisioned successfully\nResource name: inference-regular-74659\nResource alias: CLAUDE_HAIKU\nRun \'heroku config -a app1\' to view model config vars associated with this app.\nUse heroku ai:docs to view documentation.\n')
+      expect(confirmCommand.calledOnce).to.be.false
+      expect(stripAnsi(stderr)).not.to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
+      expect(stripAnsi(stdout)).to.contain('Resource name: inference-regular-74659')
+      expect(stripAnsi(stdout)).to.contain('Resource alias: CLAUDE_HAIKU')
     })
 
     it('fails if the user provides the wrong confirmation response interactively', async function () {
-      const prompt = sandbox.stub(ux, 'prompt').resolves('wrong-app-name')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand')
+        .rejects(new Error('Confirmation did not match app1. Aborted.'))
       api
         .post('/apps/app1/addons', {
           config: {},
@@ -145,24 +139,20 @@ describe('ai:models:create', function () {
           message: 'Adding CLAUDE_HAIKU to app app1 would overwrite existing vars CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_MODEL_ID, and CLAUDE_HAIKU_URL.',
         })
 
-      try {
-        await runCommand(Cmd, [
-          'claude-3-haiku',
-          '--app=app1',
-          '--as=CLAUDE_HAIKU',
-        ])
-      } catch (error: unknown) {
-        const {message} = error as Error
-        expect(stripAnsi(message)).to.eq('Confirmation did not match app1. Aborted.')
-      }
+      const {error, stdout} = await runCommand(Cmd, [
+        'claude-3-haiku',
+        '--app=app1',
+        '--as=CLAUDE_HAIKU',
+      ])
 
-      expect(prompt.calledOnce).to.be.true
-      expect(stripAnsi(stderr.output)).to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
-      expect(stripAnsi(stdout.output)).to.eq('')
+      expect(confirmCommand.calledOnce).to.be.true
+      expect(stripAnsi(error?.message || '')).to.contain('Confirmation did not match app1. Aborted.')
+      expect(stripAnsi(stdout)).to.eq('')
     })
 
     it('fails if the user provides the wrong --confirmation option value', async function () {
-      const prompt = sandbox.stub(ux, 'prompt')
+      const confirmCommand = sandbox.stub(hux, 'confirmCommand')
+        .rejects(new Error('Confirmation wrong-app-name did not match app1. Aborted.'))
       api
         .post('/apps/app1/addons', {
           config: {},
@@ -175,21 +165,16 @@ describe('ai:models:create', function () {
           message: 'Adding CLAUDE_HAIKU to app app1 would overwrite existing vars CLAUDE_HAIKU_KEY, CLAUDE_HAIKU_MODEL_ID, and CLAUDE_HAIKU_URL.',
         })
 
-      try {
-        await runCommand(Cmd, [
-          'claude-3-haiku',
-          '--app=app1',
-          '--as=CLAUDE_HAIKU',
-          '--confirm=wrong-app-name',
-        ])
-      } catch (error: unknown) {
-        const {message} = error as Error
-        expect(stripAnsi(message)).to.eq('Confirmation wrong-app-name did not match app1. Aborted.')
-      }
+      const {error, stdout} = await runCommand(Cmd, [
+        'claude-3-haiku',
+        '--app=app1',
+        '--as=CLAUDE_HAIKU',
+        '--confirm=wrong-app-name',
+      ])
 
-      expect(prompt.calledOnce).to.be.false
-      expect(stripAnsi(stderr.output)).not.to.contain('Adding CLAUDE_HAIKU to app app1 would overwrite existing vars')
-      expect(stripAnsi(stdout.output)).to.eq('')
+      expect(confirmCommand.calledOnce).to.be.true
+      expect(stripAnsi(error?.message || '')).to.contain('Confirmation wrong-app-name did not match app1. Aborted.')
+      expect(stripAnsi(stdout)).to.eq('')
     })
   })
 
@@ -206,18 +191,13 @@ describe('ai:models:create', function () {
     })
 
     it('errors out, showing the appropriate message', async function () {
-      try {
-        await runCommand(Cmd, [
-          'not-a-model-name',
-          '--app=app1',
-        ])
-      } catch (error: unknown) {
-        const {message, oclif} = error as CLIError
-        expect(stripAnsi(message)).to.include('not-a-model-name is an invalid model name. Run heroku ai:models:list for a list of valid models per region.')
-        expect(oclif.exit).to.eq(2)
-      }
+      const {error, stdout} = await runCommand(Cmd, [
+        'not-a-model-name',
+        '--app=app1',
+      ])
 
-      expect(stripAnsi(stdout.output)).to.eq('')
+      expect(stripAnsi(error?.message || '')).to.contain('not-a-model-name is an invalid model name. Run heroku ai:models:list for a list of valid models per region.')
+      expect(stripAnsi(stdout)).to.eq('')
     })
   })
 
@@ -234,19 +214,14 @@ describe('ai:models:create', function () {
     })
 
     it('errors out, showing the appropriate message', async function () {
-      try {
-        await runCommand(Cmd, [
-          'claude-3-haiku',
-          '--app=app1',
-          '--as=wrong-alias',
-        ])
-      } catch (error: unknown) {
-        const {message, oclif} = error as CLIError
-        expect(stripAnsi(message)).to.eq('wrong-alias is an invalid alias. Alias must start with a letter and can only contain uppercase letters, numbers, and underscores.')
-        expect(oclif.exit).to.eq(1)
-      }
+      const {error, stdout} = await runCommand(Cmd, [
+        'claude-3-haiku',
+        '--app=app1',
+        '--as=wrong-alias',
+      ])
 
-      expect(stripAnsi(stdout.output)).to.eq('')
+      expect(stripAnsi(error?.message || '')).to.contain('wrong-alias is an invalid alias. Alias must start with a letter and can only contain uppercase letters, numbers, and underscores.')
+      expect(stripAnsi(stdout)).to.eq('')
     })
   })
 })

@@ -2,8 +2,15 @@
  * API reference doc: https://salesforce.quip.com/xi1fAHQczNbO
  */
 
-import Command from '@heroku-cli/command'
-import {CLIParseErrorOptions, ParserOutput} from '@oclif/core/lib/interfaces/parser'
+import type Command from '@heroku-cli/command'
+import {ParserOutput} from '@oclif/core/interfaces'
+
+type CLIParseErrorOptions = {
+  parse: {
+    input: unknown
+    output: ParserOutput<any, any, any>
+  }
+}
 
 /**
  * Model names and types

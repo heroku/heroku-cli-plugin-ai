@@ -1,11 +1,10 @@
+import {runCommand} from '@heroku-cli/test-utils'
 import {expect} from 'chai'
-import {stderr, stdout} from 'stdout-stderr'
-import Cmd from '../../../../src/commands/ai/models/list'
-import stripAnsi from '../../../helpers/strip-ansi'
-import {runCommand} from '../../../run-command'
-import {availableModels, mockAPIErrors} from '../../../helpers/fixtures'
-import {CLIError} from '@oclif/core/lib/errors'
 import nock from 'nock'
+import Cmd from '../../../../src/commands/ai/models/list.js'
+import stripAnsi from '../../../helpers/strip-ansi.js'
+import removeAllWhitespace from '../../../helpers/utils/remove-whitespaces.js'
+import {availableModels, mockAPIErrors} from '../../../helpers/fixtures.js'
 
 describe('ai:models:list', function () {
   const {env} = process
@@ -27,19 +26,26 @@ describe('ai:models:list', function () {
       .get('/available-models')
       .reply(200, availableModels)
 
-    await runCommand(Cmd)
+    const {stdout, stderr} = await runCommand(Cmd)
+    const stripped = removeAllWhitespace(stdout)
 
-    expect(stdout.output).to.match(/Model\s+Type\s+Supported regions/)
+    expect(stripped).to.include('Model')
+    expect(stripped).to.include('Type')
+    expect(stripped).to.include('Supportedregions')
 
-    expect(stdout.output).to.match(/claude-3-5-sonnet\s+text-to-text\s+eu-central-1, us-east-1/)
-    expect(stdout.output).to.match(/claude-3-5-sonnet-latest\s+text-to-text\s+us-east-1/)
-    expect(stdout.output).to.match(/claude-3-haiku\s+text-to-text\s+eu-central-1, us-east-1/)
-    expect(stdout.output).to.match(/claude-3-5-haiku\s+text-to-text\s+us-east-1/)
-    expect(stdout.output).to.match(/cohere-embed-multilingual\s+text-to-embedding\s+us-east-1/)
-    expect(stdout.output).to.match(/stable-image-ultra\s+text-to-image\s+eu-central-1, us-east-1/)
+    expect(stripped).to.include('claude-3-5-sonnet')
+    expect(stripped).to.include('text-to-text')
+    expect(stripped).to.include('eu-central-1,us-east-1')
+    expect(stripped).to.include('claude-3-5-sonnet-latest')
+    expect(stripped).to.include('claude-3-haiku')
+    expect(stripped).to.include('claude-3-5-haiku')
+    expect(stripped).to.include('cohere-embed-multilingual')
+    expect(stripped).to.include('text-to-embedding')
+    expect(stripped).to.include('stable-image-ultra')
+    expect(stripped).to.include('text-to-image')
 
-    expect(stdout.output).to.contain('See https://devcenter.heroku.com/articles/heroku-inference-api-model-cards for more info')
-    expect(stderr.output).to.eq('')
+    expect(stdout).to.contain('See https://devcenter.heroku.com/articles/heroku-inference-api-model-cards for more info')
+    expect(stderr).to.eq('')
   })
 
   it('warns if no models are available', async function () {
@@ -50,13 +56,10 @@ describe('ai:models:list', function () {
       .get('/available-models')
       .reply(500, mockAPIErrors.modelsListErrorResponse)
 
-    try {
-      await runCommand(Cmd)
-    } catch (error) {
-      const {message} = error as CLIError
-      expect(stripAnsi(message)).to.contains('Failed to retrieve the list of available models.')
-      expect(stripAnsi(message)).to.contains(statusURL)
-      expect(stripAnsi(message)).to.contains(modelsDevCenterURL)
-    }
+    const {error} = await runCommand(Cmd)
+    const message = stripAnsi(error?.message || '')
+    expect(message).to.contain('Failed to retrieve the list of available models.')
+    expect(message).to.contain(statusURL)
+    expect(message).to.contain(modelsDevCenterURL)
   })
 })

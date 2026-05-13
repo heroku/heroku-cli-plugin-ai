@@ -1,30 +1,25 @@
-import {ux} from '@oclif/core'
+import {ux} from '@oclif/core/ux'
+import {hux} from '@heroku/heroku-cli-util'
 import type {ModelList} from '@heroku/ai'
-import Command from '../../../lib/base'
+import Command from '../../../lib/base.js'
 
 const displayModels = (models: ModelList) => {
-  ux.log()
-  ux.table(models, {
-    model: {
-      get: ({model_id}: any) => model_id,
-    },
-    type: {
-      get: ({type}: any) => type.join(', '),
-    },
-    supported_regions: {
-      get: ({regions}: any) => regions.join(', '),
-    },
-  }, {'no-header': false})
+  ux.stdout('')
+  hux.table(models as unknown as Record<string, unknown>[], {
+    model_id: {header: 'Model'},
+    type: {header: 'Type', get: (row: any) => row.type.join(', ')},
+    regions: {header: 'Supported regions', get: (row: any) => row.regions.join(', ')},
+  })
 }
 
 export default class List extends Command {
+  static aliases: string[] = ['ai:models']
+
   static description = 'list available AI models to provision access to '
 
   static examples = [
     '$ heroku ai:models:list',
   ]
-
-  static aliases: string[] = ['ai:models']
 
   public async run(): Promise<void> {
     await this.configureHerokuAIClient()
@@ -35,6 +30,6 @@ export default class List extends Command {
     const {body: availableModels} = await herokuAIClient.get<ModelList>(urlPath)
 
     displayModels(availableModels)
-    ux.log('\nSee https://devcenter.heroku.com/articles/heroku-inference-api-model-cards for more info. ')
+    ux.stdout('\nSee https://devcenter.heroku.com/articles/heroku-inference-api-model-cards for more info. ')
   }
 }

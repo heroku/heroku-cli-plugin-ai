@@ -1,11 +1,19 @@
-import {Args} from '@oclif/core'
 import {flags} from '@heroku-cli/command'
-import destroyAddon from '../../../lib/ai/models/destroy_addon'
-import confirmCommand from '../../../lib/confirmCommand'
-import Command from '../../../lib/base'
+import {Args} from '@oclif/core'
+import destroyAddon from '../../../lib/ai/models/destroy_addon.js'
+import {confirmCommand} from '@heroku/heroku-cli-util/hux'
+import Command from '../../../lib/base.js'
 
 export default class Destroy extends Command {
+  static args = {
+    model_resource: Args.string({required: true, description: 'resource ID or alias of model resource to destroy '}),
+  }
+
   static description = 'destroy an existing AI model resource '
+
+  static examples = [
+    '$ heroku ai:models:destroy claude-3-5-sonnet-acute-43973 ',
+  ]
 
   static flags = {
     app: flags.app({required: true, description: 'app to run command against '}),
@@ -13,14 +21,6 @@ export default class Destroy extends Command {
     force: flags.boolean({char: 'f', description: 'allow destruction even if connected to other apps '}),
     remote: flags.remote({description: 'git remote of app to use '}),
   }
-
-  static args = {
-    model_resource: Args.string({required: true, description: 'resource ID or alias of model resource to destroy '}),
-  }
-
-  static examples = [
-    '$ heroku ai:models:destroy claude-3-5-sonnet-acute-43973 ',
-  ]
 
   public async run(): Promise<void> {
     const {flags, args} = await this.parse(Destroy)
@@ -32,7 +32,7 @@ export default class Destroy extends Command {
 
     const aiAddon = this.addon
 
-    await confirmCommand(app, confirm)
+    await confirmCommand({comparison: app, confirmation: confirm})
     await destroyAddon(this.config, aiAddon, force)
   }
 }

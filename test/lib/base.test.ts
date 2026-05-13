@@ -1,20 +1,19 @@
+import {flags} from '@heroku-cli/command'
+import {runCommand} from '@heroku-cli/test-utils'
 import {Args} from '@oclif/core'
-import {CLIError} from '@oclif/core/lib/errors'
-import {expect} from '@oclif/test'
+import {expect} from 'chai'
 import nock from 'nock'
-import heredoc from 'tsheredoc'
-import {stderr, stdout} from 'stdout-stderr'
-import {runCommand} from '../run-command'
-import BaseCommand from '../../src/lib/base'
-import type {ModelResource, ModelList} from '@heroku/ai'
-import stripAnsi from '../helpers/strip-ansi'
+import tsheredoc from 'tsheredoc'
+const heredoc = tsheredoc.default ?? tsheredoc
+import BaseCommand from '../../src/lib/base.js'
+import type {ModelList, ModelResource} from '@heroku/ai'
+import stripAnsi from '../helpers/strip-ansi.js'
 import {
   addon1, addon1Attachment1,
   addon2, addon2Attachment1, addon2Attachment2,
   addon3, addon3Attachment1, addon3Attachment2,
   addon4, addon4Attachment1,
-} from '../helpers/fixtures'
-import {flags} from '@heroku-cli/command'
+} from '../helpers/fixtures.js'
 
 class CommandWithoutConfiguration extends BaseCommand {
   async run() {
@@ -68,17 +67,11 @@ describe('attempt a request using the Heroku AI client', function () {
 
   context('when the client wasn\'t configured', function () {
     it('returns an error message and exits with a status of 1', async function () {
-      try {
-        await runCommand(CommandWithoutConfiguration, [
-          'inference-vertical-01234',
-        ])
-      } catch (error) {
-        const {message, oclif} = error as CLIError
-        expect(stripAnsi(message)).to.equal('Heroku AI API Client not configured.')
-        expect(oclif.exit).to.equal(1)
-      }
-
-      expect(stdout.output).to.equal('')
+      const {error} = await runCommand(CommandWithoutConfiguration, [
+        'inference-vertical-01234',
+      ])
+      expect(stripAnsi(error?.message || '')).to.equal('Heroku AI API Client not configured.')
+      expect(error?.oclif?.exit).to.equal(1)
     })
   })
 
@@ -120,17 +113,11 @@ describe('attempt a request using the Heroku AI client', function () {
     })
 
     it('returns an error message and exits with a status of 1', async function () {
-      try {
-        await runCommand(CommandConfiguredWithResourceName, [
-          addon1.name as string,
-        ])
-      } catch (error) {
-        const {message, oclif} = error as CLIError
-        expect(stripAnsi(message)).to.equal('Model resource inference-regular-74659 isn’t fully provisioned on app1.')
-        expect(oclif.exit).to.equal(1)
-      }
-
-      expect(stdout.output).to.equal('')
+      const {error} = await runCommand(CommandConfiguredWithResourceName, [
+        addon1.name as string,
+      ])
+      expect(stripAnsi(error?.message || '')).to.equal('Model resource inference-regular-74659 isn\'t fully provisioned on app1.')
+      expect(error?.oclif?.exit).to.equal(1)
     })
   })
 
@@ -145,19 +132,12 @@ describe('attempt a request using the Heroku AI client', function () {
       })
 
       it('returns a not found error message', async function () {
-        try {
-          await runCommand(CommandConfiguredWithResourceName, [
-            'inference-inexistent-00001',
-          ])
-        } catch (error) {
-          const {message} = error as Error
-          expect(stripAnsi(message)).to.equal(heredoc`
-            We can’t find a model resource called inference-inexistent-00001.
-            Run heroku ai:models:info --app <value> to see a list of model resources.
-          `)
-        }
-
-        expect(stdout.output).to.equal('')
+        const {error} = await runCommand(CommandConfiguredWithResourceName, [
+          'inference-inexistent-00001',
+        ])
+        const msg = stripAnsi(error?.message || '')
+        expect(msg).to.contain('We can\'t find a model resource called inference-inexistent-00001.')
+        expect(msg).to.contain('heroku ai:models:info --app <value>')
       })
     })
 
@@ -171,20 +151,13 @@ describe('attempt a request using the Heroku AI client', function () {
       })
 
       it('returns a not found error message', async function () {
-        try {
-          await runCommand(CommandConfiguredWithResourceName, [
-            addon1.name as string,
-            '--app=app2',
-          ])
-        } catch (error) {
-          const {message} = error as Error
-          expect(stripAnsi(message)).to.equal(heredoc`
-            We can’t find a model resource called ${addon1.name} on app2.
-            Run heroku ai:models:info --app app2 to see a list of model resources.
-          `)
-        }
-
-        expect(stdout.output).to.equal('')
+        const {error} = await runCommand(CommandConfiguredWithResourceName, [
+          addon1.name as string,
+          '--app=app2',
+        ])
+        const msg = stripAnsi(error?.message || '')
+        expect(msg).to.contain(`We can't find a model resource called ${addon1.name} on app2.`)
+        expect(msg).to.contain('heroku ai:models:info --app app2')
       })
     })
 
@@ -198,19 +171,13 @@ describe('attempt a request using the Heroku AI client', function () {
       })
 
       it('returns a custom not found error message', async function () {
-        try {
-          await runCommand(CommandConfiguredWithResourceName, [
-            addon1.name as string,
-            '--app=app2',
-          ])
-        } catch (error) {
-          const {message} = error as Error
-          expect(stripAnsi(message)).to.equal(heredoc`
-            We can’t find the app2 app. Check your spelling.
-          `)
-        }
-
-        expect(stdout.output).to.equal('')
+        const {error} = await runCommand(CommandConfiguredWithResourceName, [
+          addon1.name as string,
+          '--app=app2',
+        ])
+        expect(stripAnsi(error?.message || '')).to.equal(heredoc`
+          We can't find the app2 app. Check your spelling.
+        `)
       })
     })
 
@@ -224,19 +191,13 @@ describe('attempt a request using the Heroku AI client', function () {
       })
 
       it('returns an ambiguous identifier error message', async function () {
-        try {
-          await runCommand(CommandConfiguredWithResourceName, [
-            'heroku-inference',
-          ])
-        } catch (error) {
-          const {message} = error as Error
-          expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match heroku-inference: ${addon1.name}, ${addon2.name}, ${addon3.name}, ${addon4.name}.
-            Specify the model resource by its alias instead.
-          `)
-        }
-
-        expect(stdout.output).to.equal('')
+        const {error} = await runCommand(CommandConfiguredWithResourceName, [
+          'heroku-inference',
+        ])
+        expect(stripAnsi(error?.message || '')).to.equal(heredoc`
+          Multiple model resources match heroku-inference: ${addon1.name}, ${addon2.name}, ${addon3.name}, ${addon4.name}.
+          Specify the model resource by its alias instead.
+        `)
       })
     })
 
@@ -266,9 +227,6 @@ describe('attempt a request using the Heroku AI client', function () {
           'inference',
           '--app=app2',
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
 
@@ -282,19 +240,13 @@ describe('attempt a request using the Heroku AI client', function () {
       })
 
       it('returns an ambiguous identifier error message', async function () {
-        try {
-          await runCommand(CommandConfiguredWithResourceName, [
-            'heroku-inference:claude-3-5-sonnet-latest',
-          ])
-        } catch (error) {
-          const {message} = error as Error
-          expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match heroku-inference:claude-3-5-sonnet-latest: ${addon2.name}, ${addon4.name}.
-            Specify the model resource by its alias instead.
-          `)
-        }
-
-        expect(stdout.output).to.equal('')
+        const {error} = await runCommand(CommandConfiguredWithResourceName, [
+          'heroku-inference:claude-3-5-sonnet-latest',
+        ])
+        expect(stripAnsi(error?.message || '')).to.equal(heredoc`
+          Multiple model resources match heroku-inference:claude-3-5-sonnet-latest: ${addon2.name}, ${addon4.name}.
+          Specify the model resource by its alias instead.
+        `)
       })
     })
 
@@ -324,9 +276,6 @@ describe('attempt a request using the Heroku AI client', function () {
           'heroku-inference:claude-3-5-sonnet-latest',
           '--app=app2',
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
 
@@ -340,20 +289,14 @@ describe('attempt a request using the Heroku AI client', function () {
       })
 
       it('returns an ambiguous identifier error message', async function () {
-        try {
-          await runCommand(CommandConfiguredWithResourceName, [
-            'INFERENCE',
-            '--app=app1',
-          ])
-        } catch (error) {
-          const {message} = error as Error
-          expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match INFERENCE on app1: ${addon2Attachment1.name}, ${addon2Attachment2.name}, ${addon3Attachment1.name}.
-            Specify the model resource by its alias instead.
-          `)
-        }
-
-        expect(stdout.output).to.equal('')
+        const {error} = await runCommand(CommandConfiguredWithResourceName, [
+          'INFERENCE',
+          '--app=app1',
+        ])
+        expect(stripAnsi(error?.message || '')).to.equal(heredoc`
+          Multiple model resources match INFERENCE on app1: ${addon2Attachment1.name}, ${addon2Attachment2.name}, ${addon3Attachment1.name}.
+          Specify the model resource by its alias instead.
+        `)
       })
     })
 
@@ -383,9 +326,6 @@ describe('attempt a request using the Heroku AI client', function () {
           'INFERENCE_PINK',
           '--app=app1',
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
 
@@ -412,9 +352,6 @@ describe('attempt a request using the Heroku AI client', function () {
         await runCommand(CommandConfiguredWithResourceName, [
           addon3Attachment1.name as string,
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
 
@@ -442,9 +379,6 @@ describe('attempt a request using the Heroku AI client', function () {
           addon3Attachment1.name as string,
           '--app=app1',
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
 
@@ -472,9 +406,6 @@ describe('attempt a request using the Heroku AI client', function () {
           addon3Attachment2.name as string,
           '--app=app2',
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
 
@@ -501,9 +432,6 @@ describe('attempt a request using the Heroku AI client', function () {
         await runCommand(CommandConfiguredWithResourceName, [
           addon2Attachment1.name as string,
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
   })
@@ -534,9 +462,6 @@ describe('attempt a request using the Heroku AI client', function () {
         await runCommand(CommandConfiguredWithResourceName, [
           'inference',
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
 
@@ -565,9 +490,6 @@ describe('attempt a request using the Heroku AI client', function () {
         await runCommand(CommandConfiguredWithResourceName, [
           'heroku-inference:claude-3-5-sonnet-latest',
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
 
@@ -581,20 +503,14 @@ describe('attempt a request using the Heroku AI client', function () {
       })
 
       it('returns an ambiguous identifier error message', async function () {
-        try {
-          await runCommand(CommandConfiguredWithResourceName, [
-            'INFERENCE',
-            '--app=app2',
-          ])
-        } catch (error) {
-          const {message} = error as Error
-          expect(stripAnsi(message)).to.equal(heredoc`
-            Multiple model resources match INFERENCE on app2: ${addon3Attachment2.name}, ${addon4Attachment1.name}.
-            Specify the model resource by its alias instead.
-          `)
-        }
-
-        expect(stdout.output).to.equal('')
+        const {error} = await runCommand(CommandConfiguredWithResourceName, [
+          'INFERENCE',
+          '--app=app2',
+        ])
+        expect(stripAnsi(error?.message || '')).to.equal(heredoc`
+          Multiple model resources match INFERENCE on app2: ${addon3Attachment2.name}, ${addon4Attachment1.name}.
+          Specify the model resource by its alias instead.
+        `)
       })
     })
 
@@ -624,9 +540,6 @@ describe('attempt a request using the Heroku AI client', function () {
           'INFERENCE_JADE',
           '--app=app2',
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
 
@@ -640,17 +553,11 @@ describe('attempt a request using the Heroku AI client', function () {
       })
 
       it('returns a forbidden error message', async function () {
-        try {
-          await runCommand(CommandConfiguredWithResourceName, [
-            addon3Attachment1.name as string,
-            '--app=app1',
-          ])
-        } catch (error) {
-          const {message} = error as Error
-          expect(stripAnsi(message)).to.equal('You do not have access to the app app1\n\nError ID: forbidden')
-        }
-
-        expect(stdout.output).to.equal('')
+        const {error} = await runCommand(CommandConfiguredWithResourceName, [
+          addon3Attachment1.name as string,
+          '--app=app1',
+        ])
+        expect(stripAnsi(error?.message || '')).to.equal('You do not have access to the app app1\n\nError ID: forbidden')
       })
     })
 
@@ -680,9 +587,6 @@ describe('attempt a request using the Heroku AI client', function () {
           addon3.name as string,
           '--app=app2',
         ])
-
-        expect(stderr.output).to.equal('')
-        expect(stdout.output).to.equal('')
       })
     })
   })

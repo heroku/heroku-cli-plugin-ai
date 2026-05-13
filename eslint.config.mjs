@@ -4,9 +4,11 @@ export default [
   ...oclif,
   {
     ignores: [
-      './lib',
+      './dist',
       '**/*.js',
-      'dist/**/*',
+      'coverage/**/*',
+      'workflows-repo/**/*',
+      'src/lib/ai/types.d.ts',
     ],
   },
   {
@@ -68,6 +70,12 @@ export default [
       'unicorn/prefer-number-properties': 'warn',
       'unicorn/prefer-string-replace-all': 'warn',
       'unicorn/switch-case-braces': 'warn',
+    },
+  },
+  {
+    files: ['test/**/*.ts'],
+    rules: {
+      'prefer-arrow-callback': 'off',
     },
   },
 ]

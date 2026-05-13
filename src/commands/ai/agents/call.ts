@@ -1,13 +1,15 @@
 import {flags} from '@heroku-cli/command'
-import {Args, ux} from '@oclif/core'
+import {Args, Interfaces} from '@oclif/core'
+import {ux} from '@oclif/core/ux'
+import {styledJSON} from '@heroku/heroku-cli-util/hux'
 import fs from 'node:fs/promises'
-import type {AgentRequest, ChatCompletionResponse, CLIParseError} from '@heroku/ai'
-import Command from '../../../lib/base'
-import {ParserOutput} from '@oclif/core/lib/interfaces/parser'
-import {handleAgentStream, formatCompletionMessage} from '../../../lib/ai/agents/stream'
 import {ReadableStream} from 'node:stream/web'
+import type {AgentRequest, ChatCompletionResponse, CLIParseError} from '@heroku/ai'
+import Command from '../../../lib/base.js'
+import {formatCompletionMessage, handleAgentStream} from '../../../lib/ai/agents/stream.js'
 
 export default class Call extends Command {
+  static baseFlags = Command.baseFlagsWithoutPrompt()
   static args = {
     model_resource: Args.string({
       description: 'resource ID or alias of model (--app flag required if alias is used)',
@@ -31,6 +33,12 @@ export default class Call extends Command {
       char: 'j',
       description: 'output response as JSON',
       exclusive: ['output'],
+    }),
+    messages: flags.string({
+      description: 'JSON array of messages to send to the model',
+      required: false,
+      exclusive: ['prompt'],
+      exactlyOne: ['optfile', 'opts'],
     }),
     optfile: flags.string({
       description: 'additional options for model inference, provided as a JSON config file',
@@ -57,36 +65,37 @@ export default class Call extends Command {
       exclusive: ['messages'],
       exactlyOne: ['optfile', 'opts'],
     }),
-    messages: flags.string({
-      description: 'JSON array of messages to send to the model',
-      required: false,
-      exclusive: ['prompt'],
-      exactlyOne: ['optfile', 'opts'],
-    }),
     remote: flags.remote(),
   }
 
+  private static get allFlags() {
+    return {...Call.baseFlags, ...Call.flags}
+  }
+
   public async run(): Promise<void> {
-    let flags = {} as ParserOutput<Call>['flags']
-    let args = {} as ParserOutput<Call>['args']
+    type CallFlags = Interfaces.InferredFlags<typeof Call.allFlags & typeof Call.flags>
+    type CallArgs = Interfaces.InferredArgs<typeof Call.args>
+
+    let parsedFlags = {} as CallFlags
+    let parsedArgs = {} as CallArgs
     try {
-      ({args, flags} = await this.parse(Call))
+      const parsed = await this.parse(Call)
+      parsedFlags = parsed.flags as CallFlags
+      parsedArgs = parsed.args as CallArgs
     } catch (error) {
-      const {parse: {output}} = error as CLIParseError<Call>
-      ({args, flags} = output)
+      const {parse: {output}} = error as CLIParseError<any>
+      parsedFlags = output.flags as CallFlags
+      parsedArgs = output.args as CallArgs
     }
 
-    const {model_resource: modelResource} = args
-    const {app, json, optfile, opts, output, prompt, messages} = flags
+    const {model_resource: modelResource} = parsedArgs
+    const {app, json, messages, optfile, opts, output, prompt} = parsedFlags
 
-    // Configure the client to send a request for the target model resource
     await this.configureHerokuAIClient(modelResource, app)
 
-    // Get config vars to find the model resource
     const {body: config} = await this.heroku.get<Record<string, string>>(`/apps/${this.addon.app?.id}/config-vars`)
     const configVarNames = Object.keys(config)
 
-    // Look for model resource in config vars
     const modelResourceKey = configVarNames.find(key => key.startsWith('INFERENCE_') && key.endsWith('_MODEL_ID'))
     if (!modelResourceKey) {
       throw new Error(`No model resource found for ${app}. Check the Heroku Inference documentation for setup instructions: https://devcenter.heroku.com/articles/heroku-inference`)
@@ -94,7 +103,6 @@ export default class Call extends Command {
 
     const options = await this.parseOptions(optfile, opts)
 
-    // Create the agent request
     const agentRequest = this.createAgentRequest(prompt, messages, options)
     const response = await this.callAgent(agentRequest, !json && !output)
     await this.displayAgentResponse(response, output, json)
@@ -183,7 +191,7 @@ export default class Call extends Command {
         completions.push(completion)
         const message = formatCompletionMessage(completion)
         if (message && writeToStdout) {
-          ux.log(message)
+          ux.stdout(message)
         }
       },
     })
@@ -195,14 +203,13 @@ export default class Call extends Command {
       if (json) {
         await fs.writeFile(output, JSON.stringify(completions, null, 2))
       } else {
-        // Write only the final assistant message content
         const finalAssistantMessage = completions
           .filter(c => c.object === 'chat.completion')
           .pop()?.choices[0].message.content || ''
         await fs.writeFile(output, finalAssistantMessage)
       }
     } else if (json) {
-      ux.styledJSON(completions)
+      styledJSON(completions)
     }
   }
 }

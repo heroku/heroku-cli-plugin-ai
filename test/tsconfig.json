@@ -1,17 +1,9 @@
 {
+  "extends": "../tsconfig",
   "compilerOptions": {
-    "rootDirs": [
-      "./",
-      "../src"
-    ],
     "sourceMap": true,
-    "paths": {
-      "@heroku/ai": ["../src/lib/ai/types.ts"]
-    }
+    "rootDirs": ["./", "../src"]
   },
-  "declaration": false,
-  "extends": "../tsconfig.json",
-  "include": [
-    "./**/*.test.ts"
-  ]
+  "include": ["./**/*", "../src/**/*"],
+  "ts-node": { "transpileOnly": true }
 }

@@ -1,16 +1,18 @@
-import {color} from '@heroku-cli/color'
 import {APIClient, Command} from '@heroku-cli/command'
+import {HerokuAPIError} from '@heroku-cli/command/lib/api-client.js'
 import * as Heroku from '@heroku-cli/schema'
-import {ux} from '@oclif/core'
-import heredoc from 'tsheredoc'
-import {HerokuAPIError} from '@heroku-cli/command/lib/api-client'
-import HTTP from '@heroku/http-call'
+import * as color from '@heroku/heroku-cli-util/color'
+import httpCall from '@heroku/http-call'
+const HTTP = httpCall.default ?? httpCall
+import {ux} from '@oclif/core/ux'
+import tsheredoc from 'tsheredoc'
+const heredoc = tsheredoc.default ?? tsheredoc
 
 export class NotFound extends Error {
   constructor(addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
-      We can’t find a model resource called ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}.
-      Run ${color.cmd(`heroku ai:models:info --app ${appIdentifier ? appIdentifier : '<value>'}`)} to see a list of model resources.
+      We can't find a model resource called ${color.addon(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}.
+      Use ${color.command(`heroku ai:models:info --app ${appIdentifier ? appIdentifier : '<value>'}`)} to see a list of model resources.
     `
     super(message)
   }
@@ -22,7 +24,7 @@ export class NotFound extends Error {
 export class AppNotFound extends Error {
   constructor(appIdentifier?: string) {
     const message = heredoc`
-      We can’t find the ${color.app(appIdentifier)} app. Check your spelling.
+      We can't find the ${color.app(appIdentifier ?? '')} app. Check your spelling.
     `
     super(message)
   }
@@ -34,7 +36,7 @@ export class AppNotFound extends Error {
 export class AmbiguousError extends Error {
   constructor(public readonly matches: string[], addonIdentifier: string, appIdentifier?: string) {
     const message = heredoc`
-      Multiple model resources match ${color.yellow(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}: ${matches.map(match => color.addon(match)).join(', ')}.
+      Multiple model resources match ${color.addon(addonIdentifier)}${appIdentifier ? ` on ${color.app(appIdentifier)}` : ''}: ${matches.map(match => color.addon(match)).join(', ')}.
       Specify the model resource by its alias instead.
     `
     super(message)
@@ -64,8 +66,8 @@ export default abstract class extends Command {
   private _defaultInferenceHost: string = process.env.HEROKU_INFERENCE_HOST || 'us.inference.heroku.com'
 
   protected async configureHerokuAIClient(addonIdentifier?: string, appIdentifier?: string): Promise<void> {
-    const defaultHeaders = {
-      ...this.heroku.defaults.headers,
+    const defaultHeaders: Record<string, string> = {
+      ...this.heroku.defaults.headers as Record<string, string>,
       accept: 'application/json',
       'user-agent': `heroku-cli-plugin-ai/${process.env.npm_package_version} ${this.config.platform}`,
     }
@@ -279,14 +281,14 @@ export default abstract class extends Command {
     if (this.addon && this._addonResourceId)
       return this._addonResourceId
 
-    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+    ux.error(`Model resource ${color.addon(this.addon?.name ?? '')} isn't fully provisioned on ${color.app(this.addon?.app.name ?? '')}.`, {exit: 1})
   }
 
   get apiKey(): string {
     if (this.addon && this._apiKey)
       return this._apiKey
 
-    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+    ux.error(`Model resource ${color.addon(this.addon?.name ?? '')} isn't fully provisioned on ${color.app(this.addon?.app.name ?? '')}.`, {exit: 1})
   }
 
   get apiKeyConfigVarName(): string {
@@ -309,7 +311,7 @@ export default abstract class extends Command {
     if (this.addon && this._apiUrl)
       return this._apiUrl
 
-    ux.error(`Model resource ${color.addon(this.addon?.name)} isn’t fully provisioned on ${color.app(this.addon?.app.name)}.`, {exit: 1})
+    ux.error(`Model resource ${color.addon(this.addon?.name ?? '')} isn't fully provisioned on ${color.app(this.addon?.app.name ?? '')}.`, {exit: 1})
   }
 
   get apiUrlConfigVarName(): string {

@@ -1,8 +1,8 @@
-import color from '@heroku-cli/color'
-import {ux} from '@oclif/core'
-import {Config} from '@oclif/core'
 import {APIClient} from '@heroku-cli/command'
 import * as Heroku from '@heroku-cli/schema'
+import * as color from '@heroku/heroku-cli-util/color'
+import {Config} from '@oclif/core'
+import {ux} from '@oclif/core/ux'
 
 export default async function (config: Config, addon: Heroku.AddOn, force = false) {
   const addonName = addon.name || ''

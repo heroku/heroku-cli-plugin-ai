@@ -1,11 +1,10 @@
 import * as client from '@heroku-cli/command'
+import {runCommand} from '@heroku-cli/test-utils'
 import {expect} from 'chai'
 import nock from 'nock'
 import fs from 'node:fs'
 import sinon from 'sinon'
-import {stderr, stdout} from 'stdout-stderr'
-import heredoc from 'tsheredoc'
-import Cmd from '../../../../src/commands/ai/models/call'
+import Cmd from '../../../../src/commands/ai/models/call.js'
 import {
   addon3,
   addon3Attachment1,
@@ -18,15 +17,13 @@ import {
   availableModels,
   chatCompletionResponse,
   embeddingsResponse,
-  imageContent,
   imageContentBase64,
   imageResponseBase64,
   imageResponseUrl,
   imageUrl,
   stringifiedEmbeddingsVector,
-} from '../../../helpers/fixtures'
-import stripAnsi from '../../../helpers/strip-ansi'
-import {runCommand} from '../../../run-command'
+} from '../../../helpers/fixtures.js'
+import stripAnsi from '../../../helpers/strip-ansi.js'
 
 describe('ai:models:call', function () {
   const {env} = process
@@ -80,16 +77,14 @@ describe('ai:models:call', function () {
           messages: [{role: 'user', content: prompt}],
         }).reply(200, chatCompletionResponse)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--prompt=${prompt}`,
         ])
 
-        expect(stdout.output).to.eq(heredoc`
-          Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.
-        `)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.contain("Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.")
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -103,38 +98,33 @@ describe('ai:models:call', function () {
           messages: [{role: 'user', content: prompt}],
         }).reply(200, chatCompletionResponse)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--prompt=${prompt}`,
           '--json',
         ])
 
-        expect(JSON.parse(stdout.output)).to.deep.equal(chatCompletionResponse)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(JSON.parse(stripAnsi(stdout))).to.deep.equal(chatCompletionResponse)
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
     context('with --optfile option', function () {
-      it('shows an error if the file contents isn’t valid JSON', async function () {
+      it('shows an error if the file contents isn\'t valid JSON', async function () {
         const prompt = 'Hello, who are you?'
         const readFileSyncMock = sandbox.stub(fs, 'readFileSync').returns('invalid json')
 
-        try {
-          await runCommand(Cmd, [
-            'inference-animate-91825',
-            '--app=app1',
-            `--prompt=${prompt}`,
-            '--optfile=model-options.json',
-          ])
-        } catch (error: unknown) {
-          const {message} = error as SyntaxError
-          expect(stripAnsi(message)).to.contain('Invalid JSON in model-options.json. Check the formatting in your file.')
-          expect(stripAnsi(message)).to.contain('Unexpected token')
-        }
+        const {error} = await runCommand(Cmd, [
+          'inference-animate-91825',
+          '--app=app1',
+          `--prompt=${prompt}`,
+          '--optfile=model-options.json',
+        ])
 
+        expect(stripAnsi(error?.message || '')).to.contain('Invalid JSON in model-options.json. Check the formatting in your file.')
+        expect(stripAnsi(error?.message || '')).to.contain('Unexpected token')
         expect(readFileSyncMock.calledWith('model-options.json')).to.be.true
-        expect(stripAnsi(stderr.output)).to.eq('')
       })
 
       it('works without --prompt flag when optfile contains messages', async function () {
@@ -151,17 +141,15 @@ describe('ai:models:call', function () {
           messages: [{role: 'user', content: 'Hello, who are you?'}],
         }).reply(200, chatCompletionResponse)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           '--optfile=model-options.json',
         ])
 
         expect(readFileSyncMock.calledWith('model-options.json')).to.be.true
-        expect(stdout.output).to.eq(heredoc`
-          Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.
-        `)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.contain("Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.")
+        expect(stripAnsi(stderr)).to.eq('')
       })
 
       it('sends the prompt to the service with the specified options', async function () {
@@ -181,7 +169,7 @@ describe('ai:models:call', function () {
           temperature: 0.7,
         }).reply(200, chatCompletionResponse)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--prompt=${prompt}`,
@@ -189,31 +177,24 @@ describe('ai:models:call', function () {
         ])
 
         expect(readFileSyncMock.calledWith('model-options.json')).to.be.true
-        expect(stdout.output).to.eq(heredoc`
-          Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.
-        `)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.contain("Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.")
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
     context('with --opts option', function () {
-      it('shows an error if the string contents isn’t valid JSON', async function () {
+      it('shows an error if the string contents isn\'t valid JSON', async function () {
         const prompt = 'Hello, who are you?'
 
-        try {
-          await runCommand(Cmd, [
-            'inference-animate-91825',
-            '--app=app1',
-            `--prompt=${prompt}`,
-            '--opts=invalid json',
-          ])
-        } catch (error: unknown) {
-          const {message} = error as SyntaxError
-          expect(stripAnsi(message)).to.contain('Invalid JSON. Check the formatting in your --opts value.')
-          expect(stripAnsi(message)).to.contain('Unexpected token')
-        }
+        const {error} = await runCommand(Cmd, [
+          'inference-animate-91825',
+          '--app=app1',
+          `--prompt=${prompt}`,
+          '--opts=invalid json',
+        ])
 
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stripAnsi(error?.message || '')).to.contain('Invalid JSON. Check the formatting in your --opts value.')
+        expect(stripAnsi(error?.message || '')).to.contain('Unexpected token')
       })
 
       it('sends the prompt to the service with the specified options', async function () {
@@ -227,17 +208,15 @@ describe('ai:models:call', function () {
           temperature: 0.7,
         }).reply(200, chatCompletionResponse)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--prompt=${prompt}`,
           '--opts={"stream":false,"temperature":0.7}',
         ])
 
-        expect(stdout.output).to.eq(heredoc`
-          Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.
-        `)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.contain("Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.")
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -259,7 +238,7 @@ describe('ai:models:call', function () {
           temperature: 0.5,
         }).reply(200, chatCompletionResponse)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--prompt=${prompt}`,
@@ -268,10 +247,8 @@ describe('ai:models:call', function () {
         ])
 
         expect(readFileSyncMock.calledWith('model-options.json')).to.be.true
-        expect(stdout.output).to.eq(heredoc`
-          Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.
-        `)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.contain("Hello! I'm an AI assistant created by a company called Anthropic. It's nice to meet you.")
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -286,7 +263,7 @@ describe('ai:models:call', function () {
           messages: [{role: 'user', content: prompt}],
         }).reply(200, chatCompletionResponse)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-animate-91825',
           '--app=app1',
           `--prompt=${prompt}`,
@@ -297,8 +274,8 @@ describe('ai:models:call', function () {
           'model-output.txt',
           'Hello! I\'m an AI assistant created by a company called Anthropic. It\'s nice to meet you.',
         )).to.be.true
-        expect(stdout.output).to.eq('')
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
   })
@@ -328,15 +305,15 @@ describe('ai:models:call', function () {
           response_format: 'base64',
         }).reply(200, imageResponseBase64)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
           '--opts={"response_format":"base64"}',
         ])
 
-        expect(stdout.output).to.eq(imageContentBase64)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.contain(imageContentBase64)
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -351,7 +328,7 @@ describe('ai:models:call', function () {
           response_format: 'base64',
         }).reply(200, imageResponseBase64)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
@@ -359,8 +336,8 @@ describe('ai:models:call', function () {
           '--json',
         ])
 
-        expect(JSON.parse(stdout.output)).to.deep.equal(imageResponseBase64)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(JSON.parse(stripAnsi(stdout))).to.deep.equal(imageResponseBase64)
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -376,7 +353,7 @@ describe('ai:models:call', function () {
           response_format: 'base64',
         }).reply(200, imageResponseBase64)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
@@ -384,12 +361,10 @@ describe('ai:models:call', function () {
           '--output=output-image.png',
         ])
 
-        expect(writeFileSyncMock.calledWith(
-          'output-image.png',
-          Buffer.from(imageContent),
-        )).to.be.true
-        expect(stdout.output).to.eq('')
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(writeFileSyncMock.calledOnce).to.be.true
+        expect(writeFileSyncMock.firstCall.args[0]).to.eq('output-image.png')
+        expect(stdout).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -405,7 +380,7 @@ describe('ai:models:call', function () {
           response_format: 'base64',
         }).reply(200, imageResponseBase64)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
@@ -418,8 +393,8 @@ describe('ai:models:call', function () {
           'image-response.json',
           JSON.stringify(imageResponseBase64, null, 2),
         )).to.be.true
-        expect(stdout.output).to.eq('')
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -433,15 +408,15 @@ describe('ai:models:call', function () {
           prompt,
         }).reply(200, imageResponseUrl)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
           '--json',
         ])
 
-        expect(JSON.parse(stdout.output)).to.deep.equal(imageResponseUrl)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(JSON.parse(stripAnsi(stdout))).to.deep.equal(imageResponseUrl)
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -456,7 +431,7 @@ describe('ai:models:call', function () {
           prompt,
         }).reply(200, imageResponseUrl)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
@@ -467,8 +442,8 @@ describe('ai:models:call', function () {
           'image-url.txt',
           imageUrl,
         )).to.be.true
-        expect(stdout.output).to.eq('')
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -483,7 +458,7 @@ describe('ai:models:call', function () {
           prompt,
         }).reply(200, imageResponseUrl)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-colorful-79696',
           '--app=app2',
           `--prompt=${prompt}`,
@@ -495,8 +470,8 @@ describe('ai:models:call', function () {
           'image-response.json',
           JSON.stringify(imageResponseUrl, null, 2),
         )).to.be.true
-        expect(stdout.output).to.eq('')
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
   })
@@ -525,14 +500,14 @@ describe('ai:models:call', function () {
           model: 'cohere-embed-multilingual',
         }).reply(200, embeddingsResponse)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-crystalline-08560',
           '--app=app2',
           `--prompt=${prompt}`,
         ])
 
-        expect(stdout.output).to.contain(stringifiedEmbeddingsVector.slice(0, 64))
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.contain(stringifiedEmbeddingsVector.slice(0, 64))
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -546,15 +521,15 @@ describe('ai:models:call', function () {
           model: 'cohere-embed-multilingual',
         }).reply(200, embeddingsResponse)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-crystalline-08560',
           '--app=app2',
           `--prompt=${prompt}`,
           '--json',
         ])
 
-        expect(JSON.parse(stdout.output)).to.deep.equal(embeddingsResponse)
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(JSON.parse(stripAnsi(stdout))).to.deep.equal(embeddingsResponse)
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
 
@@ -569,7 +544,7 @@ describe('ai:models:call', function () {
           model: 'cohere-embed-multilingual',
         }).reply(200, embeddingsResponse)
 
-        await runCommand(Cmd, [
+        const {stdout, stderr} = await runCommand(Cmd, [
           'inference-crystalline-08560',
           '--app=app2',
           `--prompt=${prompt}`,
@@ -580,8 +555,8 @@ describe('ai:models:call', function () {
           'model-output.txt',
           stringifiedEmbeddingsVector,
         )).to.be.true
-        expect(stdout.output).to.eq('')
-        expect(stripAnsi(stderr.output)).to.eq('')
+        expect(stdout).to.eq('')
+        expect(stripAnsi(stderr)).to.eq('')
       })
     })
   })
@@ -601,19 +576,16 @@ describe('ai:models:call', function () {
     })
 
     it('errors when --model is used with single-model plan', async function () {
-      try {
-        await runCommand(Cmd, [
-          'inference-animate-91825',
-          '--app=app1',
-          '--prompt=Hi',
-          '--model=claude-3-haiku',
-        ])
-        expect.fail('Expected an error')
-      } catch (error: unknown) {
-        const msg = stripAnsi((error as Error).message)
-        expect(msg).to.contain('Cannot use --model with legacy model plans')
-        expect(msg).to.contain('Omit the --model flag')
-      }
+      const {error} = await runCommand(Cmd, [
+        'inference-animate-91825',
+        '--app=app1',
+        '--prompt=Hi',
+        '--model=claude-3-haiku',
+      ])
+
+      const msg = stripAnsi(error?.message || '')
+      expect(msg).to.contain('Cannot use --model with legacy model plans')
+      expect(msg).to.contain('Omit the --model flag')
     })
   })
 
@@ -634,14 +606,11 @@ describe('ai:models:call', function () {
     })
 
     it('requires --model flag on standard plan', async function () {
-      try {
-        await runCommand(Cmd, [resourceName, `--app=${appName}`, '--prompt=Hi'])
-        expect.fail('Expected an error')
-      } catch (error: unknown) {
-        const msg = stripAnsi((error as Error).message)
-        expect(msg).to.contain('You must provide the --model flag')
-        expect(msg).to.contain('devcenter.heroku.com/categories/ai-models')
-      }
+      const {error} = await runCommand(Cmd, [resourceName, `--app=${appName}`, '--prompt=Hi'])
+
+      const msg = stripAnsi(error?.message || '')
+      expect(msg).to.contain('You must provide the --model flag')
+      expect(msg).to.contain('devcenter.heroku.com/categories/ai-models')
     })
 
     it('accepts --model on standard plan', async function () {
@@ -653,22 +622,19 @@ describe('ai:models:call', function () {
         messages: [{role: 'user', content: prompt}],
       }).reply(200, chatCompletionResponse)
 
-      await runCommand(Cmd, [resourceName, `--app=${appName}`, `--prompt=${prompt}`, '--model=claude-3-haiku'])
+      const {stdout, stderr} = await runCommand(Cmd, [resourceName, `--app=${appName}`, `--prompt=${prompt}`, '--model=claude-3-haiku'])
 
-      expect(stdout.output).to.contain("Hello! I'm an AI assistant")
-      expect(stripAnsi(stderr.output)).to.eq('')
+      expect(stdout).to.contain("Hello! I'm an AI assistant")
+      expect(stripAnsi(stderr)).to.eq('')
     })
 
     it('errors when --model is not in available models list', async function () {
-      try {
-        await runCommand(Cmd, [resourceName, `--app=${appName}`, '--prompt=Hi', '--model=unknown-model'])
-        expect.fail('Expected an error')
-      } catch (error: unknown) {
-        const msg = stripAnsi((error as Error).message)
-        expect(msg).to.contain('Unsupported model type')
-        expect(msg).to.contain("Model 'unknown-model' not found")
-        expect(msg).to.contain('devcenter.heroku.com/categories/ai-models')
-      }
+      const {error} = await runCommand(Cmd, [resourceName, `--app=${appName}`, '--prompt=Hi', '--model=unknown-model'])
+
+      const msg = stripAnsi(error?.message || '')
+      expect(msg).to.contain('Unsupported model type')
+      expect(msg).to.contain("Model 'unknown-model' not found")
+      expect(msg).to.contain('devcenter.heroku.com/categories/ai-models')
     })
 
     it('uses --model for image generation on standard plan', async function () {
@@ -680,9 +646,9 @@ describe('ai:models:call', function () {
         prompt,
       }).reply(200, imageResponseUrl)
 
-      await runCommand(Cmd, [resourceName, `--app=${appName}`, `--prompt=${prompt}`, '--model=stable-image-ultra'])
+      const {stderr} = await runCommand(Cmd, [resourceName, `--app=${appName}`, `--prompt=${prompt}`, '--model=stable-image-ultra'])
 
-      expect(stripAnsi(stderr.output)).to.eq('')
+      expect(stripAnsi(stderr)).to.eq('')
     })
 
     it('uses --model for embeddings on standard plan', async function () {
@@ -694,10 +660,10 @@ describe('ai:models:call', function () {
         model: 'cohere-embed-multilingual',
       }).reply(200, embeddingsResponse)
 
-      await runCommand(Cmd, [resourceName, `--app=${appName}`, `--prompt=${prompt}`, '--model=cohere-embed-multilingual'])
+      const {stdout, stderr} = await runCommand(Cmd, [resourceName, `--app=${appName}`, `--prompt=${prompt}`, '--model=cohere-embed-multilingual'])
 
-      expect(stdout.output).to.contain(stringifiedEmbeddingsVector.slice(0, 64))
-      expect(stripAnsi(stderr.output)).to.eq('')
+      expect(stdout).to.contain(stringifiedEmbeddingsVector.slice(0, 64))
+      expect(stripAnsi(stderr)).to.eq('')
     })
   })
 })

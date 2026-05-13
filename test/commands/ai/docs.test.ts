@@ -1,8 +1,8 @@
+import {runCommand} from '@heroku-cli/test-utils'
+import {hux} from '@heroku/heroku-cli-util'
 import {expect} from 'chai'
 import sinon, {SinonSandbox, SinonStub} from 'sinon'
-import Cmd from '../../../src/commands/ai/docs'
-import {runCommand} from '../../run-command'
-import * as openUrl from '../../../src/lib/open-url'
+import Cmd from '../../../src/commands/ai/docs.js'
 
 describe('ai:docs', function () {
   const {env} = process
@@ -12,7 +12,7 @@ describe('ai:docs', function () {
   beforeEach(function () {
     process.env = {}
     sandbox = sinon.createSandbox()
-    openUrlStub = sandbox.stub(openUrl, 'openUrl').onFirstCall().resolves()
+    openUrlStub = sandbox.stub(hux, 'openUrl').resolves()
   })
 
   afterEach(function () {
@@ -21,20 +21,26 @@ describe('ai:docs', function () {
   })
 
   context('without --browser option', function () {
-    it('attempts to open the default browser to the Dev Center AI article', async function () {
+    it('opens the default Dev Center AI article URL', async function () {
       await runCommand(Cmd)
 
-      expect(openUrlStub.calledWith(Cmd.defaultUrl, undefined, 'view the documentation')).to.be.true
+      expect(openUrlStub.calledOnce).to.be.true
+      const [url, browser] = openUrlStub.firstCall.args
+      expect(url).to.equal(Cmd.defaultUrl)
+      expect(browser).to.be.undefined
     })
   })
 
   context('with --browser option', function () {
-    it('attempts to open the specified browser to the Dev Center AI article', async function () {
+    it('opens the Dev Center AI article with specified browser', async function () {
       await runCommand(Cmd, [
         '--browser=firefox',
       ])
 
-      expect(openUrlStub.calledWith(Cmd.defaultUrl, 'firefox', 'view the documentation')).to.be.true
+      expect(openUrlStub.calledOnce).to.be.true
+      const [url, browser] = openUrlStub.firstCall.args
+      expect(url).to.equal(Cmd.defaultUrl)
+      expect(browser).to.equal('firefox')
     })
   })
 
@@ -47,6 +53,8 @@ describe('ai:docs', function () {
 
     await runCommand(Cmd)
 
-    expect(openUrlStub.calledWith(customUrl, undefined, 'view the documentation')).to.be.true
+    expect(openUrlStub.calledOnce).to.be.true
+    const [url] = openUrlStub.firstCall.args
+    expect(url).to.equal(customUrl)
   })
 })

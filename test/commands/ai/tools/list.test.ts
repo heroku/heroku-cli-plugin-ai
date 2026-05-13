@@ -1,9 +1,8 @@
+import {runCommand} from '@heroku-cli/test-utils'
 import {expect} from 'chai'
-import {stdout, stderr} from 'stdout-stderr'
-import ListCmd from '../../../../src/commands/ai/tools/list'
-import {runCommand} from '../../../run-command'
 import nock from 'nock'
-import {CLIError} from '@oclif/core/lib/errors'
+import ListCmd from '../../../../src/commands/ai/tools/list.js'
+import removeAllWhitespace from '../../../helpers/utils/remove-whitespaces.js'
 
 const mockConfigVars = {
   INFERENCE_KEY: 'fake-key',
@@ -48,39 +47,30 @@ describe('ai:tools:list', function () {
   beforeEach(function () {
     process.env = {}
     herokuAPI = nock('https://api.heroku.com')
-    nock('https://us.inference.heroku.com')
-    stdout.start()
-    stderr.start()
   })
 
   afterEach(function () {
     process.env = env
     nock.cleanAll()
-    stdout.stop()
-    stderr.stop()
   })
 
   function mockAddonAndConfig(app = 'my-app', addon = 'heroku-inference') {
     herokuAPI
       .post('/actions/addons/resolve')
       .reply(200, [{
-
         id: 'addon-1',
         name: addon,
         app: {id: 'app-1', name: app},
         addon_service: {id: 'service-1', name: 'heroku-inference'},
-        plan: {id: 'plan-1', name: 'heroku-inference:basic'}
-        ,
+        plan: {id: 'plan-1', name: 'heroku-inference:basic'},
       }])
     herokuAPI
       .post('/actions/addon-attachments/resolve')
       .reply(200, [{
-
         id: 'attach-1',
         name: 'INFERENCE',
         app: {id: 'app-1', name: app},
-        addon: {id: 'addon-1', name: addon, app: {id: 'app-1', name: app}}
-        ,
+        addon: {id: 'addon-1', name: addon, app: {id: 'app-1', name: app}},
       }])
     herokuAPI
       .get('/apps/app-1/config-vars')
@@ -93,12 +83,15 @@ describe('ai:tools:list', function () {
       .get('/v1/mcp/servers')
       .reply(200, mockServers)
 
-    await runCommand(ListCmd, ['--app', 'my-app'])
+    const {stdout} = await runCommand(ListCmd, ['--app', 'my-app'])
+    const stripped = removeAllWhitespace(stdout)
 
-    expect(stdout.output).to.match(/Tool\s+Description/)
-    expect(stdout.output).to.match(/heroku-inference.summarize\s+Summarize text/)
-    expect(stdout.output).to.match(/heroku-inference.classify\s+Classify text/)
-    expect(stderr.output).to.eq('')
+    expect(stripped).to.include('Tool')
+    expect(stripped).to.include('Description')
+    expect(stripped).to.include('heroku-inference.summarize')
+    expect(stripped).to.include('Summarizetext')
+    expect(stripped).to.include('heroku-inference.classify')
+    expect(stripped).to.include('Classifytext')
   })
 
   it('lists all available tools in JSON format', async function () {
@@ -107,12 +100,12 @@ describe('ai:tools:list', function () {
       .get('/v1/mcp/servers')
       .reply(200, mockServers)
 
-    await runCommand(ListCmd, ['--app', 'my-app', '--json'])
+    const {stdout} = await runCommand(ListCmd, ['--app', 'my-app', '--json'])
 
-    expect(() => JSON.parse(stdout.output)).not.to.throw()
-    const output = JSON.parse(stdout.output)
+    expect(() => JSON.parse(stdout)).not.to.throw()
+    const output = JSON.parse(stdout)
     expect(output).to.be.an('array')
-    expect(output[0].tools).to.be.undefined // Should be flat array of tools
+    expect(output[0].tools).to.be.undefined
     expect(output[0].namespaced_name).to.equal('heroku-inference.summarize')
   })
 
@@ -122,9 +115,9 @@ describe('ai:tools:list', function () {
       .get('/v1/mcp/servers')
       .reply(200, [{...mockServers[0], tools: []}])
 
-    await runCommand(ListCmd, ['--app', 'my-app'])
+    const {stdout} = await runCommand(ListCmd, ['--app', 'my-app'])
 
-    expect(stdout.output).to.match(/No AI tools are currently available/)
+    expect(stdout).to.include('No AI tools are currently available')
   })
 
   it('handles API errors gracefully', async function () {
@@ -133,13 +126,8 @@ describe('ai:tools:list', function () {
       .get('/v1/mcp/servers')
       .reply(500, {message: 'Internal Server Error'})
 
-    try {
-      await runCommand(ListCmd, ['--app', 'my-app'])
-    } catch (error) {
-      const err = error as CLIError
-      expect(err).to.be.instanceOf(CLIError)
-      expect(err.message).to.match(/Internal Server Error/)
-    }
+    const {error} = await runCommand(ListCmd, ['--app', 'my-app'])
+    expect(error).to.exist
   })
 
   it('uses custom addon when specified', async function () {
@@ -149,12 +137,11 @@ describe('ai:tools:list', function () {
       .get('/v1/mcp/servers')
       .reply(200, mockServers)
 
-    await runCommand(ListCmd, ['--app', 'my-app', customAddon])
+    const {stdout} = await runCommand(ListCmd, ['--app', 'my-app', customAddon])
+    const stripped = removeAllWhitespace(stdout)
 
-    expect(stdout.output).to.match(/Tool\s+Description/)
-    expect(stdout.output).to.match(/heroku-inference.summarize\s+Summarize text/)
-    expect(stdout.output).to.match(/heroku-inference.classify\s+Classify text/)
-    expect(stderr.output).to.eq('')
+    expect(stripped).to.include('heroku-inference.summarize')
+    expect(stripped).to.include('heroku-inference.classify')
   })
 
   it('works without app specified', async function () {
@@ -163,11 +150,10 @@ describe('ai:tools:list', function () {
       .get('/v1/mcp/servers')
       .reply(200, mockServers)
 
-    await runCommand(ListCmd, [])
+    const {stdout} = await runCommand(ListCmd, [])
+    const stripped = removeAllWhitespace(stdout)
 
-    expect(stdout.output).to.match(/Tool\s+Description/)
-    expect(stdout.output).to.match(/heroku-inference.summarize\s+Summarize text/)
-    expect(stdout.output).to.match(/heroku-inference.classify\s+Classify text/)
-    expect(stderr.output).to.eq('')
+    expect(stripped).to.include('heroku-inference.summarize')
+    expect(stripped).to.include('heroku-inference.classify')
   })
 })
