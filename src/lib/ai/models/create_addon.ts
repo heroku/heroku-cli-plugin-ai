@@ -1,6 +1,6 @@
 import {APIClient} from '@heroku-cli/command'
 import * as Heroku from '@heroku-cli/schema'
-import {color} from '@heroku/heroku-cli-util'
+import * as color from '@heroku/heroku-cli-util/color'
 import {ux} from '@oclif/core/ux'
 import * as util from './util.js'
 
@@ -52,7 +52,7 @@ export default async function (
   ux.stdout(`Resource name: ${color.green(addon.name)}${options.as ? `\nResource alias: ${color.green(options.as)}` : ''}`)
 
   ux.stdout(
-    `Run ${color.command(`'heroku config -a ${addon.app.name}'`)} to view model config vars associated with this app.`
+    `Use ${color.command(`heroku config -a ${addon.app.name}`)} to view model config vars associated with this app.`
   )
 
   return addon

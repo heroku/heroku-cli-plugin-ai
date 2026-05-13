@@ -1,26 +1,28 @@
-/*
 import {flags} from '@heroku-cli/command'
-import {Args, ux} from '@oclif/core'
+import {Args} from '@oclif/core'
+import {ux} from '@oclif/core/ux'
+import {styledJSON} from '@heroku/heroku-cli-util/hux'
+import type {ParserOutput} from '@oclif/core/interfaces'
 import fs from 'node:fs'
 import type {
   ChatCompletionResponse,
+  CLIParseError,
   EmbeddingResponse,
   ImageResponse,
   ModelList,
-  CLIParseError,
 } from '@heroku/ai'
-import Command from '../../../lib/base'
-import {ParserOutput} from '@oclif/core/lib/interfaces/parser'
+import Command from '../../../lib/base.js'
 
 export type ChatCompletionRequest = {
-  model: string;
   messages: Array<{
-    role: string;
     content: string;
+    role: string;
   }>;
+  model: string;
 } & {prompt: string}
 
 export default class Call extends Command {
+  static baseFlags = Command.baseFlagsWithoutPrompt()
   static args = {
     model_resource: Args.string({
       description: 'resource ID or alias of model (--app flag required if alias is used)',
@@ -29,6 +31,7 @@ export default class Call extends Command {
   }
 
   static description = 'make an inference request to a specific AI model resource '
+
   static examples = [
     'heroku ai:models:call my_llm --app my-app --prompt "What is the meaning of life?" --model claude-3-5-sonnet',
     'heroku ai:models:call diffusion --app my-app --prompt "Generate an image of a sunset" --model stable-image-ultra --opts \'{"quality":"hd"}\' -o sunset.png',
@@ -36,14 +39,9 @@ export default class Call extends Command {
 
   static flags = {
     app: flags.app({
-      required: false,
       description: 'name or ID of app (required if alias is used)',
+      required: false,
     }),
-    // interactive: flags.boolean({
-    //   char: 'i',
-    //   description: 'Use interactive mode for conversation beyond the initial prompt (not available on all models)',
-    //   default: false,
-    // }),
     json: flags.boolean({char: 'j', description: 'output response as JSON '}),
     model: flags.string({
       char: 'm',
@@ -60,7 +58,6 @@ export default class Call extends Command {
     }),
     output: flags.string({
       char: 'o',
-      // description: 'The file path where the command writes the model response. If used with --interactive, this flag writes the entire exchange when the session closes.',
       description: 'file path where command writes the model response',
       required: false,
     }),
@@ -89,11 +86,9 @@ export default class Call extends Command {
       throw new Error('You must provide either --prompt, --optfile, or --opts.')
     }
 
-    // Initially, configure the default client to fetch the available model classes
     await this.configureHerokuAIClient()
     const {body: availableModels} = await this.herokuAI.get<ModelList>('/available-models')
 
-    // Now, configure the client to send a request for the target model resource
     await this.configureHerokuAIClient(modelResource, app)
     const options = this.parseOptions(optfile, opts)
 
@@ -137,11 +132,7 @@ export default class Call extends Command {
 
   /**
    * Parse the model call request options from the command flags.
-   *
-   * @param optfile Path to a JSON file containing options.
-   * @param opts JSON string containing options.
-   * @returns The parsed options as an object.
-   *\/
+   */
   private parseOptions(optfile?: string, opts?: string): Record<string, unknown> {
     const options = {}
 
@@ -200,7 +191,7 @@ export default class Call extends Command {
     if (output) {
       fs.writeFileSync(output, json ? JSON.stringify(completion, null, 2) : content)
     } else {
-      json ? ux.styledJSON(completion) : ux.log(content)
+      json ? styledJSON(completion) : ux.stdout(content)
     }
   }
 
@@ -224,7 +215,8 @@ export default class Call extends Command {
         const content = json ? JSON.stringify(image, null, 2) : Buffer.from(image.data[0].b64_json, 'base64')
         fs.writeFileSync(output, content)
       } else
-        json ? ux.styledJSON(image) : process.stdout.write(image.data[0].b64_json)
+        json ? styledJSON(image) : process.stdout.write(image.data[0].b64_json)
+
       return
     }
 
@@ -232,26 +224,26 @@ export default class Call extends Command {
       if (output)
         fs.writeFileSync(output, json ? JSON.stringify(image, null, 2) : image.data[0].url)
       else if (json)
-        ux.styledJSON(image)
+        styledJSON(image)
+
       return
     }
 
-    // This should never happen, but we'll handle it anyway
     ux.error('Unexpected response format.', {exit: 1})
   }
 
   private async createEmbedding<T extends Record<string, unknown>>(input: string, modelId: string, options = {} as T) {
     const {input: optsInput, ...rest} = options
-    const {body: EmbeddingResponse} = await this.herokuAI.post<EmbeddingResponse>('/v1/embeddings', {
+    const {body: embeddingResponse} = await this.herokuAI.post<EmbeddingResponse>('/v1/embeddings', {
       body: {
         ...rest,
-        model: modelId,
         input: input ?? optsInput,
+        model: modelId,
       },
       headers: {authorization: `Bearer ${this.apiKey}`},
     })
 
-    return EmbeddingResponse
+    return embeddingResponse
   }
 
   private async displayEmbedding(embedding: EmbeddingResponse, output?: string, json = false) {
@@ -260,8 +252,7 @@ export default class Call extends Command {
     if (output) {
       fs.writeFileSync(output, json ? JSON.stringify(embedding, null, 2) : content)
     } else {
-      json ? ux.styledJSON(embedding) : ux.log(content)
+      json ? styledJSON(embedding) : ux.stdout(content)
     }
   }
 }
-*/

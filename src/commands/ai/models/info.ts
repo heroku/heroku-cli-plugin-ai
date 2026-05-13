@@ -1,14 +1,19 @@
-/*
-import color from '@heroku-cli/color'
 import {flags} from '@heroku-cli/command'
-import {Args, ux} from '@oclif/core'
-import Command from '../../../lib/base'
-import type {ModelResource} from '@heroku/ai'
-
 import * as Heroku from '@heroku-cli/schema'
+import * as color from '@heroku/heroku-cli-util/color'
+import {hux} from '@heroku/heroku-cli-util'
+import {Args} from '@oclif/core'
+import {ux} from '@oclif/core/ux'
+import type {ModelResource} from '@heroku/ai'
+import Command from '../../../lib/base.js'
 
 export default class Info extends Command {
+  static args = {
+    model_resource: Args.string({description: 'resource ID or alias of model resource '}),
+  }
+
   static description = 'get current status of a specific AI model resource or all AI model resources attached to an app'
+
   static examples = [
     'heroku ai:models:info claude-3-5-sonnet-acute-04281 --app example-app ',
     'heroku ai:models:info --app example-app ',
@@ -19,16 +24,12 @@ export default class Info extends Command {
     remote: flags.remote(),
   }
 
-  static args = {
-    model_resource: Args.string({description: 'resource ID or alias of model resource '}),
-  }
-
   public async run(): Promise<any> {
     const {args, flags} = await this.parse(Info)
     const {app} = flags
     const {model_resource: modelResource} = args
     const synthesizedModels: Array<ModelResource> = []
-    let listOfProvisionedModels: Array<ModelResource>  = []
+    let listOfProvisionedModels: Array<ModelResource> = []
 
     const modelInfo = async () => {
       const modelInfoResponse = await this.herokuAI.get<ModelResource>(`/models/${this.addon.id}`, {
@@ -36,7 +37,7 @@ export default class Info extends Command {
       })
         .catch(error => {
           if (error.statusCode === 404) {
-            ux.warn(`We can't find a model resource called ${color.yellow(modelResource)}.\nRun ${color.cmd('heroku ai:models:info -a <app>')} to see a list of model resources.`)
+            ux.warn(`We can't find a model resource called ${color.addon(modelResource)}.\nUse ${color.command('heroku ai:models:info -a <app>')} to see a list of model resources.`)
           } else {
             throw error
           }
@@ -45,9 +46,7 @@ export default class Info extends Command {
       return modelInfoResponse
     }
 
-    const addModelProperties = (alias: string, resourceId: string, modelResource: ModelResource = {} as ModelResource) => {
-      return Object.assign(modelResource, {model_alias: alias, model_resource_id: resourceId})
-    }
+    const addModelProperties = (alias: string, resourceId: string, modelResource: ModelResource = {} as ModelResource) => Object.assign(modelResource, {model_alias: alias, model_resource_id: resourceId})
 
     const getModelDetails = async (collectedModels: Array<Heroku.AddOn> | string) => {
       if (typeof collectedModels === 'string') {
@@ -100,9 +99,9 @@ export default class Info extends Command {
 
   displayModelResource(modelResources: ModelResource[]) {
     for (const modelResource of modelResources) {
-      ux.log()
-      ux.styledHeader(modelResource.model_id)
-      ux.styledObject({
+      ux.stdout('')
+      hux.styledHeader(modelResource.model_id)
+      hux.styledObject({
         'Base Model ID': modelResource.model_id,
         'Model Alias': modelResource.model_alias,
         'Model Resource ID': modelResource.model_resource_id,
@@ -112,4 +111,3 @@ export default class Info extends Command {
     }
   }
 }
-*/

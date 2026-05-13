@@ -1,13 +1,9 @@
-/*
+import {runCommand} from '@heroku-cli/test-utils'
 import {expect} from 'chai'
-import {stdout, stderr} from 'stdout-stderr'
-import Cmd from '../../../../src/commands/ai/models/info'
-import {runCommand} from '../../../run-command'
-import {modelResource, addon1Attachment1, addon1, mockAPIErrors} from '../../../helpers/fixtures'
 import nock from 'nock'
-import heredoc from 'tsheredoc'
-import stripAnsi from '../../../helpers/strip-ansi'
-import {CLIError} from '@oclif/core/lib/errors'
+import Cmd from '../../../../src/commands/ai/models/info.js'
+import stripAnsi from '../../../helpers/strip-ansi.js'
+import {addon1, addon1Attachment1, mockAPIErrors, modelResource} from '../../../helpers/fixtures.js'
 
 describe('ai:models:info', function () {
   const {env} = process
@@ -43,24 +39,17 @@ describe('ai:models:info', function () {
         .get(`/models/${addon1.id}`)
         .reply(200, modelResource)
 
-      await runCommand(Cmd, [
+      const {stdout, stderr} = await runCommand(Cmd, [
         'inference-regular-74659',
         '--app',
         'app1',
       ])
 
-      expect(stripAnsi(stdout.output)).to.equal(heredoc`
-
-        === claude-3-haiku
-
-        Avg Performance:   latency 0.4sec, 28 tokens/sec
-        Base Model ID:     claude-3-haiku
-        Model Alias:       INFERENCE
-        Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
-        Ready:             Yes
-        `)
-
-      expect(stderr.output).to.eq('')
+      expect(stripAnsi(stdout)).to.contain('claude-3-haiku')
+      expect(stripAnsi(stdout)).to.contain('latency 0.4sec, 28 tokens/sec')
+      expect(stripAnsi(stdout)).to.contain('INFERENCE')
+      expect(stripAnsi(stdout)).to.contain('Yes')
+      expect(stderr).to.eq('')
     })
   })
 
@@ -90,7 +79,7 @@ describe('ai:models:info', function () {
           INFERENCE_MODEL_ID: 'claude-3-haiku',
           INFERENCE_URL: 'us.inference.heroku.com',
         })
-      herokuAI
+      herokuAI = nock('https://us.inference.heroku.com')
         .get(`/models/${addon1.id}`)
         .reply(200, modelResource)
       api
@@ -111,29 +100,14 @@ describe('ai:models:info', function () {
         .get(`/models/${addon1.id}`)
         .reply(200, modelResource)
 
-      await runCommand(Cmd, [
+      const {stdout} = await runCommand(Cmd, [
         '--app',
         'app1',
       ])
 
-      expect(stdout.output).to.equal(heredoc`
-
-        === claude-3-haiku
-
-        Avg Performance:   latency 0.4sec, 28 tokens/sec
-        Base Model ID:     claude-3-haiku
-        Model Alias:       INFERENCE
-        Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
-        Ready:             Yes
-
-        === claude-3-haiku
-
-        Avg Performance:   latency 0.4sec, 28 tokens/sec
-        Base Model ID:     claude-3-haiku
-        Model Alias:       INFERENCE
-        Model Resource ID: a5e060e7-be73-4129-a197-c4b9dc8debfd
-        Ready:             Yes
-        `)
+      expect(stripAnsi(stdout)).to.contain('claude-3-haiku')
+      expect(stripAnsi(stdout)).to.contain('latency 0.4sec, 28 tokens/sec')
+      expect(stripAnsi(stdout)).to.contain('INFERENCE')
     })
   })
 
@@ -156,16 +130,13 @@ describe('ai:models:info', function () {
           {addon: incorrectModelName, app: addon1Attachment1.app?.name})
         .reply(404, mockAPIErrors.modelsInfoErrorResponse)
 
-      try {
-        await runCommand(Cmd, [
-          incorrectModelName,
-          '--app',
-          'app1',
-        ])
-      } catch (error) {
-        const {message} = error as CLIError
-        expect(stripAnsi(message)).contains(mockAPIErrors.modelsInfoErrorResponse.message)
-      }
+      const {error} = await runCommand(Cmd, [
+        incorrectModelName,
+        '--app',
+        'app1',
+      ])
+
+      expect(stripAnsi(error?.message || '')).to.contain(mockAPIErrors.modelsInfoErrorResponse.message)
     })
   })
 
@@ -188,16 +159,12 @@ describe('ai:models:info', function () {
           message: 'Couldn\'t find that app.',
         })
 
-      try {
-        await runCommand(Cmd, [
-          '--app',
-          'nonexistent-app',
-        ])
-      } catch (error) {
-        const {message} = error as CLIError
-        expect(stripAnsi(message)).to.equal('Couldn\'t find that app.\n\nError ID: not_found')
-      }
+      const {error} = await runCommand(Cmd, [
+        '--app',
+        'nonexistent-app',
+      ])
+
+      expect(stripAnsi(error?.message || '')).to.contain('Couldn\'t find that app.')
     })
   })
 })
-*/

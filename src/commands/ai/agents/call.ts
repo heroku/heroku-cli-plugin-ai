@@ -1,6 +1,7 @@
 import {flags} from '@heroku-cli/command'
 import {Args, Interfaces} from '@oclif/core'
 import {ux} from '@oclif/core/ux'
+import {styledJSON} from '@heroku/heroku-cli-util/hux'
 import fs from 'node:fs/promises'
 import {ReadableStream} from 'node:stream/web'
 import type {AgentRequest, ChatCompletionResponse, CLIParseError} from '@heroku/ai'
@@ -208,7 +209,7 @@ export default class Call extends Command {
         await fs.writeFile(output, finalAssistantMessage)
       }
     } else if (json) {
-      ux.stdout(ux.colorizeJson(completions))
+      styledJSON(completions)
     }
   }
 }
