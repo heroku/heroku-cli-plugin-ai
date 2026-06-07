@@ -16,7 +16,7 @@
     "tsheredoc": "^1"
   },
   "devDependencies": {
-    "@heroku-cli/test-utils": "^0.2.0",
+    "@heroku-cli/test-utils": "^0.3.0",
     "@types/mocha": "^10",
     "@types/node": "^22",
     "@types/sinon": "^17",
