@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.1](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.0...plugin-ai-v2.0.1) (2026-06-12)
+
+
+### Bug Fixes
+
+* **deps:** bump fast-xml-parser and @aws-sdk/xml-builder ([#134](https://github.com/heroku/heroku-cli-plugin-ai/issues/134)) ([1e4dcf5](https://github.com/heroku/heroku-cli-plugin-ai/commit/1e4dcf57c675548819e4e4981e9b98af2f0651a8))
+* **deps:** bump ws from 8.20.0 to 8.21.0 ([#137](https://github.com/heroku/heroku-cli-plugin-ai/issues/137)) ([2d19ca0](https://github.com/heroku/heroku-cli-plugin-ai/commit/2d19ca028d4d0fa58acced725bc5be127105ac11))
+
+
+### Dependencies
+
+* tooling, dependency, and release config updates ([#139](https://github.com/heroku/heroku-cli-plugin-ai/issues/139)) ([1b1bfe1](https://github.com/heroku/heroku-cli-plugin-ai/commit/1b1bfe162b2e92c38863de4b526f1e339f665b57))
+
 ## [2.0.0](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v1.1.0...plugin-ai-v2.0.0) (2026-05-13)
 
 
