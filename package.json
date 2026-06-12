@@ -6,17 +6,17 @@
   "author": "Heroku",
   "bugs": "https://github.com/heroku/heroku-cli-plugin-ai/issues",
   "dependencies": {
-    "@heroku-cli/command": "12.3.1",
+    "@heroku-cli/command": "12.4.1",
     "@heroku-cli/schema": "^1.0.25",
     "@heroku/heroku-cli-util": "^10.8.0",
-    "@heroku/http-call": "^5.4.0",
+    "@heroku/http-call": "^5.5.0",
     "@oclif/core": "^4.3.0",
     "open": "^10.2.0",
     "printf": "^0.6.1",
     "tsheredoc": "^1"
   },
   "devDependencies": {
-    "@heroku-cli/test-utils": "^0.2.0",
+    "@heroku-cli/test-utils": "^1.0.0",
     "@types/mocha": "^10",
     "@types/node": "^22",
     "@types/sinon": "^17",
@@ -34,7 +34,7 @@
     "typescript": "^5"
   },
   "engines": {
-    "node": ">= 22"
+    "node": ">= 20"
   },
   "files": [
     "oclif.manifest.json",
@@ -65,8 +65,9 @@
     "test": "c8 mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif readme && git add README.md"
   },
-  "//overrides": "serialize-javascript: mocha transitive dep, pinned for CVE-2024-11831",
+  "//overrides": "serialize-javascript: mocha transitive dep, pinned for CVE-2024-11831; diff: mocha/sinon transitive dep, pinned for GHSA-73rr-hh4g-fpgx",
   "overrides": {
-    "serialize-javascript": "^7.0.5"
+    "serialize-javascript": "^7.0.5",
+    "diff": "^9.0.0"
   }
 }
