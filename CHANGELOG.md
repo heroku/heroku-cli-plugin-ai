@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.1...plugin-ai-v2.0.2) (2026-07-23)
+
+
+### Dependencies
+
+* update to heroku-cli-command v13 and heroku-cli-util v10.9.0 ([#150](https://github.com/heroku/heroku-cli-plugin-ai/issues/150)) ([fc218e7](https://github.com/heroku/heroku-cli-plugin-ai/commit/fc218e7336f4dcf1b39a49be53dacd3c3fd6e986))
+
 ## [2.0.1](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.0...plugin-ai-v2.0.1) (2026-06-12)
 
 
