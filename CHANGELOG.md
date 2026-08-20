@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.2...plugin-ai-v2.0.3) (2026-08-20)
+
+
+### Dependencies
+
+* bump brace-expansion ([#152](https://github.com/heroku/heroku-cli-plugin-ai/issues/152)) ([21d5590](https://github.com/heroku/heroku-cli-plugin-ai/commit/21d559065a54f74c0f49e77b7db78ce157f316b6))
+
 ## [2.0.2](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.1...plugin-ai-v2.0.2) (2026-07-23)
 
 
