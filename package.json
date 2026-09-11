@@ -11,7 +11,7 @@
     "@heroku/heroku-cli-util": "^10.9.0",
     "@heroku/http-call": "^5.5.0",
     "@oclif/core": "^4.3.0",
-    "open": "^10.2.0",
+    "open": "^11.0.1",
     "printf": "^0.6.1",
     "tsheredoc": "^1"
   },
