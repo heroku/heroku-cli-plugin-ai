@@ -48,6 +48,7 @@
   ],
   "license": "Apache-2.0",
   "oclif": {
+    "repositoryPrefix": "<%- repo %>/blob/plugin-ai-v<%- version %>/<%- commandPath %>",
     "bin": "heroku",
     "commands": "./dist/commands",
     "topics": {
