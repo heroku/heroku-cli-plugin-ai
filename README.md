@@ -44,8 +44,8 @@ make an inference request to the Heroku Inference Agents API
 
 ```
 USAGE
-  $ heroku ai:agents:call [MODEL_RESOURCE] [-a <value>] [-j | -o <value>] [--optfile <value> | --opts <value>] [-p
-    <value> | --messages <value>] [-r <value>]
+  $ heroku ai:agents:call [MODEL_RESOURCE] [-a <value>] [-j | -o <value>] [--messages <value> | -p <value>]
+    [--optfile <value> | --opts <value>] [-r <value>]
 
 ARGUMENTS
   [MODEL_RESOURCE]  [default: heroku-inference] resource ID or alias of model (--app flag required if alias is used)
@@ -69,7 +69,7 @@ EXAMPLES
   $ heroku ai:agents:call my_llm --app my-app --messages '[{"role":"user","content":"What is the current time?"}]'
 ```
 
-_See code: [src/commands/ai/agents/call.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/agents/call.ts)_
+_See code: [src/commands/ai/agents/call.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/agents/call.ts)_
 
 ## `heroku ai:docs`
 
@@ -77,16 +77,19 @@ open Heroku Managed Inference and Agent's Dev Center documentation in your brows
 
 ```
 USAGE
-  $ heroku ai:docs [--browser <value>]
+  $ heroku ai:docs [--prompt] [--browser <value>]
 
 FLAGS
   --browser=<value>  browser to open docs with (example: "firefox", "safari")
+
+GLOBAL FLAGS
+  --prompt  interactively prompt for command arguments and flags
 
 DESCRIPTION
   open Heroku Managed Inference and Agent's Dev Center documentation in your browser
 ```
 
-_See code: [src/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/docs.ts)_
+_See code: [src/commands/ai/docs.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/docs.ts)_
 
 ## `heroku ai:mcp [ADDON]`
 
@@ -94,7 +97,7 @@ list the MCP server URL
 
 ```
 USAGE
-  $ heroku ai:mcp [ADDON] [--json] [-a <value>]
+  $ heroku ai:mcp [ADDON] [--prompt] [-a <value>] [--json]
 
 ARGUMENTS
   [ADDON]  [default: heroku-inference] unique identifier or globally unique name of add-on
@@ -103,11 +106,14 @@ FLAGS
   -a, --app=<value>  app to list the MCP server URL for
       --json         output in JSON format
 
+GLOBAL FLAGS
+  --prompt  interactively prompt for command arguments and flags
+
 DESCRIPTION
   list the MCP server URL
 ```
 
-_See code: [src/commands/ai/mcp/index.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/mcp/index.ts)_
+_See code: [src/commands/ai/mcp/index.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/mcp/index.ts)_
 
 ## `heroku ai:models`
 
@@ -115,7 +121,10 @@ list available AI models to provision access to
 
 ```
 USAGE
-  $ heroku ai:models
+  $ heroku ai:models [--prompt]
+
+GLOBAL FLAGS
+  --prompt  interactively prompt for command arguments and flags
 
 DESCRIPTION
   list available AI models to provision access to
@@ -133,7 +142,8 @@ attach an existing model resource to an app
 
 ```
 USAGE
-  $ heroku ai:models:attach MODEL_RESOURCE -s <value> -t <value> [--as <value>] [--confirm <value>] [-r <value>]
+  $ heroku ai:models:attach MODEL_RESOURCE -s <value> -t <value> [--prompt] [--as <value>] [--confirm <value>] [-r
+    <value>]
 
 ARGUMENTS
   MODEL_RESOURCE  resource ID or alias of model resource to attach
@@ -145,6 +155,9 @@ FLAGS
       --as=<value>          alias name for model resource
       --confirm=<value>     overwrite existing attached resource with same name
 
+GLOBAL FLAGS
+  --prompt  interactively prompt for command arguments and flags
+
 DESCRIPTION
   attach an existing model resource to an app
 
@@ -154,7 +167,7 @@ EXAMPLES
   $ heroku ai:models:attach claude-3-5-sonnet-acute-41518 --source-app example-source-app --target-app example-target-app --as MY_CS35
 ```
 
-_See code: [src/commands/ai/models/attach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/models/attach.ts)_
+_See code: [src/commands/ai/models/attach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/models/attach.ts)_
 
 ## `heroku ai:models:call MODEL_RESOURCE`
 
@@ -188,7 +201,7 @@ EXAMPLES
   $ heroku ai:models:call diffusion --app my-app --prompt "Generate an image of a sunset" --model stable-image-ultra --opts '{"quality":"hd"}' -o sunset.png
 ```
 
-_See code: [src/commands/ai/models/call.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/models/call.ts)_
+_See code: [src/commands/ai/models/call.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/models/call.ts)_
 
 ## `heroku ai:models:create MODEL_NAME`
 
@@ -196,7 +209,7 @@ provision access to an AI model
 
 ```
 USAGE
-  $ heroku ai:models:create MODEL_NAME -a <value> [--as <value>] [--confirm <value>] [-r <value>]
+  $ heroku ai:models:create MODEL_NAME -a <value> [--prompt] [--as <value>] [--confirm <value>] [-r <value>]
 
 ARGUMENTS
   MODEL_NAME  name of AI model to provision access for
@@ -206,6 +219,9 @@ FLAGS
   -r, --remote=<value>   git remote of app to use
       --as=<value>       alias of model resource
       --confirm=<value>  overwrite existing config vars or existing add-on aliases
+
+GLOBAL FLAGS
+  --prompt  interactively prompt for command arguments and flags
 
 DESCRIPTION
   provision access to an AI model
@@ -217,7 +233,7 @@ EXAMPLES
   $ heroku ai:models:create stable-image-ultra --app example-app --as diffusion
 ```
 
-_See code: [src/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/models/create.ts)_
+_See code: [src/commands/ai/models/create.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/models/create.ts)_
 
 ## `heroku ai:models:destroy MODEL_RESOURCE`
 
@@ -225,7 +241,7 @@ destroy an existing AI model resource
 
 ```
 USAGE
-  $ heroku ai:models:destroy MODEL_RESOURCE -a <value> [-c <value>] [-f] [-r <value>]
+  $ heroku ai:models:destroy MODEL_RESOURCE -a <value> [--prompt] [-c <value>] [-f] [-r <value>]
 
 ARGUMENTS
   MODEL_RESOURCE  resource ID or alias of model resource to destroy
@@ -236,6 +252,9 @@ FLAGS
   -f, --force            allow destruction even if connected to other apps
   -r, --remote=<value>   git remote of app to use
 
+GLOBAL FLAGS
+  --prompt  interactively prompt for command arguments and flags
+
 DESCRIPTION
   destroy an existing AI model resource
 
@@ -243,7 +262,7 @@ EXAMPLES
   $ heroku ai:models:destroy claude-3-5-sonnet-acute-43973
 ```
 
-_See code: [src/commands/ai/models/destroy.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/models/destroy.ts)_
+_See code: [src/commands/ai/models/destroy.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/models/destroy.ts)_
 
 ## `heroku ai:models:detach MODEL_RESOURCE`
 
@@ -251,7 +270,7 @@ detach a model resource from an app
 
 ```
 USAGE
-  $ heroku ai:models:detach MODEL_RESOURCE -a <value> [-r <value>]
+  $ heroku ai:models:detach MODEL_RESOURCE -a <value> [--prompt] [-r <value>]
 
 ARGUMENTS
   MODEL_RESOURCE  alias of model resource to detach
@@ -260,6 +279,9 @@ FLAGS
   -a, --app=<value>     (required) name of app to detach model resource from
   -r, --remote=<value>  git remote of app to use
 
+GLOBAL FLAGS
+  --prompt  interactively prompt for command arguments and flags
+
 DESCRIPTION
   detach a model resource from an app
 
@@ -267,7 +289,7 @@ EXAMPLES
   $ heroku ai:models:detach EXAMPLE_MODEL_ALIAS --app example-app
 ```
 
-_See code: [src/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/models/detach.ts)_
+_See code: [src/commands/ai/models/detach.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/models/detach.ts)_
 
 ## `heroku ai:models:info [MODEL_RESOURCE]`
 
@@ -275,7 +297,7 @@ get current status of a specific AI model resource or all AI model resources att
 
 ```
 USAGE
-  $ heroku ai:models:info [MODEL_RESOURCE] -a <value> [-r <value>]
+  $ heroku ai:models:info [MODEL_RESOURCE] -a <value> [--prompt] [-r <value>]
 
 ARGUMENTS
   [MODEL_RESOURCE]  resource ID or alias of model resource
@@ -283,6 +305,9 @@ ARGUMENTS
 FLAGS
   -a, --app=<value>     (required) app to run command against
   -r, --remote=<value>  git remote of app to use
+
+GLOBAL FLAGS
+  --prompt  interactively prompt for command arguments and flags
 
 DESCRIPTION
   get current status of a specific AI model resource or all AI model resources attached to an app
@@ -293,7 +318,7 @@ EXAMPLES
   $ heroku ai:models:info --app example-app
 ```
 
-_See code: [src/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/models/info.ts)_
+_See code: [src/commands/ai/models/info.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/models/info.ts)_
 
 ## `heroku ai:models:list`
 
@@ -301,7 +326,10 @@ list available AI models to provision access to
 
 ```
 USAGE
-  $ heroku ai:models:list
+  $ heroku ai:models:list [--prompt]
+
+GLOBAL FLAGS
+  --prompt  interactively prompt for command arguments and flags
 
 DESCRIPTION
   list available AI models to provision access to
@@ -313,7 +341,7 @@ EXAMPLES
   $ heroku ai:models:list
 ```
 
-_See code: [src/commands/ai/models/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/models/list.ts)_
+_See code: [src/commands/ai/models/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/models/list.ts)_
 
 ## `heroku ai:tools:list [ADDON]`
 
@@ -321,7 +349,7 @@ list all available AI tools
 
 ```
 USAGE
-  $ heroku ai:tools:list [ADDON] [--json] [-a <value>]
+  $ heroku ai:tools:list [ADDON] [--prompt] [-a <value>] [--json]
 
 ARGUMENTS
   [ADDON]  [default: heroku-inference] unique identifier or globally unique name of add-on
@@ -330,9 +358,12 @@ FLAGS
   -a, --app=<value>  app to list tools for
       --json         output in JSON format
 
+GLOBAL FLAGS
+  --prompt  interactively prompt for command arguments and flags
+
 DESCRIPTION
   list all available AI tools
 ```
 
-_See code: [src/commands/ai/tools/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/v1.1.0/src/commands/ai/tools/list.ts)_
+_See code: [src/commands/ai/tools/list.ts](https://github.com/heroku/heroku-cli-plugin-ai/blob/plugin-ai-v2.0.3/src/commands/ai/tools/list.ts)_
 <!-- commandsstop -->
