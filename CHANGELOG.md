@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.5](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.4...plugin-ai-v2.0.5) (2026-10-23)
+
+
+### Dependencies
+
+* bump source-map-js from 1.2.1 to 1.2.2 ([#173](https://github.com/heroku/heroku-cli-plugin-ai/issues/173)) ([79658e3](https://github.com/heroku/heroku-cli-plugin-ai/commit/79658e3a70c0002ff1cb052677eff73177a45d91))
+
 ## [2.0.4](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.3...plugin-ai-v2.0.4) (2026-10-01)
 
 
