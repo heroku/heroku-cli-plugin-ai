@@ -74,7 +74,7 @@
   },
   "//overrides": "serialize-javascript: mocha transitive dep, pinned for CVE-2024-11831; diff: mocha/sinon transitive dep, pinned for GHSA-73rr-hh4g-fpgx",
   "overrides": {
-    "serialize-javascript": "^7.0.5",
+    "serialize-javascript": "^7.1.4",
     "diff": "^9.0.0"
   }
 }
