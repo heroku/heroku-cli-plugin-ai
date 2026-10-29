@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.5](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.4...plugin-ai-v2.0.5) (2026-10-29)
+
+
+### Dependencies
+
+* bump @heroku/heroku-cli-util from 10.9.2 to 10.10.2 ([#181](https://github.com/heroku/heroku-cli-plugin-ai/issues/181)) ([1d1fa23](https://github.com/heroku/heroku-cli-plugin-ai/commit/1d1fa2367c73a574de5cd38dcaa3bc7389b60827))
+* bump open from 11.0.2 to 11.0.4 ([#179](https://github.com/heroku/heroku-cli-plugin-ai/issues/179)) ([e1098ce](https://github.com/heroku/heroku-cli-plugin-ai/commit/e1098cee9cc97f26cf24e8ec1671114893449399))
+* bump source-map-js from 1.2.1 to 1.2.2 ([#173](https://github.com/heroku/heroku-cli-plugin-ai/issues/173)) ([79658e3](https://github.com/heroku/heroku-cli-plugin-ai/commit/79658e3a70c0002ff1cb052677eff73177a45d91))
+
 ## [2.0.4](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.3...plugin-ai-v2.0.4) (2026-10-01)
 
 
