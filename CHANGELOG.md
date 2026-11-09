@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.6](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.5...plugin-ai-v2.0.6) (2026-11-09)
+
+
+### Dependencies
+
+* bump @heroku-cli/command from 13.0.1 to 13.2.5 ([#188](https://github.com/heroku/heroku-cli-plugin-ai/issues/188)) ([3a3d081](https://github.com/heroku/heroku-cli-plugin-ai/commit/3a3d0817e8901911a89002e2a3671844378da48b))
+
 ## [2.0.5](https://github.com/heroku/heroku-cli-plugin-ai/compare/plugin-ai-v2.0.4...plugin-ai-v2.0.5) (2026-10-29)
 
 
